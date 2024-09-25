@@ -55,9 +55,10 @@ def rouge_ja(refs: list[str], preds: list[str]) -> dict:
     assert isinstance(refs, list) and isinstance(
         preds, list
     ), "refs and preds must be lists."
-    tokenizer = MecabTokenizer()
+
+    # Prepare mecab-based rouge scorer.
     rouge_types = ["rouge1", "rouge2", "rougeL"]
-    # mecab-based rouge
+    tokenizer = MecabTokenizer()
     scorer = rouge_scorer.RougeScorer(
         rouge_types,
         tokenizer=tokenizer,
@@ -68,6 +69,7 @@ def rouge_ja(refs: list[str], preds: list[str]) -> dict:
     for ref, pred in zip(refs, preds):
         aggregator.add_scores(scorer.score(ref, pred))
     result = aggregator.aggregate()
+
     return {type: result[type].mid.fmeasure * 100 for type in rouge_types}
 
 
@@ -91,6 +93,28 @@ def test_rouge_ja():
     preds = ["ここは湖の岸です。"]
     scores = rouge_ja(refs, preds)
     assert pytest.approx(scores["rougeL"], 0.01) == 50.0
+
+
+def sacrebleu_ja_sent(refs: list[str], pred: str) -> dict:
+    """Compute BLEU scores for Japanese text using the sacrebleu library.
+    Args:
+        refs: lists of reference strings. Each list corresponds to a single reference.
+        pred: predicted strings
+    Returns:
+        dict: dictionary with keys: { 'bleu' }
+    """
+    from sacrebleu import BLEU
+
+    assert isinstance(refs, list), "refs must be lists."
+    assert isinstance(pred, str), "pred must be string."
+
+    # Prepare MeCab tokenizer for Japanese BLEU scoring.
+    bleu = BLEU(trg_lang="ja")
+
+    # Compute BLEU score.
+    bleu_score = bleu.sentence_score(refs, pred)
+
+    return bleu_score.score
 
 
 if __name__ == "__main__":
