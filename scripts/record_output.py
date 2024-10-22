@@ -156,7 +156,12 @@ def main(task_id: str, result_dir: str):
                         )
 
                     df.loc[df["question_id"] == data["question_id"], model_id] = (
-                        data["text"] + "\n" + "score: " +  str(data["score_rougeL"]) + ", " + str(data["score_llm_as_a_judge"])
+                        data["text"]
+                        + "\n"
+                        + "score: "
+                        + str(data["score_rougeL"])
+                        + ", "
+                        + str(data["score_llm_as_a_judge"])
                     )
 
         dataset = load_dataset("SakanaAI/JA-VG-VQA-500", split="test")
@@ -218,7 +223,12 @@ def main(task_id: str, result_dir: str):
                         )
 
                     df.loc[df["question_id"] == data["question_id"], model_id] = (
-                        data["text"] + "\n" + "score: " + str(data["score_rougeL"]) + ", " + str(data["score_llm_as_a_judge"])
+                        data["text"]
+                        + "\n"
+                        + "score: "
+                        + str(data["score_rougeL"])
+                        + ", "
+                        + str(data["score_llm_as_a_judge"])
                     )
 
         ds = load_dataset("SakanaAI/JA-VLM-Bench-In-the-Wild", split="test")

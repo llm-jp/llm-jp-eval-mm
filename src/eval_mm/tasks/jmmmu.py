@@ -639,6 +639,12 @@ class JMMMU(Task):
         ]
 
         metrics = {"jmmmu": jmmmu_aggregate_results(results)}
+        # metrics = {"jmmmu": {"Overall-Art and Psychology": {"num": 90, "acc": 0.22222}
+        # convert metrics to {"Overall-Art and Psychology": 0.22222, ...}
+        metrics = {
+            key: value["acc"]
+            for key, value in metrics["jmmmu"].items()
+        }
         return metrics, eval_results
 
     def format_result(self, preds: list[dict], eval_results: list[dict]) -> list[dict]:
