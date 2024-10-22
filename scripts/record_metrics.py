@@ -39,8 +39,8 @@ def create_metrics_per_model(result_dir: str, task_id_list: list[str]) -> list[d
 def create_spread_sheet(metrics_per_model: list[dict]):
     # Create a spread sheet from the metrics_per_model [{mode_id, task_id {metric: value}}, ...]
     df = pd.json_normalize(metrics_per_model)
-    # round to 3 decimal places
-    df = df.round(3)
+    # round to 2 decimal places
+    df = df.round(2)
 
     df.columns = pd.MultiIndex.from_tuples([tuple(c.split(".")) for c in df.columns])
     print(df)
