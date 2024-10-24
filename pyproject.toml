@@ -14,7 +14,6 @@ dependencies = [
     "emoji>=2.12.1",
     "fugashi>=1.3.2",
     "unidic-lite>=1.0.8",
-    "s2wrapper @ git+https://github.com/bfshi/scaling_on_scales.git",
 ]
 readme = "README.md"
 requires-python = ">= 3.12.1"

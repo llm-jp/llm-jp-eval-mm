@@ -41,8 +41,6 @@ dill==0.3.8
     # via multiprocess
 distro==1.9.0
     # via openai
-einops==0.8.0
-    # via s2wrapper
 emoji==2.13.2
     # via eval-mm
 filelock==3.16.1
@@ -114,8 +112,6 @@ requests==2.32.3
     # via eval-mm
     # via huggingface-hub
 rouge-score==0.1.2
-    # via eval-mm
-s2wrapper @ git+https://github.com/bfshi/scaling_on_scales.git@ea1435a5e2aa7dadded22de2329d4d657d0aa164
     # via eval-mm
 six==1.16.0
     # via python-dateutil
