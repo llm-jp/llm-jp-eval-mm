@@ -9,6 +9,9 @@ import unicodedata
 # import neologdn FIXME: fix c++12 error when installing neologdn
 from tqdm import tqdm
 
+# for jdocqa
+from sacrebleu import sentence_bleu, sentence_chrf, corpus_bleu, corpus_chrf
+
 
 class MecabTokenizer:
     def __init__(self) -> None:
@@ -122,7 +125,7 @@ def llm_as_a_judge(
                 print(f"Invalid score: {score}")
                 return {"score": 1, "rationale": completion}
             return {"score": score, "rationale": completion}
-        except:
+        except Exception:
             print("parse_score error")
             return {"score": 1, "rationale": completion}
 
@@ -151,6 +154,35 @@ def test_rouge_ja():
     preds = ["ここは湖の岸です。"]
     scores = rouge_ja(refs, preds)
     assert pytest.approx(scores["rougeL"], 0.01) == 50.0
+
+
+def bleu_ja(refs, pred):
+    # TODO: Implement BLEU for Japanese
+    print("====")
+    print("refs:", refs)
+    print("pred:", pred)
+    bleu_score = sentence_bleu(
+        hypothesis=pred,
+        references=refs,
+        smooth_value=0.0,
+        tokenize="ja-mecab",
+        use_effective_order=False,
+    )
+    print("bleu_score:", bleu_score.score)
+
+    return bleu_score.score
+
+
+# def bleu(predictions, references):
+#     references = [references]
+#     bleu_score = corpus_bleu(predictions, references,
+#                                         smooth_method="exp",
+#                                         smooth_value=0.0,
+#                                         force=False,
+#                                         lowercase=False,
+#                                         tokenize="ja-mecab",
+#                                         use_effective_order=False) #use_effective_order=False
+#     return bleu_score.score
 
 
 if __name__ == "__main__":
