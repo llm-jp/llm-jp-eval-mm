@@ -52,7 +52,12 @@ parser.add_argument("--result_dir", type=str, default="results/run_0")
 parser.add_argument(
     "--task_id_list",
     nargs="+",
-    default=["japanese-heron-bench", "ja-vlm-bench-in-the-wild", "ja-vg-vqa-500", "jmmmu"],
+    default=[
+        "japanese-heron-bench",
+        "ja-vlm-bench-in-the-wild",
+        "ja-vg-vqa-500",
+        "jmmmu",
+    ],
 )
 args = parser.parse_args()
 

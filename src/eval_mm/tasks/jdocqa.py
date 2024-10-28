@@ -1,8 +1,13 @@
 from datasets import Dataset, load_dataset
+from pdf2image import convert_from_path
 
 from ..api.registry import register_task
 from ..api.task import Task
 from ..utils.metrics import bleu_ja
+
+from PIL import Image
+
+Image.MAX_IMAGE_PIXELS = None
 
 ANSWER_TYPE_MAP = {
     "yesno": 0,  # Yes/No questions
@@ -14,15 +19,28 @@ ANSWER_TYPE_MAP = {
 NUM_TO_ANSWER_TYPE = {v: k for k, v in ANSWER_TYPE_MAP.items()}
 
 
-def pdf_to_image(pdf_path):
-    # TODO: Implement pdf to image conversion
-    image = None
-    return image
+# FIXME; Preprocess! self.dataset["images"] で前もって画像を取得しておく方がよい
+def pdf_to_images(pdf_path):
+    images = convert_from_path(pdf_path)
+    return images
 
 
 def jdocqa_normalize(text):
     text = text.replace("です", "").replace("。", "").replace("、", "").strip()
     return text
+
+
+def get_elements_from_index(indices_str, array):
+    try:
+        indices = [int(x.strip()) - 1 for x in indices_str.split(",")]
+        elements = [array[i] for i in indices if 0 <= i < len(array)]
+        return elements
+    except ValueError:
+        print("The string doesn't seem to have numbers or commas in the right places.")
+        return None  # Or maybe an empty list, depending on how you wanna handle it
+    except IndexError:
+        print("Out of bounds error!")
+        return None  # Same, an empty list or special value could work
 
 
 @register_task("jdocqa")
@@ -47,19 +65,17 @@ class JDocQA(Task):
         else:
             raise ValueError("Dataset is None, cannot rename column.")
 
-        # check dataset's columns and types of each column
-        if self._dataset is not None:
-            print(self._dataset.column_names)
-            print(self._dataset.features)
+        # TODO: When the PR is closing, remove this.
+        # sample first 30 examples
+        self._dataset = self._dataset.select(range(30))
 
     def doc_to_text(self, doc):
-        return doc["input_text"]
+        return jdocqa_normalize(doc["input_text"])
 
     def doc_to_visual(self, doc):
-        # Read pdf from path
-        filepath = doc["pdf_filepath"]
-        image = pdf_to_image(filepath)
-        return image
+        images_all = pdf_to_images(doc["pdf_filepath"])
+        images = get_elements_from_index(doc["question_page_number"], images_all)
+        return images
 
     def doc_to_id(self, doc):
         return doc["question_id"]
@@ -88,20 +104,40 @@ class JDocQA(Task):
 
         scores = []
         for doc, pred in zip(docs, preds):
-            print("==== answer type ====")
-            print(doc["answer_type"], NUM_TO_ANSWER_TYPE[doc["answer_type"]])
-            print(doc["answer"], type(doc["answer"]))
-            print(doc["pdf_filepath"], type(doc["pdf_filepath"]))
+            print("==== sample ====")
+            question = self.doc_to_text(doc)
+            print("Question:", question)
+            image = self.doc_to_visual(doc)
+            print("Image:", type(image))
 
+            # TODO: Delete when PR is closing
+            # print(doc["answer_type"], NUM_TO_ANSWER_TYPE[doc["answer_type"]])
+            # print(doc["answer"], type(doc["answer"]))
+            # print(doc["pdf_filepath"], type(doc["pdf_filepath"]))
+            # print(doc["question_page_number"], type(doc["question_page_number"]))
+            # print("Image List:", type(self.doc_to_visual(doc)), "len:", len(self.doc_to_visual(doc)))
+            # print("Image:", type(self.doc_to_visual(doc)[0]))
+
+            answer = doc["answer"]
             if doc["answer_type"] == ANSWER_TYPE_MAP["open-ended"]:
                 refs = [doc["answer"]]
                 scores.append(bleu_ja(refs, pred["text"]))
-            else:
-                # === Exact match with Simple Rules ===
-                # TODO: Implement exact match with simple rules
-                scores.append(0.0)
-        eval_results = []
 
+            # 著者実装と異なる可能性がある． 注意して利用する．
+            # TODO: Implement Unanswerable Questions
+            elif doc["answer_type"] in [
+                ANSWER_TYPE_MAP["yesno"],
+                ANSWER_TYPE_MAP["factoid"],
+                ANSWER_TYPE_MAP["numerical"],
+            ]:
+                if answer in pred["text"]:
+                    scores.append(1.0)
+                else:
+                    scores.append(0.0)
+            else:
+                raise NotImplementedError("Bad answer type.")
+
+        eval_results = []
         for doc, pred, score in zip(docs, preds, scores):
             eval_result = doc
             eval_result["pred"] = pred["text"]
@@ -188,8 +224,13 @@ if __name__ == "__main__":
     config = None
     task.prepare_task(config)
     docs = task.dataset
+
     preds = [{"question_id": doc["question_id"], "text": doc["answer"]} for doc in docs]
     metrics, eval_results = task.compute_metrics(preds)
-    results = task.format_result(preds, eval_results)
-    # print(results)
-    print(metrics)
+
+    preds_bad = [
+        {"question_id": doc["question_id"], "text": "これは間違いです"} for doc in docs
+    ]
+    metrics_bad, eval_results_bad = task.compute_metrics(preds_bad)
+
+    print(metrics, metrics_bad)

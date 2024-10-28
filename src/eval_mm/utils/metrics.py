@@ -157,10 +157,6 @@ def test_rouge_ja():
 
 
 def bleu_ja(refs, pred):
-    # TODO: Implement BLEU for Japanese
-    print("====")
-    print("refs:", refs)
-    print("pred:", pred)
     bleu_score = sentence_bleu(
         hypothesis=pred,
         references=refs,
@@ -168,21 +164,7 @@ def bleu_ja(refs, pred):
         tokenize="ja-mecab",
         use_effective_order=False,
     )
-    print("bleu_score:", bleu_score.score)
-
     return bleu_score.score
-
-
-# def bleu(predictions, references):
-#     references = [references]
-#     bleu_score = corpus_bleu(predictions, references,
-#                                         smooth_method="exp",
-#                                         smooth_value=0.0,
-#                                         force=False,
-#                                         lowercase=False,
-#                                         tokenize="ja-mecab",
-#                                         use_effective_order=False) #use_effective_order=False
-#     return bleu_score.score
 
 
 if __name__ == "__main__":
