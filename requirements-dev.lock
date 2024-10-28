@@ -174,8 +174,11 @@ packaging==24.1
 pandas==2.2.3
     # via datasets
     # via seaborn
+pdf2image==1.17.0
+    # via eval-mm
 pillow==10.4.0
     # via matplotlib
+    # via pdf2image
     # via torchvision
 pluggy==1.5.0
     # via pytest

@@ -5,6 +5,7 @@ from ..api.registry import register_task
 from ..api.task import Task
 from ..utils.metrics import bleu_ja
 
+import aiohttp
 from PIL import Image
 
 Image.MAX_IMAGE_PIXELS = None
@@ -19,7 +20,6 @@ ANSWER_TYPE_MAP = {
 NUM_TO_ANSWER_TYPE = {v: k for k, v in ANSWER_TYPE_MAP.items()}
 
 
-# FIXME; Preprocess! self.dataset["images"] で前もって画像を取得しておく方がよい
 def pdf_to_images(pdf_path):
     images = convert_from_path(pdf_path)
     return images
@@ -54,6 +54,9 @@ class JDocQA(Task):
             split="test",
             rename_pdf_category=True,
             trust_remote_code=True,
+            storage_options={
+                "client_kwargs": {"timeout": aiohttp.ClientTimeout(total=3600)}
+            },
         )
 
         # rename columns
@@ -67,7 +70,7 @@ class JDocQA(Task):
 
         # TODO: When the PR is closing, remove this.
         # sample first 30 examples
-        self._dataset = self._dataset.select(range(30))
+        self._dataset = self._dataset.select(range(100))
 
     def doc_to_text(self, doc):
         return jdocqa_normalize(doc["input_text"])
@@ -104,20 +107,6 @@ class JDocQA(Task):
 
         scores = []
         for doc, pred in zip(docs, preds):
-            print("==== sample ====")
-            question = self.doc_to_text(doc)
-            print("Question:", question)
-            image = self.doc_to_visual(doc)
-            print("Image:", type(image))
-
-            # TODO: Delete when PR is closing
-            # print(doc["answer_type"], NUM_TO_ANSWER_TYPE[doc["answer_type"]])
-            # print(doc["answer"], type(doc["answer"]))
-            # print(doc["pdf_filepath"], type(doc["pdf_filepath"]))
-            # print(doc["question_page_number"], type(doc["question_page_number"]))
-            # print("Image List:", type(self.doc_to_visual(doc)), "len:", len(self.doc_to_visual(doc)))
-            # print("Image:", type(self.doc_to_visual(doc)[0]))
-
             answer = doc["answer"]
             if doc["answer_type"] == ANSWER_TYPE_MAP["open-ended"]:
                 refs = [doc["answer"]]

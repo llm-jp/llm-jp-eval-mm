@@ -3,7 +3,7 @@
 # model list: Select from here
 set -l models \
     # "EvoVLM_JP_v1_7B" \
-    "InternVL2_8B"
+    # "InternVL2_8B"
     # "japanese_instructblip_alpha"\
     # "japanese_stable_vlm" \
     # "Llama_3_2_11B_Vision_Instruct"\
@@ -11,14 +11,16 @@ set -l models \
     # "llava_calm2_siglip"\
     # "llava_v1_6_mistral_7b_hf"
     # "Qwen2_VL_7B_Instruct"
+    "GPT_4o"
 
 # task list: Select from here
 set -l tasks \
     # "japanese-heron-bench" \
     # "ja-vg-vqa-500" \
     # "ja-vlm-bench-in-the-wild" \
-    "ja-multi-image-vqa" 
+    # "ja-multi-image-vqa" 
     # "jmmmu"
+    "jdocqa"
 
 # execute evaluation
 for model in $models

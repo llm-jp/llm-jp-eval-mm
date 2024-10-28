@@ -99,6 +99,10 @@ packaging==24.1
     # via huggingface-hub
 pandas==2.2.3
     # via datasets
+pdf2image==1.17.0
+    # via eval-mm
+pillow==11.0.0
+    # via pdf2image
 portalocker==2.10.1
     # via sacrebleu
 pyarrow==17.0.0
