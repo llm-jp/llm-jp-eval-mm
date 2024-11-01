@@ -32,7 +32,7 @@ class VLM:
         if "<image>" not in text:
             if isinstance(image, list):
                 image_tokens = "".join(
-                    [f"Image{i} <ImageHere>; " for i in range(len(image))]
+                    [f"Image{i} <ImageHere>; " for i in range(1, len(image)+1)]
                 )
                 text = f"{image_tokens}{text}"
             else:
@@ -57,8 +57,7 @@ class VLM:
                 text,
                 image_files,
                 do_sample=False,
-                num_beams=3,
-                use_meta=True,
+                max_new_tokens=max_new_tokens,
             )
 
         # remove tmp files
