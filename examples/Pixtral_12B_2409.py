@@ -1,10 +1,10 @@
-import requests
 from PIL import Image
 from vllm import LLM
 from vllm.sampling_params import SamplingParams
 from typing import Union
 import base64
 from io import BytesIO
+from base_vlm import BaseVLM
 
 
 def image_to_base64(img):
@@ -28,7 +28,7 @@ def image_to_content(image: Image.Image) -> dict:
     return content
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "mistralai/Pixtral-12B-2409"
 
     def __init__(self) -> None:
@@ -66,11 +66,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
-
-    # Not Supported Multi-Image Inference
-    # multi_images = [image for _ in range(3)]
-    # print(model.generate(multi_images, "What is the difference between these images?"))
+    vlm = VLM()
+    vlm.test_vlm()

@@ -3,12 +3,13 @@
 import torch
 from transformers import AutoModel, AutoTokenizer
 import os
-from PIL import Image
+
+from base_vlm import BaseVLM
 
 torch.set_grad_enabled(False)
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "internlm/internlm-xcomposer2d5-7b"
 
     def __init__(self) -> None:
@@ -32,7 +33,7 @@ class VLM:
         if "<image>" not in text:
             if isinstance(image, list):
                 image_tokens = "".join(
-                    [f"Image{i} <ImageHere>; " for i in range(1, len(image)+1)]
+                    [f"Image{i} <ImageHere>; " for i in range(1, len(image) + 1)]
                 )
                 text = f"{image_tokens}{text}"
             else:
@@ -67,13 +68,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    import requests
-    from PIL import Image
-
     model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
-    print(
-        model.generate([image, image], "What is the difference between these images?")
-    )
+    model.test_vlm()

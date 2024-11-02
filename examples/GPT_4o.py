@@ -2,7 +2,7 @@ from openai import AzureOpenAI
 import os
 from io import BytesIO
 import base64
-import requests
+from base_vlm import BaseVLM
 
 
 def encode_image_to_base64(image):
@@ -12,7 +12,7 @@ def encode_image_to_base64(image):
     return img_str
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id: str = "gpt-4o-2024-05-13"
 
     def __init__(self) -> None:
@@ -79,10 +79,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    import requests
-    from PIL import Image
-
-    model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
+    vlm = VLM()
+    vlm.test_vlm()

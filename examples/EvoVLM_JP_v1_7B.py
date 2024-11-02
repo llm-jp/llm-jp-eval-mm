@@ -1,9 +1,10 @@
 # This model doesn't work when the transformers library's version is newer than 4.42.4.
 from transformers import AutoModelForVision2Seq, AutoProcessor
 import torch
+from base_vlm import BaseVLM
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "SakanaAI/EvoVLM-JP-v1-7B"
 
     def __init__(self) -> None:
@@ -38,10 +39,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    import requests
-    from PIL import Image
-
-    model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
+    vlm = VLM()
+    vlm.test_vlm()

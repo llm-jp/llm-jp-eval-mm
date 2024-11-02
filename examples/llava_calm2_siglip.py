@@ -1,10 +1,9 @@
-from PIL import Image
-import requests
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 import torch
+from base_vlm import BaseVLM
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "cyberagent/llava-calm2-siglip"
 
     def __init__(self) -> None:
@@ -50,12 +49,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
-    print(
-        model.generate(
-            [image, image], "What is the difference between these two images?"
-        )
-    )
+    vlm = VLM()
+    vlm.test_vlm()

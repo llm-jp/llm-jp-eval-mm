@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForVision2Seq, AutoImageProcessor
 from PIL import Image, ImageDraw, ImageFont
-import requests
+from base_vlm import BaseVLM
 
 # helper function to format input prompts
 TASK2INSTRUCTION = {
@@ -162,7 +162,7 @@ def process_images(images, size=1008):
         return concat_horizontal
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "stabilityai/japanese-stable-vlm"
 
     def __init__(self) -> None:
@@ -198,10 +198,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
-    multi_images = [image for _ in range(3)]
-    print(model.generate([image], "画像の違いはなんですか"))
-    print(model.generate(multi_images, "画像の違いはなんですか?"))
+    vlm = VLM()
+    vlm.test_vlm()

@@ -1,11 +1,11 @@
-import requests
 import torch
 from PIL import Image
 from transformers import MllamaForConditionalGeneration, AutoProcessor
 from typing import Union
+from base_vlm import BaseVLM
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "meta-llama/Llama-3.2-11B-Vision-Instruct"
 
     def __init__(self) -> None:
@@ -54,10 +54,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
-
-    multi_images = [image for _ in range(3)]
-    print(model.generate(multi_images, "What is the difference between these images?"))
+    vlm = VLM()
+    vlm.test_vlm()

@@ -4,6 +4,7 @@ from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
 from transformers import AutoModel, AutoTokenizer
 from typing import Union
+from base_vlm import BaseVLM
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -118,7 +119,7 @@ def add_image_tags(images: Union[Image.Image, list[Image.Image]], prompt: str) -
     return new_prompt
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "OpenGVLab/InternVL2-8B"
 
     def __init__(self) -> None:
@@ -177,13 +178,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    import requests
-    from PIL import Image
-
-    model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
-    print(
-        model.generate([image, image], "What is the difference between these images?")
-    )
+    vlm = VLM()
+    vlm.test_vlm()

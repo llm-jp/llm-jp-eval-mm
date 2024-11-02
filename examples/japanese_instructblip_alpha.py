@@ -1,7 +1,9 @@
-import requests
+# TODO: 複数画像のレスポンスが空白
+
 from PIL import Image, ImageDraw, ImageFont
 from transformers import LlamaTokenizer, AutoModelForVision2Seq, BlipImageProcessor
 from typing import Union
+from base_vlm import BaseVLM
 
 
 # helper function to format input prompts
@@ -147,7 +149,7 @@ def process_images(images, size=1008):
         return concat_horizontal
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "stabilityai/japanese-instructblip-alpha"
 
     def __init__(self) -> None:
@@ -194,10 +196,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    model = VLM()
-    image_file = "https://images.unsplash.com/photo-1582538885592-e70a5d7ab3d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
-    image = Image.open(requests.get(image_file, stream=True).raw).convert("RGB")
-    print(model.generate(image, "これはなんですか?"))
-
-    multi_images = [image for _ in range(3)]
-    print(model.generate(multi_images, "画像の違いはなんですか?"))
+    vlm = VLM()
+    vlm.test_vlm()

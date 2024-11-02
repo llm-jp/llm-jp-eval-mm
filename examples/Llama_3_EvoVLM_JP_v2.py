@@ -1,5 +1,3 @@
-import requests
-from PIL import Image
 import torch
 from mantis.models.conversation import Conversation, SeparatorStyle
 from mantis.models.mllava import (
@@ -8,7 +6,7 @@ from mantis.models.mllava import (
     MLlavaProcessor,
 )
 from mantis.models.mllava.utils import conv_templates
-
+from base_vlm import BaseVLM
 
 # 1. Set the system prompt
 conv_llama_3_elyza = Conversation(
@@ -22,7 +20,7 @@ conv_llama_3_elyza = Conversation(
 conv_templates["llama_3"] = conv_llama_3_elyza
 
 
-class VLM:
+class VLM(BaseVLM):
     model_id = "SakanaAI/Llama-3-EvoVLM-JP-v2"
 
     def __init__(self) -> None:
@@ -57,8 +55,5 @@ class VLM:
 
 
 if __name__ == "__main__":
-    model = VLM()
-    image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
-    image = Image.open(requests.get(image_file, stream=True).raw)
-    print(model.generate(image, "What is in the image?"))
-    print(model.generate([image, image], "What is in the image?"))
+    vlm = VLM()
+    vlm.test_vlm()
