@@ -29,8 +29,6 @@ class VLM(BaseVLM):
                 qs = "<image>\n" * len(image) + text
             else:
                 qs = "<image>\n" + text
-        print(qs)
-        print(image)
         conv_mode = "llmjp_v3"
         conv = conv_templates[conv_mode].copy()
         conv.append_message(conv.roles[0], qs)
