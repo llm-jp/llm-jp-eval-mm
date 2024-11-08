@@ -106,8 +106,13 @@ class JDocQA(Task):
         ), "Question IDs must be the same."
 
         scores = []
+
+        # TMP;
+        idx = 0
+
         for doc, pred in zip(docs, preds):
             answer = doc["answer"]
+
             if doc["answer_type"] == ANSWER_TYPE_MAP["open-ended"]:
                 refs = [doc["answer"]]
                 scores.append(bleu_ja(refs, pred["text"]))
@@ -125,6 +130,20 @@ class JDocQA(Task):
                     scores.append(0.0)
             else:
                 raise NotImplementedError("Bad answer type.")
+
+            question = self.doc_to_text(doc)
+            answer = doc["answer"]
+            images = self.doc_to_visual(doc)
+
+            print(f"Idx: {idx}")
+            print(f"Question: {question}")
+            print(f"Answer: {answer}")
+            for i, image in enumerate(images):
+                image.save(
+                    f"/home/silviase/llmjp/llm-jp-eval-multimodal/tmp/jdocqa/image_{idx}_{i}.jpg"
+                )
+
+            idx += 1
 
         eval_results = []
         for doc, pred, score in zip(docs, preds, scores):
