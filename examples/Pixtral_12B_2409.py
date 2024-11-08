@@ -5,6 +5,7 @@ from typing import Union
 import base64
 from io import BytesIO
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 
 def image_to_base64(img):
@@ -42,7 +43,7 @@ class VLM(BaseVLM):
         self,
         images: Union[Image.Image, list[Image.Image]],
         text: str,
-        max_new_tokens: int = 256,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
         if isinstance(images, list):
             content = [image_to_content(image) for image in images]
@@ -57,7 +58,11 @@ class VLM(BaseVLM):
             }
         ]
 
-        sampling_params = SamplingParams(max_tokens=max_new_tokens)
+        sampling_params = SamplingParams(
+            max_tokens=gen_kwargs.max_new_tokens,
+            temperature=gen_kwargs.temperature,
+            top_p=gen_kwargs.top_p,
+        )
         outputs = self.model.chat(
             messages,
             sampling_params=sampling_params,

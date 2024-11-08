@@ -3,7 +3,7 @@
 import torch
 from transformers import AutoModel, AutoTokenizer
 import os
-
+from utils import GenerationConfig
 from base_vlm import BaseVLM
 
 torch.set_grad_enabled(False)
@@ -28,7 +28,9 @@ class VLM(BaseVLM):
         )
         self.model.tokenizer = self.tokenizer
 
-    def generate(self, image, text: str, max_new_tokens: int = 256):
+    def generate(
+        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ):
         text = text.replace("<image>", "")
         if "<image>" not in text:
             if isinstance(image, list):
@@ -57,8 +59,7 @@ class VLM(BaseVLM):
                 self.tokenizer,
                 text,
                 image_files,
-                do_sample=False,
-                max_new_tokens=max_new_tokens,
+                generation_config=gen_kwargs.__dict__,
             )
 
         # remove tmp files

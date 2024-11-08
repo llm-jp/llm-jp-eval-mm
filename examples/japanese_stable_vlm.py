@@ -2,6 +2,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForVision2Seq, AutoImageProcessor
 from PIL import Image, ImageDraw, ImageFont
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 # helper function to format input prompts
 TASK2INSTRUCTION = {
@@ -175,7 +176,9 @@ class VLM(BaseVLM):
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
         self.model.to(self.device)
 
-    def generate(self, images, text: str, max_new_tokens: int = 256):
+    def generate(
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ):
         # instruct blip does not expect the <image> tag
         text = text.replace("<image>", "")
         prompt = build_prompt(task="vqa", input=text)
@@ -189,8 +192,7 @@ class VLM(BaseVLM):
 
         # autoregressively complete prompt
         output = self.model.generate(
-            **inputs.to(self.device, dtype=self.model.dtype),
-            max_new_tokens=max_new_tokens,
+            **inputs.to(self.device, dtype=self.model.dtype), **gen_kwargs.__dict__
         )[0]
 
         generated_text = self.tokenizer.decode(output, skip_special_tokens=True).strip()

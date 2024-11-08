@@ -8,6 +8,7 @@ from llava.mm_utils import (
 )
 from llava.model.builder import load_pretrained_model
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
@@ -21,7 +22,9 @@ class VLM(BaseVLM):
             load_pretrained_model(model_checkpoint_path, model_name)
         )
 
-    def generate(self, image, text: str, max_new_tokens: int = 256):
+    def generate(
+        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ):
         qs = text
         qs = qs.replace("<image>", "")
         if "<image>" not in text:
@@ -55,10 +58,7 @@ class VLM(BaseVLM):
                 images=[
                     images_tensor,
                 ],
-                do_sample=False,
-                num_beams=1,
-                max_new_tokens=max_new_tokens,
-                use_cache=True,
+                **gen_kwargs.__dict__,
             )
 
         outputs = self.tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]

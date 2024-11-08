@@ -4,6 +4,7 @@ import torch
 from PIL import Image
 from typing import Union
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
@@ -21,7 +22,7 @@ class VLM(BaseVLM):
         self,
         images: Union[Image.Image, list[Image.Image]],
         text: str,
-        max_new_tokens: int = 256,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
         if isinstance(images, list):
             prompt_template = (
@@ -39,11 +40,7 @@ class VLM(BaseVLM):
         ).to("cuda", torch.float16)
         output = self.model.generate(
             **model_inputs,
-            max_new_tokens=max_new_tokens,
-            min_new_tokens=32,
-            temperature=1.0,
-            top_p=0.9,
-            do_sample=True,
+            **gen_kwargs.__dict__,
         )
         output = output[0]
         result = self.processor.decode(

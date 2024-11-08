@@ -2,6 +2,7 @@
 from transformers import AutoModelForVision2Seq, AutoProcessor
 import torch
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
@@ -15,8 +16,15 @@ class VLM(BaseVLM):
         self.processor = AutoProcessor.from_pretrained(self.model_id)
         self.model.to(self.device)
 
-    def generate(self, image, text: str, max_new_tokens: int = 256):
-        text = f"<image>{text}"
+    def generate(
+        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ):
+        text = text.replace("<image>", "")
+        if isinstance(image, list):
+            text = "<image>" * len(image) + f"{text}"
+        else:
+            text = f"<image>{text}"
+
         messages = [
             {
                 "role": "system",
@@ -29,7 +37,7 @@ class VLM(BaseVLM):
             messages, return_tensors="pt"
         )
         output_ids = self.model.generate(
-            **inputs.to(self.device), max_new_token=max_new_tokens
+            **inputs.to(self.device), **gen_kwargs.__dict__
         )
         output_ids = output_ids[:, inputs.input_ids.shape[1] :]
         generated_text = self.processor.batch_decode(

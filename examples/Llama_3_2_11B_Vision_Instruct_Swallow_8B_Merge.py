@@ -3,6 +3,7 @@ from PIL import Image
 from transformers import MllamaForConditionalGeneration, AutoProcessor
 from typing import Union
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
@@ -20,7 +21,7 @@ class VLM(BaseVLM):
         self,
         images: Union[Image.Image, list[Image.Image]],
         text: str,
-        max_new_tokens: int = 256,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
         if "<image>" in text:
             text = text.replace("<image>", "")
@@ -41,7 +42,7 @@ class VLM(BaseVLM):
         inputs = self.processor(
             images, input_text, add_special_tokens=False, return_tensors="pt"
         ).to(self.model.device)
-        output_ids = self.model.generate(**inputs, max_new_tokens=max_new_tokens)
+        output_ids = self.model.generate(**inputs, **gen_kwargs.__dict__)
         generated_ids = [
             output_ids[len(input_ids) :]
             for input_ids, output_ids in zip(inputs.input_ids, output_ids)

@@ -5,6 +5,7 @@ from torchvision.transforms.functional import InterpolationMode
 from transformers import AutoModel, AutoTokenizer
 from typing import Union
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -135,7 +136,9 @@ class VLM(BaseVLM):
             self.model_id, trust_remote_code=True, use_fast=False
         )
 
-    def generate(self, image, text: str, max_new_tokens: int = 256):
+    def generate(
+        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ):
         text = text.replace("<image>", "")
         if "<image>" not in text:
             if isinstance(image, list):
@@ -164,14 +167,12 @@ class VLM(BaseVLM):
                 load_image(image, max_num=12).to(self.model.device).to(self.model.dtype)
             )
 
-        generation_config = dict(max_new_tokens=max_new_tokens, do_sample=False)
-
         response = self.model.chat(
             self.tokenizer,
             pixel_values,
             text,
-            generation_config,
             num_patches_list=num_patches_list,
+            generation_config=gen_kwargs.__dict__,
         )
         generated_text = response
         return generated_text

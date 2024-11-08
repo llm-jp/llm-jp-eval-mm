@@ -6,18 +6,33 @@ from tqdm import tqdm
 import importlib
 import argparse
 import time
+from utils import GenerationConfig
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--class_path", type=str, default="llava_1_5")
+parser.add_argument("--class_path", type=str, default="llava_1_5_7b_hf")
 parser.add_argument("--task_id", type=str, default="japanese-heron-bench")
 parser.add_argument("--openai_model_id", type=str, default="gpt-4o-mini-2024-07-18")
 parser.add_argument("--batch_size_for_evaluation", type=int, default=10)
-parser.add_argument("--max_new_tokens", type=int, default=256)
 parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--result_dir", type=str, default="result")
 parser.add_argument("--inference_only", action="store_true")
+parser.add_argument("--max_new_tokens", type=int, default=256)
+parser.add_argument("--num_beams", type=int, default=1)
+parser.add_argument("--temperature", type=float, default=0.0)
+parser.add_argument("--top_p", type=float, default=1.0)
+parser.add_argument("--do_sample", action="store_true", default=False)
+parser.add_argument("--use_cache", action="store_true", default=True)
 
 args = parser.parse_args()
+
+gen_kwargs = GenerationConfig(
+    max_new_tokens=args.max_new_tokens,
+    temperature=args.temperature,
+    top_p=args.top_p,
+    num_beams=args.num_beams,
+    do_sample=args.do_sample,
+    use_cache=args.use_cache,
+)
 
 class_path = args.class_path
 task_id = args.task_id
@@ -62,7 +77,7 @@ else:
 
         pred = {
             "question_id": qid,
-            "text": model.generate(image, text, max_new_tokens=args.max_new_tokens),
+            "text": model.generate(image, text, gen_kwargs),
         }
         preds.append(pred)
     with open(prediction_result_file_path, "w") as f:

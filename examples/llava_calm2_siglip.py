@@ -1,6 +1,7 @@
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 import torch
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
@@ -13,7 +14,9 @@ class VLM(BaseVLM):
         ).to("cuda")
         self.processor = AutoProcessor.from_pretrained(self.model_id)
 
-    def generate(self, image, text: str, max_new_tokens: int = 256):
+    def generate(
+        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ):
         prefix = None
         if "<image>" in text:
             prompt = "USER: " + text + "\nASSISTANT: "
@@ -32,9 +35,7 @@ class VLM(BaseVLM):
         )
         output_ids = self.model.generate(
             **inputs,
-            max_length=max_new_tokens,
-            do_sample=True,
-            temperature=0.2,
+            **gen_kwargs.__dict__,
         )
         generate_ids = [
             output_ids[len(input_ids) :]

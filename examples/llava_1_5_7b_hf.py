@@ -3,6 +3,7 @@ from PIL import Image
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 from typing import Union
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 DEFAULT_IMAGE_TOKEN = "<image>"
 
@@ -24,7 +25,7 @@ class VLM(BaseVLM):
         self,
         images: Union[Image.Image, list[Image.Image]],
         text: str,
-        max_new_tokens: int = 256,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
         if DEFAULT_IMAGE_TOKEN in text:
             text = text.replace(DEFAULT_IMAGE_TOKEN, "")
@@ -49,7 +50,7 @@ class VLM(BaseVLM):
         )
 
         # autoregressively complete prompt
-        output = self.model.generate(**inputs, max_new_tokens=max_new_tokens)[0]
+        output = self.model.generate(**inputs, **gen_kwargs.__dict__)[0]
 
         generated_text = self.processor.decode(output, skip_special_tokens=True)
 

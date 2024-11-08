@@ -3,6 +3,7 @@ import os
 from io import BytesIO
 import base64
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 
 def encode_image_to_base64(image):
@@ -22,7 +23,9 @@ class VLM(BaseVLM):
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
         )
 
-    def generate(self, image, text: str, max_new_tokens: int = 256):
+    def generate(
+        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ):
         if "<image>" in text:
             text = text.replace("<image>", "")
         message = []
@@ -70,7 +73,11 @@ class VLM(BaseVLM):
             ]
         try:
             response = self.client.chat.completions.create(
-                model=self.model_id, messages=message, max_tokens=max_new_tokens
+                model=self.model_id,
+                messages=message,
+                max_tokens=gen_kwargs.max_new_tokens,
+                temperature=gen_kwargs.temperature,
+                top_p=gen_kwargs.top_p,
             )
             return response.choices[0].message.content
         except Exception as e:

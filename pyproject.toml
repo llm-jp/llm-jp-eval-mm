@@ -6,7 +6,7 @@ authors = [
     { name = "speed1313", email = "sugiura.issa.q29@kyoto-u.jp" },
 ]
 dependencies = [
-    "datasets>=2.21.0",
+    "datasets==2.18.0",
     "requests>=2.32.3",
     "python-dotenv>=1.0.1",
     "openai>=1.42.0",
@@ -14,6 +14,7 @@ dependencies = [
     "emoji>=2.12.1",
     "fugashi>=1.3.2",
     "unidic-lite>=1.0.8",
+    "s2wrapper @ git+https://github.com/bfshi/scaling_on_scales.git",
 ]
 readme = "README.md"
 requires-python = ">= 3.12.1"
@@ -55,9 +56,11 @@ dev-dependencies = [
     "seaborn>=0.13.2",
     "pytest>=8.3.2",
     "torch>=2.4.0",
-    "transformers>=4.45.1",
+    "transformers>=4.45.2",
     "accelerate>=0.34.2",
     "click>=8.1.7",
+    "mantis-vl @ git+https://github.com/TIGER-AI-Lab/Mantis.git",
+    "qwen-vl-utils>=0.0.8",
 ]
 
 [tool.hatch.metadata]

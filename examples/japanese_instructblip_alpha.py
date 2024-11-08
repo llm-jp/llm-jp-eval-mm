@@ -4,6 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 from transformers import LlamaTokenizer, AutoModelForVision2Seq, BlipImageProcessor
 from typing import Union
 from base_vlm import BaseVLM
+from utils import GenerationConfig
 
 
 # helper function to format input prompts
@@ -166,7 +167,7 @@ class VLM(BaseVLM):
         self,
         images: Union[Image.Image, list[Image.Image]],
         text: str,
-        max_new_tokens: int = 256,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
         text = text.replace("<image>", "")
         prompt = build_prompt(prompt=text)
@@ -185,9 +186,7 @@ class VLM(BaseVLM):
         # autoregressively complete prompt
         output = self.model.generate(
             **inputs.to(self.model.device),
-            num_beams=5,
-            max_new_tokens=max_new_tokens,
-            min_length=1,
+            **gen_kwargs.__dict__,
         )
         # TODO: white space return problem some times
         response = self.tokenizer.batch_decode(output, skip_special_tokens=True)
