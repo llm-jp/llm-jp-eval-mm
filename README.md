@@ -26,6 +26,7 @@
     - [リーダーボードの公開](#リーダーボードの公開)
   - [サポートするタスク](#サポートするタスク)
   - [各VLMモデル推論時の必要ライブラリ情報](#各vlmモデル推論時の必要ライブラリ情報)
+  - [タスク固有の必要ライブラリ情報](#タスク固有の必要ライブラリ情報)
   - [ライセンス](#ライセンス)
   - [Contribution](#contribution)
 
@@ -163,6 +164,16 @@ rye add --dev mantis-vl --git=https://github.com/TIGER-AI-Lab/Mantis.git
 qwen-vl-utils のインストールが必要です.
 ```bash
 rye add --dev qwen-vl-utils
+```
+
+## タスク固有の必要ライブラリ情報
+
+- JDocQA
+
+```bash
+sudo apt-get install poppler-utils
+rye add pdf2image
+rye add "sacrebleu[ja]"
 ```
 
 ## ライセンス
