@@ -34,6 +34,8 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via nltk
+colorama==0.4.6
+    # via sacrebleu
 datasets==2.18.0
     # via eval-mm
 dill==0.3.8
@@ -67,10 +69,16 @@ idna==3.10
     # via httpx
     # via requests
     # via yarl
+ipadic==1.0.0
+    # via sacrebleu
 jiter==0.5.0
     # via openai
 joblib==1.4.2
     # via nltk
+lxml==5.3.0
+    # via sacrebleu
+mecab-python3==1.0.10
+    # via sacrebleu
 multidict==6.1.0
     # via aiohttp
     # via yarl
@@ -83,6 +91,7 @@ numpy==2.1.1
     # via pandas
     # via pyarrow
     # via rouge-score
+    # via sacrebleu
 openai==1.47.1
     # via eval-mm
 packaging==24.1
@@ -90,6 +99,12 @@ packaging==24.1
     # via huggingface-hub
 pandas==2.2.3
     # via datasets
+pdf2image==1.17.0
+    # via eval-mm
+pillow==11.0.0
+    # via pdf2image
+portalocker==3.0.0
+    # via sacrebleu
 pyarrow==17.0.0
     # via datasets
 pyarrow-hotfix==0.6
@@ -109,11 +124,14 @@ pyyaml==6.0.2
     # via huggingface-hub
 regex==2024.9.11
     # via nltk
+    # via sacrebleu
 requests==2.32.3
     # via datasets
     # via eval-mm
     # via huggingface-hub
 rouge-score==0.1.2
+    # via eval-mm
+sacrebleu==2.4.3
     # via eval-mm
 six==1.16.0
     # via python-dateutil
@@ -122,6 +140,8 @@ sniffio==1.3.1
     # via anyio
     # via httpx
     # via openai
+tabulate==0.9.0
+    # via sacrebleu
 tqdm==4.66.5
     # via datasets
     # via huggingface-hub

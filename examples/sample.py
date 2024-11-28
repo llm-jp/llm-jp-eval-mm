@@ -3,13 +3,12 @@ import os
 
 import eval_mm
 from tqdm import tqdm
-import importlib
 import argparse
-import time
 from utils import GenerationConfig
+from model_table import get_class_from_model_id
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--class_path", type=str, default="llava_1_5_7b_hf")
+parser.add_argument("--model_id", type=str, default="llava-hf/llava-1.5-7b-hf")
 parser.add_argument("--task_id", type=str, default="japanese-heron-bench")
 parser.add_argument("--judge_model", type=str, default="gpt-4o-mini-2024-07-18")
 parser.add_argument("--batch_size_for_evaluation", type=int, default=10)
@@ -46,11 +45,7 @@ gen_kwargs = GenerationConfig(
     use_cache=args.use_cache,
 )
 
-class_path = args.class_path
 task_id = args.task_id
-
-module = importlib.import_module(class_path)
-model_id = module.VLM.model_id.replace("/", "-")
 
 task_config = eval_mm.api.task.TaskConfig(
     max_dataset_len=args.max_dataset_len,
@@ -68,9 +63,9 @@ os.makedirs(prediction_result_dir, exist_ok=True)
 evaluation_result_dir = os.path.join(result_dir, "evaluation")
 os.makedirs(evaluation_result_dir, exist_ok=True)
 
-unix_time = int(time.time())
-
-prediction_result_file_path = os.path.join(prediction_result_dir, f"{model_id}.jsonl")
+prediction_result_file_path = os.path.join(
+    prediction_result_dir, f"{args.model_id.replace('/', '-')}.jsonl"
+)
 
 # if prediciton is already done, load the prediction
 if os.path.exists(prediction_result_file_path) and not args.overwrite:
@@ -81,7 +76,7 @@ if os.path.exists(prediction_result_file_path) and not args.overwrite:
     ), f"Prediction result length is not equal to the dataset length. Prediction result length: {len(preds)}, Dataset length: {len(task.dataset)}"
     print(f"Prediction result loaded from {prediction_result_file_path}")
 else:
-    model = module.VLM()
+    model = get_class_from_model_id(args.model_id)()
     preds = []
     print(task.dataset)
     for doc in tqdm(task.dataset):
@@ -137,7 +132,9 @@ with open(os.path.join(prediction_result_file_path), "w") as f:
         f.write(json.dumps(content, ensure_ascii=False) + "\n")
 print(f"Prediction result saved to {prediction_result_file_path}")
 
-eval_result_file_path = os.path.join(evaluation_result_dir, f"{model_id}.jsonl")
+eval_result_file_path = os.path.join(
+    evaluation_result_dir, f"{args.model_id.replace('/', '-')}.json"
+)
 with open(eval_result_file_path, "w") as f:
     f.write(json.dumps(calculated_metrics, ensure_ascii=False) + "\n")
 print(f"Evaluation result saved to {eval_result_file_path}")

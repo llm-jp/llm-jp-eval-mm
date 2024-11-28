@@ -103,7 +103,7 @@ rye run bash examples/evaluate.sh
 
 ```bash
 python3 examples/sample.py \
-  --class_path llava_1_5_7b_hf \
+  --model_id llava-hf/llava-1.5-7b-hf \
   --task_id japanese-heron-bench  \
   --result_dir test  \
   --metrics "llm_as_a_judge_heron_bench,exact_match,rougel" \
