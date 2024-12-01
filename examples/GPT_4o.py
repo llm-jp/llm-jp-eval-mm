@@ -14,9 +14,8 @@ def encode_image_to_base64(image):
 
 
 class VLM(BaseVLM):
-    model_id: str = "gpt-4o-2024-05-13"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "gpt-4o-2024-05-13") -> None:
+        self.model_id = model_id
         self.client = AzureOpenAI(
             api_key=os.getenv("AZURE_OPENAI_KEY"),
             api_version="2023-05-15",

@@ -76,7 +76,7 @@ if os.path.exists(prediction_result_file_path) and not args.overwrite:
     ), f"Prediction result length is not equal to the dataset length. Prediction result length: {len(preds)}, Dataset length: {len(task.dataset)}"
     print(f"Prediction result loaded from {prediction_result_file_path}")
 else:
-    model = get_class_from_model_id(args.model_id)()
+    model = get_class_from_model_id(args.model_id)(args.model_id)
     preds = []
     print(task.dataset)
     for doc in tqdm(task.dataset):

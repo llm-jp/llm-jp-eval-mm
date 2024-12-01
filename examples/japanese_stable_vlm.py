@@ -164,9 +164,8 @@ def process_images(images, size=1008):
 
 
 class VLM(BaseVLM):
-    model_id = "stabilityai/japanese-stable-vlm"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "stabilityai/japanese-stable-vlm") -> None:
+        self.model_id = model_id
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = AutoModelForVision2Seq.from_pretrained(
             self.model_id,

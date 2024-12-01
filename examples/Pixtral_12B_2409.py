@@ -30,9 +30,8 @@ def image_to_content(image: Image.Image) -> dict:
 
 
 class VLM(BaseVLM):
-    model_id = "mistralai/Pixtral-12B-2409"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "mistralai/Pixtral-12B-2409")-> None:
+        self.model_id = model_id
         self.model = LLM(
             model=self.model_id,
             tokenizer_mode="mistral",

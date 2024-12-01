@@ -6,9 +6,8 @@ from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
-    model_id = "SakanaAI/EvoVLM-JP-v1-7B"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "SakanaAI/EvoVLM-JP-v1-7B") -> None:
+        self.model_id = model_id
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = AutoModelForVision2Seq.from_pretrained(
             self.model_id, torch_dtype=torch.float16

@@ -121,9 +121,8 @@ def add_image_tags(images: Union[Image.Image, list[Image.Image]], prompt: str) -
 
 
 class VLM(BaseVLM):
-    model_id = "OpenGVLab/InternVL2-8B"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "OpenGVLab/InternVL2-8B") -> None:
+        self.model_id = model_id
         self.model = AutoModel.from_pretrained(
             self.model_id,
             torch_dtype=torch.bfloat16,

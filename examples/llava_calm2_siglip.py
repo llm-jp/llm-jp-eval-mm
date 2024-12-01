@@ -5,9 +5,8 @@ from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
-    model_id = "cyberagent/llava-calm2-siglip"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "cyberagent/llava-calm2-siglip")-> None:
+        self.model_id = model_id
         self.model = LlavaForConditionalGeneration.from_pretrained(
             self.model_id,
             torch_dtype=torch.bfloat16,

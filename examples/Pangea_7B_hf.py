@@ -8,9 +8,8 @@ from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
-    model_id: str = "neulab/Pangea-7B-hf"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "neulab/Pangea-7B-hf") -> None:
+        self.model_id = model_id
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = LlavaNextForConditionalGeneration.from_pretrained(
             self.model_id, torch_dtype=torch.float16

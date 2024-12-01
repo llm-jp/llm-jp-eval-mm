@@ -10,9 +10,8 @@ torch.set_grad_enabled(False)
 
 
 class VLM(BaseVLM):
-    model_id = "internlm/internlm-xcomposer2d5-7b"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "internlm/internlm-xcomposer2d5-7b") -> None:
+        self.model_id = model_id
         self.model = (
             AutoModel.from_pretrained(
                 self.model_id,

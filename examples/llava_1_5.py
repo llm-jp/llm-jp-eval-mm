@@ -9,9 +9,8 @@ DEFAULT_IMAGE_TOKEN = "<image>"
 
 
 class VLM(BaseVLM):
-    model_id: str = "llava-hf/llava-1.5-7b-hf"
-
-    def __init__(self) -> None:
+    def __init__(self, model_id: str = "llava-hf/llava-1.5-7b-hf") -> None:
+        self.model_id = model_id
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = LlavaForConditionalGeneration.from_pretrained(
             self.model_id,

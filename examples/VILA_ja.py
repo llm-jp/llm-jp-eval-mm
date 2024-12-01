@@ -12,15 +12,10 @@ from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
-    model_id = "llm-jp/VILA-ja"
-
-    def __init__(self) -> None:
-        model_checkpoint_path = "/model/sasagawa/VILA-ja/checkpoints/llm-jp-3-13b-instruct_siglip_mlp2xgelu_step-2_20241004/"
-        model_name = get_model_name_from_path(model_checkpoint_path)
-        print(model_name)
-        self.tokenizer, self.model, self.image_processor, self.context_len = (
-            load_pretrained_model(model_checkpoint_path, model_name)
-        )
+    def __init__(self, model_id: str = "llm-jp/llm-jp-3-vila-14b")-> None:
+        self.model_id = model_id
+        model_name = get_model_name_from_path(self.model_id)
+        self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(self.model_id, model_name)
 
     def generate(
         self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
