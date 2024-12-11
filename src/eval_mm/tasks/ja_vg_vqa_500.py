@@ -58,6 +58,7 @@ class JaVGVQA500(Task):
             "docs": docs,
             "client": self.client,
             "batch_size": self.config.batch_size_for_evaluation,
+            "judge_model": self.config.judge_model,
         }
         return scorer.score(refs, pred_texts, **kwargs)
 
