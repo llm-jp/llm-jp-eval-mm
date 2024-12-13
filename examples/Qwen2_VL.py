@@ -10,7 +10,7 @@ class VLM(BaseVLM):
     def __init__(self, model_id: str = "Qwen/Qwen2-VL-7B-Instruct") -> None:
         self.model_id = model_id
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-            self.model_id, torch_dtype="bfloat16", device_map="auto"
+            self.model_id, torch_dtype="bfloat16", device_map="auto", attn_implementation="flash_attention_2",
         )
         min_pixels = 256 * 28 * 28
         max_pixels = 1280 * 28 * 28
