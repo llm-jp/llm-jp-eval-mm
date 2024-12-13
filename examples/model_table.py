@@ -8,6 +8,7 @@ MODEL_ID_TO_CLASS_PATH = {
     "gpt-4o-2024-05-13": "GPT_4o.VLM",
     "internlm/internlm-xcomposer2d5-7b": "internlm_xcomposer2d5_7b.VLM",
     "OpenGVLab/InternVL2-8B": "InternVL2.VLM",
+    "OpenGVLab/InternVL2-26B": "InternVL2.VLM",
     "meta-llama/Llama-3.2-11B-Vision-Instruct": "Llama_3_2_11B_Vision_Instruct.VLM",
     "Kendamarron/Llama-3.2-11B-Vision-Instruct-Swallow-8B-Merge": "Llama_3_2_11B_Vision_Instruct.VLM",
     "AXCXEPT/Llama-3-EZO-VLM-1": "Llama_3_EvoVLM_JP_v2.VLM",
@@ -15,10 +16,12 @@ MODEL_ID_TO_CLASS_PATH = {
     "neulab/Pangea-7B-hf": "Pangea_7B_hf.VLM",
     "mistralai/Pixtral-12B-2409": "Pixtral_12B_2409.VLM",
     "Qwen/Qwen2-VL-7B-Instruct": "Qwen2_VL.VLM",
+    "Qwen/Qwen2-VL-72B-Instruct": "Qwen2_VL.VLM",
     "llm-jp/llm-jp-3-vila-14b": "VILA_ja.VLM",
     "stabilityai/japanese-instructblip-alpha": "japanese_instructblip_alpha.VLM",
     "stabilityai/japanese-stable-vlm": "japanese_stable_vlm.VLM",
     "cyberagent/llava-calm2-siglip": "llava_calm2_siglip.VLM",
+    "Efficient-Large-Model/VILA1.5-13b": "vila.VLM",
 }
 
 

@@ -26,7 +26,7 @@
     - [リーダーボードの公開](#リーダーボードの公開)
   - [サポートするタスク](#サポートするタスク)
   - [各VLMモデル推論時の必要ライブラリ情報](#各vlmモデル推論時の必要ライブラリ情報)
-  - [タスク固有の必要ライブラリ情報](#タスク固有の必要ライブラリ情報)
+  - [ベンチマーク固有の必要ライブラリ情報](#ベンチマーク固有の必要ライブラリ情報)
   - [ライセンス](#ライセンス)
   - [Contribution](#contribution)
 
@@ -84,22 +84,7 @@ rye sync
 
 新たな推論方法・新たなモデルでの評価を実行したい場合，既存の`examples/{モデル名}.py`を参考に同様のファイルを作成することで，評価を実行することができます．
 
-`examples/evaluate.sh`は，`examples/sample.py`を実行するためのスクリプトです．複数のベンチマーク・モデルを指定することで，一括で評価を行うことができます．
-
-実行するためのコマンドは以下のとおりです．
-
-```bash
-rye run bash examples/evaluate.sh
-```
-
-`examples/evaluate.sh`の現在の設定は以下の通りです．
-
-- 評価モデル：`llava 1.5`
-- 評価ベンチマーク：`japanese-heron-bench`
-- OpenAIモデル（LLM-as-a-judgeのために利用）：`gpt-4o-mini-2024-07-18`
-
-`sample.py`を直接実行しても同じ結果が得られます．
-その場合は以下のコマンドを実行してください．
+例として, `llava-hf/llava-1.5-7b-hf`モデルをjapanese-heron-benchで評価したい場合は, 以下のコマンドを実行してください．
 
 ```bash
 python3 examples/sample.py \
@@ -110,6 +95,7 @@ python3 examples/sample.py \
   --judge_model "gpt-4o-2024-05-13" \
   --overwrite
 ```
+
 
 ### 評価結果の確認
 
@@ -161,12 +147,22 @@ rye add --dev mantis-vl --git=https://github.com/TIGER-AI-Lab/Mantis.git
 
 - Qwen/Qwen2-VL-7B-Instruct
 
-qwen-vl-utils のインストールが必要です.
+qwen-vl-utils及びflash-attnのインストールが必要です.
 ```bash
 rye add --dev qwen-vl-utils
+rye add --dev "transformers>=4.45.2"
+uv pip install flash-attn --no-build-isolation --python .venv
 ```
 
-## タスク固有の必要ライブラリ情報
+- llm-jp/llm-jp-3-vila-14b
+s2wrapper及びflash-attnのインストールが必要です.
+```bash
+rye add  s2wrapper  --git=https://github.com/bfshi/scaling_on_scales.git
+rye add --dev "transformers==4.36.2"
+uv pip install flash-attn --no-build-isolation --python .venv
+```
+
+## ベンチマーク固有の必要ライブラリ情報
 
 - JDocQA
 JDocQA データセットの構築において, [pdf2image](https://pypi.org/project/pdf2image/) library が必要です. pdf2imageはpoppler-utilsに依存していますので, 以下のコマンドでインストールしてください.
