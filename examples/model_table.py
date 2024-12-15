@@ -10,6 +10,7 @@ MODEL_ID_TO_CLASS_PATH = {
     "OpenGVLab/InternVL2-8B": "InternVL2.VLM",
     "OpenGVLab/InternVL2-26B": "InternVL2.VLM",
     "meta-llama/Llama-3.2-11B-Vision-Instruct": "Llama_3_2_11B_Vision_Instruct.VLM",
+    "meta-llama/Llama-3.2-90B-Vision-Instruct": "Llama_3_2_11B_Vision_Instruct.VLM",
     "Kendamarron/Llama-3.2-11B-Vision-Instruct-Swallow-8B-Merge": "Llama_3_2_11B_Vision_Instruct.VLM",
     "AXCXEPT/Llama-3-EZO-VLM-1": "Llama_3_EvoVLM_JP_v2.VLM",
     "SakanaAI/Llama-3-EvoVLM-JP-v2": "Llama_3_EvoVLM_JP_v2.VLM",
