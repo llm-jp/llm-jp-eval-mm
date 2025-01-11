@@ -91,28 +91,13 @@ python3 examples/sample.py \
   --model_id llava-hf/llava-1.5-7b-hf \
   --task_id japanese-heron-bench  \
   --result_dir test  \
-  --metrics "llm_as_a_judge_heron_bench,exact_match,rougel" \
+  --metrics "llm_as_a_judge_heron_bench" \
   --judge_model "gpt-4o-2024-05-13" \
   --overwrite
 ```
 
-
-### 評価結果の確認
-
 評価結果のスコアと出力結果は
-`result/{task_id}/evaluation/{model_id}.jsonl`, `result/{task_id}/prediction/{model_id}.jsonl` に保存されます.
-
-一部タスクでは評価結果の可視化を行うためのスクリプトが提供されています．
-
-japanese-heron-benchベンチマークについての結果の確認については,
-```python
-rye run python3 scripts/japanese-heron-bench/record_output.py
-```
-を実行することで,
-- 各exampleに対する各モデルの生成結果を載せたexcelファイル
-- 各モデルのスコアを載せたexcelファイル
-- 各モデルのスコア分布を示すグラフ画像
-が生成されます.
+`test/{task_id}/evaluation/{model_id}.jsonl`, `test/{task_id}/prediction/{model_id}.jsonl` に保存されます.
 
 ### リーダーボードの公開
 
@@ -126,6 +111,7 @@ rye run python3 scripts/japanese-heron-bench/record_output.py
 - JA-VG-VQA500
 - JA-VLM-Bench-In-the-Wild
 - JA-Multi-Image-VQA
+- JDocQA
 - JMMMU
 
 ## 各VLMモデル推論時の必要ライブラリ情報
@@ -177,18 +163,36 @@ sudo apt-get install poppler-utils
 ## Contribution
 
 - 問題や提案があれば，Issue で報告してください．
-- 修正や追加があれば，Pull Requestを送ってください．
+- 新たなベンチマークタスクやメトリック, VLMモデルの推論コードの追加や, バグの修正がありましたら, Pull Requestを送ってください.
 
-- ライブラリの追加
+### ベンチマークタスクの追加方法
+タスクはTaskクラスで定義されます.
+[src/eval_mm/tasks](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/src/eval_mm/tasks)のコードを参考にTaskクラスを実装してください.
+データセットをVLMモデルに入力する形式に変換するメソッドと, スコアを計算するメソッドを定義する必要があります.
+
+### メトリックの追加方法
+メトリックはScorerクラスで定義されます.
+[src/eval_mm/metrics](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/src/eval_mm/metrics)のコードを参考にScorerクラスを実装してください.
+参照文と生成文を比較してsampleレベルのスコアリングを行う`score()`メソッドと, スコアを集約してpopulationレベルのメトリック計算を行う`aggregate()`メソッドを定義する必要があります.
+
+### VLMモデルの推論コードの追加方法
+VLMモデルの推論コードはVLMクラスで定義されます.
+[examples/base_vlm](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/examples/base_vlm.py)を参考に, VLMクラスを実装してください.
+画像とプロンプトをもとに生成文を生成する`generate()`メソッドを定義する必要があります.
+
+
+### 依存ライブラリの追加方法
+
 ```
 rye add <package_name>
 ```
-- ruffを用いたフォーマット
+### ruffを用いたフォーマット, リント
 ```
-rye run ruff format .
+rye run ruff format src
+rye run ruff check --fix src
 ```
 
-- PyPIへのリリース方法
+### PyPIへのリリース方法
 ```
 git tag -a v0.x.x -m "version 0.x.x"
 git push origin --tags
