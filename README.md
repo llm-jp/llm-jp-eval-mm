@@ -22,13 +22,18 @@
     - [GitHubをCloneする場合](#githubをcloneする場合)
   - [評価方法](#評価方法)
     - [評価の実行](#評価の実行)
-    - [評価結果の確認](#評価結果の確認)
     - [リーダーボードの公開](#リーダーボードの公開)
   - [サポートするタスク](#サポートするタスク)
   - [各VLMモデル推論時の必要ライブラリ情報](#各vlmモデル推論時の必要ライブラリ情報)
   - [ベンチマーク固有の必要ライブラリ情報](#ベンチマーク固有の必要ライブラリ情報)
   - [ライセンス](#ライセンス)
   - [Contribution](#contribution)
+    - [ベンチマークタスクの追加方法](#ベンチマークタスクの追加方法)
+    - [メトリックの追加方法](#メトリックの追加方法)
+    - [VLMモデルの推論コードの追加方法](#vlmモデルの推論コードの追加方法)
+    - [依存ライブラリの追加方法](#依存ライブラリの追加方法)
+    - [ruffを用いたフォーマット, リント](#ruffを用いたフォーマット-リント)
+    - [PyPIへのリリース方法](#pypiへのリリース方法)
 
 ## 環境構築
 
@@ -50,7 +55,7 @@ pip install eval_mm
 
 ### GitHubをCloneする場合
 
-eval-mmは仮想環境の管理にryeを用いています．
+eval-mmは仮想環境の管理にuvを用いています．
 
 1. リポジトリをクローンして移動する
 ```bash
@@ -58,13 +63,13 @@ git clone git@github.com:llm-jp/llm-jp-eval-mm.git
 cd llm-jp-eval-mm
 ```
 
-2. rye を用いて環境構築を行う
+2. uv を用いて環境構築を行う
 
-ryeは[official doc](https://rye.astral.sh/guide/installation/) を参考にインストールしてください．
+uvは[official doc](https://docs.astral.sh/uv/getting-started/installation/) を参考にインストールしてください．
 
 ```bash
 cd llm-jp-eval-mm
-rye sync
+uv sync
 ```
 
 3. [.env.sample](./.env.sample)を参考にして, `.env`ファイルを作成し，`AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`の組，あるいは`OPENAI_API_KEY`を設定してください.
@@ -99,6 +104,8 @@ python3 examples/sample.py \
 評価結果のスコアと出力結果は
 `test/{task_id}/evaluation/{model_id}.jsonl`, `test/{task_id}/prediction/{model_id}.jsonl` に保存されます.
 
+複数のモデルを複数のタスクで評価したい場合は, `eval_all.sh`を参考にしてください.
+
 ### リーダーボードの公開
 
 現在，代表的なモデルの評価結果をまとめたリーダーボードを公開する予定があります．
@@ -116,37 +123,41 @@ python3 examples/sample.py \
 
 ## 各VLMモデル推論時の必要ライブラリ情報
 
-- OpenGVLab/InternVL2-8B
+各モデルごとに, 必要なライブラリが異なります. このリポジトリでは, uvの[Dependency groups](https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups)を用いて, モデルごとに必要なライブラリを管理しています.
 
-OOM防止のためFlashAttentionのInstallが必要です.
+以下のモデルを利用する際には, normal groupを指定してください.
+stabiliyai/japanese-instructblip-alpha, stabilityai/japanese-stable-vlm, cyberagent/llava-calm2-siglip, llava-hf/llava-1.5-7b-hf, llava-hf/llava-v1.6-mistral-7b-hf, neulab/Pangea-7B-hf,  meta-llama/Llama-3.2-11B-Vision-Instruct, meta-llama/Llama-3.2-90B-Vision-Instruct, OpenGVLab/InternVL2-8B, Qwen/Qwen2-VL-7B-Instruct, OpenGVLab/InternVL2-26B, Qwen/Qwen2-VL-72B-Instruct, gpt-4o-2024-05-13
 ```bash
-uv pip install flash-attn --no-build-isolation --python .venv
+uv sync --group normal
 ```
 
-- Llama_3_EvoVLM_JP_v2
+以下のモデルを利用する際には, evovlm groupを指定してください.
+SamanaAI/Llama-3-EvoVLM-JP-v2
 
-mantis-vl のインストールが必要です.
 ```bash
-rye add "datasets==2.18.0"
-rye add --dev mantis-vl --git=https://github.com/TIGER-AI-Lab/Mantis.git
+uv sync --group evovlm
 ```
 
-- Qwen/Qwen2-VL-7B-Instruct
-
-qwen-vl-utils及びflash-attnのインストールが必要です.
+以下のモデルを利用する際には, vilaja groupを指定してください.
+llm-jp/llm-jp-3-vila-14b, Efficient-Large-Model/VILA1.5-13b
 ```bash
-rye add --dev qwen-vl-utils
-rye add --dev "transformers>=4.45.2"
-uv pip install flash-attn --no-build-isolation --python .venv
+uv sync --group vilaja
 ```
 
-- llm-jp/llm-jp-3-vila-14b
-s2wrapper及びflash-attnのインストールが必要です.
+mistralai/Pixtral-12B-2409
 ```bash
-rye add  s2wrapper  --git=https://github.com/bfshi/scaling_on_scales.git
-rye add --dev "transformers==4.36.2"
-uv pip install flash-attn --no-build-isolation --python .venv
+uv sync --group pixtral
 ```
+
+
+実行時は, groupを指定してください.
+
+```bash
+$ uv run --group normal python ...
+```
+
+新しいgroupを追加する際は, [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies)の設定を忘れないようにしてください.
+
 
 ## ベンチマーク固有の必要ライブラリ情報
 
@@ -184,12 +195,14 @@ VLMモデルの推論コードはVLMクラスで定義されます.
 ### 依存ライブラリの追加方法
 
 ```
-rye add <package_name>
+uv add <package_name>
+uv add --group <group_name> <package_name>
 ```
+
 ### ruffを用いたフォーマット, リント
 ```
-rye run ruff format src
-rye run ruff check --fix src
+uv run ruff format src
+uv run ruff check --fix src
 ```
 
 ### PyPIへのリリース方法

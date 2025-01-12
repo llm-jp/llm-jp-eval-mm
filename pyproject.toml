@@ -16,6 +16,9 @@ dependencies = [
     "unidic-lite>=1.0.8",
     "sacrebleu[ja]>=2.4.3",
     "pdf2image>=1.17.0",
+    "protobuf>=5.29.1",
+    "backoff>=2.2.1",
+    "scipy>=1.15.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.12.1"
@@ -40,29 +43,57 @@ exclude = [
     "scripts",
 ]
 
-[tool.rye]
-managed = true
-dev-dependencies = [
-    "ruff>=0.6.2",
-    "mypy>=1.11.2",
-    "tiktoken>=0.7.0",
-    "matplotlib>=3.7.5",
-    "transformers_stream_generator>=0.0.5",
-    "einops>=0.8.0",
-    "torchvision>=0.19.0",
-    "timm>=1.0.9",
-    "sentencepiece>=0.2.0",
-    "openpyxl>=3.1.5",
-    "seaborn>=0.13.2",
-    "pytest>=8.3.2",
-    "torch>=2.4.0",
-    "transformers>=4.45.2",
-    "accelerate>=0.34.2",
-    "click>=8.1.7",
-]
+[tool.uv.sources]
+mantis-vl = { git = "https://github.com/TIGER-AI-Lab/Mantis" }
+s2wrapper = { git = "https://github.com/bfshi/scaling_on_scales.git" }
 
 [tool.hatch.metadata]
 allow-direct-references = true
+
+[dependency-groups]
+dev = [
+    "flash-attn>=2.7.3",
+]
+
+evovlm = [
+    "torch>=2.5.1",
+    "transformers==4.42.4",
+    "mantis-vl",
+]
+vilaja = [
+    "accelerate==0.27.2",
+    "deepspeed==0.9.5",
+    "einops>=0.8.0",
+    "psutils>=3.3.9",
+    "s2wrapper",
+    "sentencepiece>=0.2.0",
+    "torchvision>=0.20.1",
+    "transformers==4.37.2",
+]
+normal = [
+    "accelerate>=1.2.1",
+    "qwen-vl-utils>=0.0.8",
+    "sentencepiece>=0.2.0",
+    "timm>=1.0.13",
+    "torchvision>=0.20.1",
+    "transformers>=4.46.3",
+]
+pixtral = [
+    "mistral-common==1.5.0",
+    "vllm==0.6.5",
+]
+
+
+[tool.uv]
+conflicts = [
+    [
+      { group = "evovlm" },
+      { group = "vilaja" },
+      { group = "normal" },
+      { group = "pixtral" },
+    ],
+]
+no-build-isolation-package = ["flash-attn"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/eval_mm"]
