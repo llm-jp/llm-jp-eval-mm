@@ -42,6 +42,7 @@ valid_metrics = [
     "llm_as_a_judge_heron_bench",
     "exact_match",
     "llm_as_a_judge",
+    "mmmu",
 ]
 
 

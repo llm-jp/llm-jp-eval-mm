@@ -5,6 +5,7 @@ from .rougel_scorer import RougeLScorer
 from .substring_match_scorer import SubstringMatchScorer
 from .scorer import Scorer
 from .jmmmu_scorer import JMMMUScorer
+from .mmmu_scorer import MMMUScorer
 from .jdocqa_scorer import JDocQAScorer
 
 
@@ -19,6 +20,7 @@ class ScorerRegistry:
         "substring_match": SubstringMatchScorer,
         "jmmmu": JMMMUScorer,
         "jdocqa": JDocQAScorer,
+        "mmmu": MMMUScorer,
     }
 
     @classmethod

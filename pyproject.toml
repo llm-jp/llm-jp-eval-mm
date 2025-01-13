@@ -53,6 +53,7 @@ allow-direct-references = true
 [dependency-groups]
 dev = [
     "flash-attn>=2.7.3",
+    "pytest>=8.3.4",
 ]
 
 evovlm = [
