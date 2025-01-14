@@ -34,6 +34,7 @@
     - [依存ライブラリの追加方法](#依存ライブラリの追加方法)
     - [ruffを用いたフォーマット, リント](#ruffを用いたフォーマット-リント)
     - [PyPIへのリリース方法](#pypiへのリリース方法)
+  - [Reference](#reference)
 
 ## 環境構築
 
@@ -217,3 +218,6 @@ git tag -a v0.x.x -m "version 0.x.x"
 git push origin --tags
 ```
 
+## Reference
+- https://github.com/EvolvingLMMs-Lab/lmms-eval
+- https://github.com/turingmotors/heron
