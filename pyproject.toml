@@ -54,6 +54,7 @@ allow-direct-references = true
 dev = [
     "flash-attn>=2.7.3",
     "pytest>=8.3.4",
+    "seaborn>=0.13.2",
 ]
 
 evovlm = [
