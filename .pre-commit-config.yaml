@@ -1,0 +1,12 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.1.4
+    hooks:
+      # Run the Ruff linter.
+      - id: ruff
+        exclude: "(__init__\\.py|migrations/)"
+        args: ["--extend-ignore=F401,E501"]
+      # Run the Ruff formatter.
+      - id: ruff-format
+        exclude: "(__init__\\.py|migrations/)"

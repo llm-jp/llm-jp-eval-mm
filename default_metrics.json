@@ -1,0 +1,12 @@
+{
+    "default_metrics": {
+        "Heron": "overall",
+        "JVB-ItW": "rouge",
+        "VGVQA": "rouge",
+        "MulIm-VQA": "rouge",
+        "JDocQA": "Acc",
+        "JMMMU": "Acc",
+        "MMMU": "Acc",
+        "LlavaB-ItW": "rouge"
+    }
+}

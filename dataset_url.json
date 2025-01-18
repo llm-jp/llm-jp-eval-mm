@@ -1,0 +1,26 @@
+{
+    "Heron": {
+        "url": "https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench"
+    },
+    "JVB-ItW": {
+        "url": "https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild"
+    },
+    "VGVQA": {
+        "url": "https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500"
+    },
+    "MulIm-VQA": {
+        "url": "https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA"
+    },
+    "JDocQA": {
+        "url": "https://huggingface.co/datasets/shunk031/JDocQA"
+    },
+    "JMMMU": {
+        "url": "https://huggingface.co/datasets/JMMMU/JMMMU"
+    },
+    "MMMU": {
+        "url": "https://huggingface.co/datasets/MMMU/MMMU"
+    },
+    "LLavaB-ItW": {
+        "url": "https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild"
+    }
+}

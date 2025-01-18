@@ -1,0 +1,285 @@
+[
+  {
+    "model": "Japanese InstructBLIP Alpha",
+    "url": "https://huggingface.co/stabilityai/japanese-instructblip-alpha",
+    "scores": {
+      "Heron": {
+        "conv": 24.1,
+        "detail": 19.4,
+        "complex": 24.7,
+        "overall": 22.7
+      },
+      "JVB-ItW": { "llm": 1.31, "rouge": 13.8 },
+      "VGVQA": { "llm": 0, "rouge": 0 },
+      "MulIm-VQA": { "llm": 2.5, "rouge": 25.0 },
+      "JDocQA": { "Acc": 0.123, "llm": 1.9 },
+      "JMMMU": { "Acc": 0.271 },
+      "MMMU": { "Acc": 0.273},
+      "LLavaB-ItW": { "llm": 2.53, "rouge": 0.171 }
+    }
+  },
+  {
+    "model": "Japanese Stable VLM",
+    "url": "https://huggingface.co/stabilityai/japanese-stable-vlm",
+    "scores": {
+      "Heron": {
+        "conv": 33.2,
+        "detail": 19.4,
+        "complex": 23.9,
+        "overall": 25.5
+      },
+      "JVB-ItW": { "llm": 2.56, "rouge": 23.3 },
+      "MulIm-VQA": { "llm": 2.27, "rouge": 40.7 },
+      "JDocQA": { "Acc": 0.128, "llm": 1.77 },
+      "JMMMU": { "Acc": 0.253 },
+      "MMMU": { "Acc": 0.253 },
+      "LLavaB-ItW": { "llm": 1.43, "rouge": 0.524 }
+    }
+  },
+  {
+    "model": "Llama-3-EvoVLM-JP-v2",
+    "url": "https://huggingface.co/SakanaAI/Llama-3-EvoVLM-JP-v2",
+    "scores": {
+      "Heron": {
+        "conv": 39.8,
+        "detail": 39.5,
+        "complex": 39.7,
+        "overall": 39.7
+      },
+      "JVB-ItW": { "llm": 3.23, "rouge": 49.9 },
+      "VGVQA": { "llm": 3.17, "rouge": 25.0 },
+      "MulIm-VQA": { "llm": 2.9, "rouge": 44.3 },
+      "JDocQA": { "Acc": 0.152, "llm": 2.23 },
+      "JMMMU": { "Acc": 0.357 },
+      "MMMU": { "Acc": 0.363 },
+      "LLavaB-ItW": { "llm": 2.78, "rouge": 26.9 }
+    }
+  },
+  {
+    "model": "LLaVA-CALM2-SigLIP",
+    "url": "https://huggingface.co/cyberagent/llava-calm2-siglip",
+    "scores": {
+      "Heron": {
+        "conv": 43.2,
+        "detail": 44.5,
+        "complex": 40.0,
+        "overall": 42.6
+      },
+      "JVB-ItW": { "llm": 3.35, "rouge": 45.9 },
+      "VGVQA": { "llm": 3.29, "rouge": 17.6 },
+      "MulIm-VQA": { "llm": 2.43, "rouge": 40.5 },
+      "JDocQA": { "Acc": 0.082, "llm": 1.85 },
+      "JMMMU": { "Acc": 0.271 },
+      "MMMU": { "Acc": 0.313 },
+      "LLavaB-ItW": { "llm": 1.96, "rouge": 2.92 }
+    }
+  },
+  {
+    "model": "LLM-jp-3 VILA 14B",
+    "url": "https://huggingface.co/llm-jp/llm-jp-3-vila-14b",
+    "scores": {
+      "Heron": {
+        "conv": 57.2,
+        "detail": 58.4,
+        "complex": 64.2,
+        "overall": 59.9
+      },
+      "JVB-ItW": { "llm": 3.77, "rouge": 52.3 },
+      "VGVQA": { "llm": 3.68, "rouge": 16.2 },
+      "MulIm-VQA": { "llm": 3.38, "rouge": 46.9 },
+      "JDocQA": { "Acc": 0.175, "llm": 2.45 },
+      "JMMMU": { "Acc": 0.285 },
+      "MMMU": { "Acc": 0.298 },
+      "LLavaB-ItW": { "llm": 3.23, "rouge": 36.0 }
+    }
+  },
+  {
+    "model": "LLaVA-1.5 7B",
+    "url": "https://huggingface.co/llava-hf/llava-1.5-7b-hf",
+    "scores": {
+      "Heron": {
+        "conv": 35.3,
+        "detail": 36.4,
+        "complex": 37.3,
+        "overall": 36.3
+      },
+      "JVB-ItW": { "llm": 2.56, "rouge": 40.6 },
+      "VGVQA": { "llm": 2.74, "rouge": 13.9 },
+      "MulIm-VQA": { "llm": 2.07, "rouge": 35.9 },
+      "JDocQA": { "Acc": 0.145, "llm": 1.98 },
+      "JMMMU": { "Acc": 0.296 },
+      "MMMU": { "Acc": 0.34 },
+      "LLavaB-ItW": { "llm": 2.93, "rouge": 34.5 }
+    }
+  },
+  {
+    "model": "LLaVA-1.6 7B",
+    "url": "https://huggingface.co/llava-hf/llava-v1.6-mistral-7b-hf",
+    "scores": {
+      "Heron": {
+        "conv": 29.3,
+        "detail": 20.8,
+        "complex": 29.2,
+        "overall": 26.4
+      },
+      "JVB-ItW": { "llm": 2.44, "rouge": 28.6 },
+      "VGVQA": { "llm": 2.72, "rouge": 11.7 },
+      "MulIm-VQA": { "llm": 1.89, "rouge": 25.2 },
+      "JDocQA": { "Acc": 0.14, "llm": 1.75 },
+      "JMMMU": { "Acc": 0.255 },
+      "MMMU": { "Acc": 0.358 },
+      "LLavaB-ItW": { "llm": 3.25, "rouge": 30.7 }
+    }
+  },
+  {
+    "model": "Pangea-7B",
+    "url": "https://huggingface.co/neulab/Pangea-7B",
+    "scores": {
+      "Heron": {
+        "conv": 36.0,
+        "detail": 52.4,
+        "complex": 46.7,
+        "overall": 45.0
+      },
+      "JVB-ItW": { "llm": 3.33, "rouge": 33.6 },
+      "MulIm-VQA": { "llm": 2.89, "rouge": 40.1 },
+      "JDocQA": { "Acc": 0.158, "llm": 2.21 },
+      "JMMMU": { "Acc": 0.394 },
+      "MMMU": { "Acc": 0.436 },
+      "LLavaB-ItW": { "llm": 3.6, "rouge": 25.9 }
+    }
+  },
+  {
+    "model": "Pixtral-12B",
+    "url": "https://huggingface.co/mistralai/Pixtral-12B-2409",
+    "scores": {
+      "Heron": {
+        "conv": 49.2,
+        "detail": 56.5,
+        "complex": 53.2,
+        "overall": 53.0
+      },
+      "JVB-ItW": { "llm": 3.62, "rouge": 38.2 },
+      "VGVQA": { "llm": 3.25, "rouge": 13.0 },
+      "MulIm-VQA": { "llm": 3.76, "rouge": 34.4 },
+      "JDocQA": { "Acc": 0.144, "llm": 2.36 },
+      "JMMMU": { "Acc": 0.331 },
+      "MMMU": { "Acc": 0.506 },
+      "LLavaB-ItW": { "llm": 3.68, "rouge": 31.5 }
+    }
+  },
+  {
+    "model": "Llama 3.2 11B Vision Instruct",
+    "url": "https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct",
+    "scores": {
+      "Heron": {
+        "conv": 36.3,
+        "detail": 28.5,
+        "complex": 36.0,
+        "overall": 33.6
+      },
+      "JVB-ItW": { "llm": 2.81, "rouge": 30.4 },
+      "VGVQA": { "llm": 3.03, "rouge": 14.2 },
+      "MulIm-VQA": { "llm": 2.3, "rouge": 24.5 },
+      "JDocQA": { "Acc": 0.174, "llm": 2.22 },
+      "JMMMU": { "Acc": 0.397 },
+      "MMMU": { "Acc": 0.431 },
+      "LLavaB-ItW": { "llm": 3.86, "rouge": 30.1 }
+    }
+  },
+  {
+    "model": "InternVL2 8B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL2-8B",
+    "scores": {
+      "Heron": {
+        "conv": 42.9,
+        "detail": 50.5,
+        "complex": 46.4,
+        "overall": 46.6
+      },
+      "JVB-ItW": { "llm": 3.11, "rouge": 33.7 },
+      "VGVQA": { "llm": 3.2, "rouge": 11.6 },
+      "MulIm-VQA": { "llm": 2.54, "rouge": 34.4 },
+      "JDocQA": { "Acc": 0.197, "llm": 2.58 },
+      "JMMMU": { "Acc": 0.39 },
+      "MMMU": { "Acc": 0.496 },
+      "LLavaB-ItW": { "llm": 3.21, "rouge": 31.4 }
+    }
+  },
+  {
+    "model": "Qwen2-VL 7B Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct",
+    "scores": {
+      "Heron": {
+        "conv": 54.4,
+        "detail": 60.2,
+        "complex": 52.0,
+        "overall": 55.5
+      },
+      "JVB-ItW": { "llm": 3.61, "rouge": 44.6 },
+      "VGVQA": { "llm": 3.6, "rouge": 16.2 },
+      "MulIm-VQA": { "llm": 4.16, "rouge": 40.4 },
+      "JDocQA": { "Acc": 0.27, "llm": 3.24 },
+      "JMMMU": { "Acc": 0.48 },
+      "MMMU": { "Acc": 0.516 },
+      "LLavaB-ItW": { "llm": 3.93, "rouge": 36.2 }
+    }
+  },
+  {
+    "model": "InternVL2 26B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL2-26B",
+    "scores": {
+      "Heron": {
+        "conv": 52.4,
+        "detail": 54.3,
+        "complex": 54.6,
+        "overall": 53.8
+      },
+      "JVB-ItW": { "llm": 3.53, "rouge": 34.4 },
+      "VGVQA": { "llm": 3.4, "rouge": 11.5 },
+      "MulIm-VQA": { "llm": 3.18, "rouge": 45.4 },
+      "JDocQA": { "Acc": 0.146, "llm": 2.42 },
+      "JMMMU": { "Acc": 0.393 },
+      "MMMU": { "Acc": 0.486 },
+      "LLavaB-ItW": { "llm": 3.91, "rouge": 18.4 }
+    }
+  },
+  {
+    "model": "Qwen2-VL-72B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2-VL-72B-Instruct",
+    "scores": {
+      "Heron": {
+        "conv": 70.2,
+        "detail": 79.7,
+        "complex": 77.4,
+        "overall": 75.8
+      },
+      "JVB-ItW": { "llm": 3.99, "rouge": 42.6 },
+      "VGVQA": { "llm": 3.75, "rouge": 15.4 },
+      "MulIm-VQA": { "llm": 4.45, "rouge": 55.0 },
+      "JDocQA": { "Acc": 0.283, "llm": 3.66 },
+      "JMMMU": { "Acc": 0.595 },
+      "MMMU": { "Acc": 0.624 },
+      "LLavaB-ItW": { "llm": 4.11, "rouge": 33.9 }
+    }
+  },
+  {
+    "model": "GPT-4o (2024-05-13) (detail: auto)",
+    "url": "https://platform.openai.com/docs/models#gpt-4o",
+    "scores": {
+      "Heron": {
+        "conv": 85.2,
+        "detail": 95.0,
+        "complex": 87.3,
+        "overall": 89.1
+      },
+      "JVB-ItW": { "llm": 4.05, "rouge": 40.1 },
+      "VGVQA": { "llm": 3.82, "rouge": 13.7 },
+      "MulIm-VQA": { "llm": 4.63, "rouge": 57.6 },
+      "JDocQA": { "Acc": 0.239, "llm": 3.6 },
+      "JMMMU": { "Acc": 0.566 },
+      "MMMU": { "Acc": 0.587 },
+      "LLavaB-ItW": { "llm": 4.26, "rouge": 35.1 }
+    }
+  }
+]
