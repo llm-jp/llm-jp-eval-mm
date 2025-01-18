@@ -1,15 +1,10 @@
-import "./LinkButton.css";
+import './LinkButton.css';
 
-interface LinkButtonProps {
-  url: string;
-  children?: React.ReactNode;
-}
-
-const LinkButton = ({ url, children }: LinkButtonProps) => {
-  const handleClick = () => window.open(url, "_blank", "noopener noreferrer");
+const LinkButton = ({ url, children }) => {
+  const handleClick = () => window.open(url, '_blank', 'noopener noreferrer');
 
   return (
-    <button className="link-button" onClick={handleClick}>
+    <button className='link-button' onClick={handleClick}>
       {children}
     </button>
   );

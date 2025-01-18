@@ -1,62 +1,62 @@
 .paper-title {
-    font-family: "Google Sans", sans-serif;
-    font-size: 3rem;
-    font-weight: 600;
-    color: #363636;
-    margin: 1rem 0rem 0rem 0rem;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 3rem;
+  font-weight: 600;
+  color: #363636;
+  margin: 1rem 0rem 0rem 0rem;
 }
 
 .paper-subtitle {
-    font-family: "Google Sans", sans-serif;
-    font-size: 2rem;
-    font-weight: 500;
-    margin: 0rem 0rem 1rem 0rem;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 0rem 0rem 1rem 0rem;
 }
 
 .authors {
-    font-family: "Google Sans", sans-serif;
-    font-weight: 300;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    flex-wrap: wrap;
-    padding: 1rem;
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  padding: 1rem;
 }
 
 .authors a:any-link {
-    color: #209cee;
-    text-decoration: none;
+  color: #209cee;
+  text-decoration: none;
 }
 
 .authors-affiliations {
-    font-family: "Google Sans", sans-serif;
-    font-weight: 300;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    flex-wrap: wrap;
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
 
-    span {
-        font-size: 1.25rem;
-    }
+  span {
+    font-size: 1.25rem;
+  }
 }
 
 .annotation-description {
-    font-family: "Google Sans", sans-serif;
+  font-family: 'Google Sans', sans-serif;
 
-    p {
-        font-size: 1.25rem;
-        margin: 0.5rem 0rem;
-    }
+  p {
+    font-size: 1.25rem;
+    margin: 0.5rem 0rem;
+  }
 }
 
 .link-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    flex-wrap: wrap;
-    padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  padding: 0.5rem;
 }

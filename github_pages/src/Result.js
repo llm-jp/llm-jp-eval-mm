@@ -1,15 +1,16 @@
-import "./Result.css";
+import './Result.css';
 
 const Result = () => {
   return (
-    <div className="result">
-      <h1 className="result-title">Findings</h1>
-      <div className="result-content">
+    <div className='result'>
+      <h1 className='result-title'>Findings</h1>
+      <div className='result-content'>
         <span>In this section, we summarize our key observations.</span>
         {/* Culture-specific Split */}
         <div>
           <h2>Model Scaling</h2>
-            As the number of parameters increases, the performance of models improves across ... TODO:
+          As the number of parameters increases, the performance of models
+          improves across ... TODO:
         </div>
         {/* Scores on Japanese Heritage */}
         <div>

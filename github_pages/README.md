@@ -49,6 +49,12 @@ The format of the benchmark results is as follows.
   },
 ```
 
+## Format the code
+```bash
+npx prettier --write "./**/*.{js,jsx,ts,tsx,css,html}"
+```
+
+
 ## Reference
 This repository refers to the following repositories. Thank you for your great work.
 - https://github.com/MMMU-Japanese-Benchmark/JMMMU

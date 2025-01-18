@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { FaGithub, FaRegFilePdf } from "react-icons/fa";
-import "./Leaderboard.css";
-import LinkButton from "./LinkButton";
+import React, { useEffect, useState } from 'react';
+import { FaGithub, FaRegFilePdf } from 'react-icons/fa';
+import './Leaderboard.css';
+import LinkButton from './LinkButton';
 
 function Leaderboard() {
   const [data, setData] = useState([]);
@@ -14,7 +14,7 @@ function Leaderboard() {
 
   useEffect(() => {
     // Fetch leaderboard data
-    fetch("leaderboard.json")
+    fetch('leaderboard.json')
       .then((response) => response.json())
       .then((data) => {
         setData(data);
@@ -38,15 +38,17 @@ function Leaderboard() {
         });
         setMetrics(metricNames);
       })
-      .catch((error) => console.error("Error loading leaderboard data:", error));
+      .catch((error) =>
+        console.error('Error loading leaderboard data:', error),
+      );
 
     // Fetch default metrics
-    fetch("default_metrics.json")
+    fetch('default_metrics.json')
       .then((response) => response.json())
       .then((defaultMetrics) => {
         setDefaultMetrics(defaultMetrics.default_metrics); // Use the `default_metrics` field
       })
-      .catch((error) => console.error("Error loading default metrics:", error));
+      .catch((error) => console.error('Error loading default metrics:', error));
 
     // Fetch dataset url
     // {
@@ -70,27 +72,25 @@ function Leaderboard() {
     //         "url": "https://huggingface.co/datasets/JMMMU/JMMMU"
     //     }
     // }
-    fetch("dataset_url.json")
+    fetch('dataset_url.json')
       .then((response) => response.json())
       .then((datasetUrl) => {
         setDatasetUrl(datasetUrl);
-      })
-
-
+      });
   }, []);
 
   const handleSort = (dataset, metric) => {
     let sortedData = [...data];
     const direction =
       sortConfig?.key === `${dataset}-${metric}` &&
-        sortConfig.direction === "asc"
-        ? "desc"
-        : "asc";
+      sortConfig.direction === 'asc'
+        ? 'desc'
+        : 'asc';
     sortedData.sort((a, b) => {
       const aValue = a.scores[dataset]?.[metric] || 0;
       const bValue = b.scores[dataset]?.[metric] || 0;
-      if (aValue < bValue) return direction === "asc" ? -1 : 1;
-      if (aValue > bValue) return direction === "asc" ? 1 : -1;
+      if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return direction === 'asc' ? 1 : -1;
       return 0;
     });
     setSortConfig({ key: `${dataset}-${metric}`, direction });
@@ -99,17 +99,16 @@ function Leaderboard() {
 
   const getSortArrow = (dataset, metric) => {
     if (sortConfig?.key === `${dataset}-${metric}`) {
-      return sortConfig.direction === "asc" ? "↑" : "↓";
+      return sortConfig.direction === 'asc' ? '↑' : '↓';
     }
-    return "↕";
+    return '↕';
   };
 
-
   return (
-    <div className="Leaderboard">
-      <h1 className="leaderboard-title">Leaderboard</h1>
+    <div className='Leaderboard'>
+      <h1 className='leaderboard-title'>Leaderboard</h1>
 
-      <div className="table-container">
+      <div className='table-container'>
         <table>
           <thead>
             <tr>
@@ -130,7 +129,7 @@ function Leaderboard() {
                   >
                     {metric} {getSortArrow(dataset, metric)}
                   </th>
-                ))
+                )),
               )}
             </tr>
           </thead>
@@ -146,13 +145,13 @@ function Leaderboard() {
                       key={`${dataset}-${metric}`}
                       className={
                         defaultMetrics[dataset] === metric
-                          ? "highlight-column"
-                          : ""
+                          ? 'highlight-column'
+                          : ''
                       }
                     >
-                      {item.scores[dataset]?.[metric] || "-"}
+                      {item.scores[dataset]?.[metric] || '-'}
                     </td>
-                  ))
+                  )),
                 )}
               </tr>
             ))}
@@ -161,6 +160,5 @@ function Leaderboard() {
       </div>
     </div>
   );
-
 }
 export default Leaderboard;

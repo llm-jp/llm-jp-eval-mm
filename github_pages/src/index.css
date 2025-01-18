@@ -1,10 +1,10 @@
 :root {
   text-rendering: justify;
-  font-family: "Noto Sans", "Noto Sans JP", sans-serif;
+  font-family: 'Noto Sans', 'Noto Sans JP', sans-serif;
   font-weight: 400;
 
   color-scheme: normal;
-  color: #4A4A4A;
+  color: #4a4a4a;
   background-color: #ffffff;
 
   font-synthesis: none;

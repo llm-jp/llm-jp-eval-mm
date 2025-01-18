@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "gh-pages": "^6.3.0",
+    "prettier": "^3.4.2",
     "web-vitals": "^4.2.4"
   }
 }
