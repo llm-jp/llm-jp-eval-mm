@@ -1,97 +1,94 @@
 # LLM-jp-eval-mm
 [![pypi](https://img.shields.io/pypi/v/eval-mm.svg)](https://pypi.python.org/pypi/eval-mm)
 
-[ [**English**](./README_en.md) | 日本語 ]
+[ [**Japanese**](./README_ja.md) | English ]
 
-このツールは，複数のデータセットを横断して日本語マルチモーダル大規模言語モデルを自動評価するものです．
-このツールは以下の機能を提供します：
+This tool automatically evaluates Japanese multi-modal large language models across multiple datasets. It offers the following features:
 
-- 既存の日本語評価データを利用し，マルチモーダルテキスト生成タスクの評価データセットに変換して提供する．
-- ユーザが作成した推論結果を用いて，タスクごとに設定された評価メトリクスを計算する．
+- Uses existing Japanese evaluation data and converts it into multi-modal text generation tasks for evaluation.
+- Calculates task-specific evaluation metrics using inference results created by users.
 
-![llm-jp-eval-mmが提供するもの](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/assets/teaser.png)
+![What llm-jp-eval-mm provides](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/assets/teaser.png)
 
-データフォーマットの詳細，サポートしているデータの一覧については，[DATASET.md](./DATASET.md)を参照ください．
+For details on the data format and the list of supported data, please check [DATASET.md](./DATASET.md).
 
-## 目次
+## Table of Contents
 
 - [LLM-jp-eval-mm](#llm-jp-eval-mm)
-  - [目次](#目次)
-  - [環境構築](#環境構築)
-    - [PyPIでインストールする](#pypiでインストールする)
-    - [GitHubをCloneする場合](#githubをcloneする場合)
-  - [評価方法](#評価方法)
-    - [評価の実行](#評価の実行)
-    - [リーダーボードの公開](#リーダーボードの公開)
-  - [サポートするタスク](#サポートするタスク)
-  - [各VLMモデル推論時の必要ライブラリ情報](#各vlmモデル推論時の必要ライブラリ情報)
-  - [ベンチマーク固有の必要ライブラリ情報](#ベンチマーク固有の必要ライブラリ情報)
-  - [ライセンス](#ライセンス)
+  - [Table of Contents](#table-of-contents)
+  - [Environment Setup](#environment-setup)
+    - [Install via PyPI](#install-via-pypi)
+    - [Clone the GitHub Repo](#clone-the-github-repo)
+  - [How to Evaluate](#how-to-evaluate)
+    - [Running an Evaluation](#running-an-evaluation)
+    - [Leaderboard](#leaderboard)
+  - [Supported Tasks](#supported-tasks)
+  - [Required Libraries for Each VLM Model Inference](#required-libraries-for-each-vlm-model-inference)
+  - [Benchmark-Specific Required Libraries](#benchmark-specific-required-libraries)
+  - [License](#license)
   - [Contribution](#contribution)
-    - [ベンチマークタスクの追加方法](#ベンチマークタスクの追加方法)
-    - [メトリックの追加方法](#メトリックの追加方法)
-    - [VLMモデルの推論コードの追加方法](#vlmモデルの推論コードの追加方法)
-    - [依存ライブラリの追加方法](#依存ライブラリの追加方法)
-    - [ruffを用いたフォーマット, リント](#ruffを用いたフォーマット-リント)
-    - [PyPIへのリリース方法](#pypiへのリリース方法)
-    - [Webサイトの更新方法](#webサイトの更新方法)
-  - [Reference](#reference)
+    - [How to Add a Benchmark Task](#how-to-add-a-benchmark-task)
+    - [How to Add a Metric](#how-to-add-a-metric)
+    - [How to Add Inference Code for a VLM Model](#how-to-add-inference-code-for-a-vlm-model)
+    - [How to Add Dependencies](#how-to-add-dependencies)
+    - [Formatting and Linting with ruff](#formatting-and-linting-with-ruff)
+    - [How to Release to PyPI](#how-to-release-to-pypi)
+    - [How to Update the Website](#how-to-update-the-website)
 
-## 環境構築
+## Environment Setup
 
-このツールはPyPI経由で利用することができます．
+You can also use this tool via PyPI.
 
-### PyPIでインストールする
+### Install via PyPI
 
-1. `pip`コマンドを用いて`eval_mm`を利用している仮想環境に含めることができます．
+1. Use the `pip` command to include `eval_mm` in the virtual environment where you want to run it:
 
-```bash
-pip install eval_mm
-```
+   ```bash
+   pip install eval_mm
+   ```
 
-2. 本ツールではLLM-as-a-judge手法を用いて評価をする際に，OpenAI APIを用いてGPT-4oにリクエストを送信します．`.env`ファイルを作成し，Azureを利用する場合には`AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`の組を，OpenAI APIを利用する場合は`OPENAI_API_KEY`を設定してください.
+2. This tool uses the LLM-as-a-judge method for evaluation, which sends requests to GPT-4o via the OpenAI API. Please create a `.env` file and set `AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_KEY` if you’re using Azure, or `OPENAI_API_KEY` if you’re using the OpenAI API.
 
-以上で環境構築は終了です.
+That’s it for environment setup.
 
-リポジトリをクローンして利用する場合は以下の手順を参考にしてください．
+If you prefer to clone the repository and use it, please follow the instructions below.
 
-### GitHubをCloneする場合
+### Clone the GitHub Repo
 
-eval-mmは仮想環境の管理にuvを用いています．
+`eval-mm` uses `uv` to manage virtual environments.
 
-1. リポジトリをクローンして移動する
-```bash
-git clone git@github.com:llm-jp/llm-jp-eval-mm.git
-cd llm-jp-eval-mm
-```
+1. Clone the repository and move into it:
+   ```bash
+   git clone git@github.com:llm-jp/llm-jp-eval-mm.git
+   cd llm-jp-eval-mm
+   ```
 
-2. uv を用いて環境構築を行う
+2. Build the environment with `uv`.
 
-uvは[official doc](https://docs.astral.sh/uv/getting-started/installation/) を参考にインストールしてください．
+   Please install `uv` by referring to the [official doc](https://docs.astral.sh/uv/getting-started/installation/).
 
-```bash
-cd llm-jp-eval-mm
-uv sync
-```
+   ```bash
+   cd llm-jp-eval-mm
+   uv sync
+   ```
 
-3. [.env.sample](./.env.sample)を参考にして, `.env`ファイルを作成し，`AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`の組，あるいは`OPENAI_API_KEY`を設定してください.
+3. Following the sample [.env.sample](./.env.sample), create a `.env` file and set `AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_KEY`, or `OPENAI_API_KEY`.
 
-以上で環境構築は終了です.
+That’s all you need for the setup.
 
+## How to Evaluate
 
-## 評価方法
+### Running an Evaluation
 
-### 評価の実行
+(Currently, the llm-jp-eval-mm repository is private. You can download the `examples` directory from the Source Distribution at [https://pypi.org/project/eval-mm/#files](https://pypi.org/project/eval-mm/#files).)
 
-(現在, llm-jp-eval-mm リポジトリはprivateになっています. examples ディレクトリについては, [https://pypi.org/project/eval-mm/#files](https://pypi.org/project/eval-mm/#files)のSource Distributionにてdownloadできます.)
+We provide a sample code `examples/sample.py` for running an evaluation.
 
-評価の実行のために，サンプルコード`examples/sample.py`を提供しています．
+Models listed as `examples/{model_name}.py` are supported only in terms of their inference method.
 
-`examples/{モデル名}.py`として含まれているモデルは，その推論方法に限りサポートしています．
+If you want to run an evaluation on a new inference method or a new model, create a similar file referencing existing `examples/{model_name}.py`, and you can run the evaluation in the same way.
 
-新たな推論方法・新たなモデルでの評価を実行したい場合，既存の`examples/{モデル名}.py`を参考に同様のファイルを作成することで，評価を実行することができます．
-
-例として, `llava-hf/llava-1.5-7b-hf`モデルをjapanese-heron-benchで評価したい場合は, 以下のコマンドを実行してください．
+For example, if you want to evaluate the `llava-hf/llava-1.5-7b-hf` model on the japanese-heron-bench task, run the following command:
 
 ```bash
 python3 examples/sample.py \
@@ -103,49 +100,43 @@ python3 examples/sample.py \
   --overwrite
 ```
 
-評価結果のスコアと出力結果は
-`test/{task_id}/evaluation/{model_id}.jsonl`, `test/{task_id}/prediction/{model_id}.jsonl` に保存されます.
+The evaluation score and output results will be saved in
+`test/{task_id}/evaluation/{model_id}.jsonl` and `test/{task_id}/prediction/{model_id}.jsonl`.
 
-複数のモデルを複数のタスクで評価したい場合は, `eval_all.sh`を参考にしてください.
+If you want to evaluate multiple models on multiple tasks, please check `eval_all.sh`.
 
-### リーダーボードの公開
+### Leaderboard
 
-現在，代表的なモデルの評価結果をまとめたリーダーボードを公開する予定があります．
+We plan to publish a leaderboard summarizing the evaluation results of major models soon.
 
-## サポートするタスク
+## Supported Tasks
 
-現在，以下のベンチマークタスクをサポートしています．
+Right now, the following benchmark tasks are supported:
 
-Japanese Task:
-- [Japanese Heron Bench](https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench)
-- [JA-VG-VQA500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500)
-- [JA-VLM-Bench-In-the-Wild](https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild)
-- [JA-Multi-Image-VQA](https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA)
-- [JDocQA](https://huggingface.co/datasets/shunk031/JDocQA)
-- [JMMMU](https://huggingface.co/datasets/JMMMU/JMMMU)
+- Japanese Heron Bench
+- JA-VG-VQA500
+- JA-VLM-Bench-In-the-Wild
+- JA-Multi-Image-VQA
+- JDocQA
+- JMMMU
 
-English Task:
-- [MMMU](https://huggingface.co/datasets/MMMU/MMMU)
-- [LlaVA-Bench-In-the-Wild](https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild)
+## Required Libraries for Each VLM Model Inference
 
-## 各VLMモデル推論時の必要ライブラリ情報
+Different models require different libraries. In this repository, we use uv’s [Dependency groups](https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups) to manage the libraries needed for each model.
 
-各モデルごとに, 必要なライブラリが異なります. このリポジトリでは, uvの[Dependency groups](https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups)を用いて, モデルごとに必要なライブラリを管理しています.
-
-以下のモデルを利用する際には, normal groupを指定してください.
-stabiliyai/japanese-instructblip-alpha, stabilityai/japanese-stable-vlm, cyberagent/llava-calm2-siglip, llava-hf/llava-1.5-7b-hf, llava-hf/llava-v1.6-mistral-7b-hf, neulab/Pangea-7B-hf,  meta-llama/Llama-3.2-11B-Vision-Instruct, meta-llama/Llama-3.2-90B-Vision-Instruct, OpenGVLab/InternVL2-8B, Qwen/Qwen2-VL-7B-Instruct, OpenGVLab/InternVL2-26B, Qwen/Qwen2-VL-72B-Instruct, gpt-4o-2024-05-13
+When using the following models, please specify the `normal` group:
+stabiliyai/japanese-instructblip-alpha, stabilityai/japanese-stable-vlm, cyberagent/llava-calm2-siglip, llava-hf/llava-1.5-7b-hf, llava-hf/llava-v1.6-mistral-7b-hf, neulab/Pangea-7B-hf, meta-llama/Llama-3.2-11B-Vision-Instruct, meta-llama/Llama-3.2-90B-Vision-Instruct, OpenGVLab/InternVL2-8B, Qwen/Qwen2-VL-7B-Instruct, OpenGVLab/InternVL2-26B, Qwen/Qwen2-VL-72B-Instruct, gpt-4o-2024-05-13
 ```bash
 uv sync --group normal
 ```
 
-以下のモデルを利用する際には, evovlm groupを指定してください.
+When using the following model, please specify the `evovlm` group:
 SamanaAI/Llama-3-EvoVLM-JP-v2
-
 ```bash
 uv sync --group evovlm
 ```
 
-以下のモデルを利用する際には, vilaja groupを指定してください.
+When using the following models, please specify the `vilaja` group:
 llm-jp/llm-jp-3-vila-14b, Efficient-Large-Model/VILA1.5-13b
 ```bash
 uv sync --group vilaja
@@ -156,73 +147,63 @@ mistralai/Pixtral-12B-2409
 uv sync --group pixtral
 ```
 
-
-実行時は, groupを指定してください.
+When running the script, make sure to specify the group:
 
 ```bash
 $ uv run --group normal python ...
 ```
 
-新しいgroupを追加する際は, [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies)の設定を忘れないようにしてください.
+If you add a new group, don’t forget to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
 
-
-
-## ベンチマーク固有の必要ライブラリ情報
+## Benchmark-Specific Required Libraries
 
 - JDocQA
-JDocQA データセットの構築において, [pdf2image](https://pypi.org/project/pdf2image/) library が必要です. pdf2imageはpoppler-utilsに依存していますので, 以下のコマンドでインストールしてください.
-```bash
-sudo apt-get install poppler-utils
-```
+  For constructing the JDocQA dataset, you need the [pdf2image](https://pypi.org/project/pdf2image/) library. Since pdf2image depends on poppler-utils, please install it with:
 
-## ライセンス
+  ```bash
+  sudo apt-get install poppler-utils
+  ```
 
-各評価データセットのライセンスは[DATASET.md](./DATASET.md)を参照してください．
+## License
+
+For the licenses of each evaluation dataset, please see [DATASET.md](./DATASET.md).
 
 ## Contribution
 
-- 問題や提案があれば，Issue で報告してください．
-- 新たなベンチマークタスクやメトリック, VLMモデルの推論コードの追加や, バグの修正がありましたら, Pull Requestを送ってください.
+- If you find any issues or have suggestions, please report them on the Issue tracker.
+- If you add new benchmark tasks, metrics, or VLM model inference code, or if you fix bugs, please send us a Pull Request.
 
-### ベンチマークタスクの追加方法
-タスクはTaskクラスで定義されます.
-[src/eval_mm/tasks](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/src/eval_mm/tasks)のコードを参考にTaskクラスを実装してください.
-データセットをVLMモデルに入力する形式に変換するメソッドと, スコアを計算するメソッドを定義する必要があります.
+### How to Add a Benchmark Task
+Tasks are defined in the `Task` class.
+Please reference the code in [src/eval_mm/tasks](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/src/eval_mm/tasks) and implement your `Task` class. You’ll need methods to convert the dataset into a format for input to the VLM model, and methods to calculate the score.
 
-### メトリックの追加方法
-メトリックはScorerクラスで定義されます.
-[src/eval_mm/metrics](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/src/eval_mm/metrics)のコードを参考にScorerクラスを実装してください.
-参照文と生成文を比較してsampleレベルのスコアリングを行う`score()`メソッドと, スコアを集約してpopulationレベルのメトリック計算を行う`aggregate()`メソッドを定義する必要があります.
+### How to Add a Metric
+Metrics are defined in the `Scorer` class.
+Please reference the code in [src/eval_mm/metrics](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/src/eval_mm/metrics) and implement your `Scorer` class. You’ll need to implement a `score()` method for sample-level scoring comparing references and generated outputs, and an `aggregate()` method for population-level metric calculation.
 
-### VLMモデルの推論コードの追加方法
-VLMモデルの推論コードはVLMクラスで定義されます.
-[examples/base_vlm](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/examples/base_vlm.py)を参考に, VLMクラスを実装してください.
-画像とプロンプトをもとに生成文を生成する`generate()`メソッドを定義する必要があります.
+### How to Add Inference Code for a VLM Model
+Inference code for VLM models is defined in the `VLM` class.
+Please reference [examples/base_vlm](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/examples/base_vlm.py) and implement your `VLM` class. You’ll need a `generate()` method to produce output text from images and prompts.
 
-
-### 依存ライブラリの追加方法
+### How to Add Dependencies
 
 ```
 uv add <package_name>
 uv add --group <group_name> <package_name>
 ```
 
-### ruffを用いたフォーマット, リント
+### Formatting and Linting with ruff
 ```
 uv run ruff format src
 uv run ruff check --fix src
 ```
 
-### PyPIへのリリース方法
+### How to Release to PyPI
 ```
 git tag -a v0.x.x -m "version 0.x.x"
 git push origin --tags
 ```
 
-### Webサイトの更新方法
-[github_pages/README.md](./github_pages/README.md)を参照ください.
+### How to Update the Website
+Please refer to [github_pages/README.md](./github_pages/README.md).
 
-
-## Reference
-- https://github.com/EvolvingLMMs-Lab/lmms-eval
-- https://github.com/turingmotors/heron
