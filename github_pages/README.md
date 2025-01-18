@@ -6,7 +6,8 @@ This repository is a source code for the llm-jp-eval-mm leaderboard website.
 ## How to develop
 ```bash
 cd github_pages
-apt install npm
+sudo apt install -y nodejs npm
+sudo npm install n -g
 npm install
 npm run start
 ```
