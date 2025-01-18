@@ -1,0 +1,10 @@
+.method-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #363636;
+  margin-block: 2.5rem 1.5rem;
+}
+
+.method-content {
+  text-align: justify;
+}

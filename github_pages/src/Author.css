@@ -1,0 +1,30 @@
+.author {
+    position: relative;
+    display: inline-block;
+}
+
+.author-name {
+    color: inherit;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.author-website {
+    color: inherit;
+    text-decoration: none;
+    position: relative;
+}
+
+.author-annotation {
+    position: relative;
+    bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.author-separator {
+    position: relative;
+    font-size: 1.5rem;
+    font-weight: 500;
+}

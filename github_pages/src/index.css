@@ -1,0 +1,55 @@
+:root {
+  text-rendering: justify;
+  font-family: "Noto Sans", "Noto Sans JP", sans-serif;
+  font-weight: 400;
+
+  color-scheme: normal;
+  color: #4A4A4A;
+  background-color: #ffffff;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: top center;
+  min-width: 300px;
+  min-height: 100vh;
+}
+
+@media (hover: hover) {
+  a:any-link:hover {
+    color: #ba2636;
+  }
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.25rem 0;
+}
+
+button {
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+select {
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: inherit;
+  cursor: pointer;
+}

@@ -1,0 +1,77 @@
+.Leaderboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.leaderboard-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #363636;
+  margin-block: 2.5rem 1.5rem;
+}
+
+.table-container {
+  width: calc(100vw - 2rem);
+  overflow-x: auto;
+  /* 横スクロールを有効化 */
+  border: 1px solid #ccc;
+  margin-top: 10px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+
+  /* スクロールを促すための最小幅 */
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background-color: #f1f1f1;
+  z-index: 1;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+  white-space: nowrap;
+  /* 折り返しを無効化 */
+  transition: background-color 0.2s ease;
+}
+
+table th {
+  background-color: #f4f4f4;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* スマホ向けのメディアクエリ */
+@media (max-width: 768px) {
+  .Leaderboard {
+    padding: 10px;
+  }
+
+  .leaderboard-title {
+    font-size: 1.5rem;
+    margin-block: 1.5rem 1rem;
+  }
+
+  table th,
+  table td {
+    font-size: 12px;
+    /* スマホ向けに文字サイズを縮小 */
+    padding: 6px;
+    /* セル内の余白を調整 */
+  }
+}

@@ -1,0 +1,22 @@
+.link-button {
+    height: 2.5rem;
+    /* width: 8rem; */
+    border: none;
+    border-radius: 1.25rem;
+    padding: 0rem 1.25rem;
+    margin: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2f2f2f;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .link-button:hover {
+        background-color: #595857;
+    }
+}
