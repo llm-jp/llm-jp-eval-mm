@@ -19,29 +19,29 @@ const SUBTITLE = (
 const AUTHORS = [
   {
     name: 'Koki Maeda',
-    affiliation: [1],
+    affiliation: [1, 4],
     annotation1: '†',
     url: 'https://github.com/llm-jp/llm-jp-eval-mm',
   },
   {
     name: 'Issa Sugiura',
-    affiliation: [2],
+    affiliation: [2, 4],
     annotation1: '†',
     url: 'https://github.com/llm-jp/llm-jp-eval-mm',
   },
   {
     name: 'Yusuke Oda',
-    affiliation: [3],
+    affiliation: [4],
     url: 'https://github.com/llm-jp/llm-jp-eval-mm',
   },
   {
     name: 'Shuhei Kurita',
-    affiliation: [3],
+    affiliation: [3, 4],
     url: 'https://github.com/llm-jp/llm-jp-eval-mm',
   },
   {
     name: 'Naoaki Okazaki',
-    affiliation: [1],
+    affiliation: [1, 4],
     url: 'https://github.com/llm-jp/llm-jp-eval-mm',
     isLast: true,
   },
@@ -52,7 +52,8 @@ const AFFILIATIONS = [
   'dummy for index 0',
   'Institute of Science Tokyo',
   'Kyoto University',
-  'National Institute of Informatics',
+  'NII',
+  'NII LLMC',
 ];
 const ANNOTATION_DESCRIPTION = ['†: Equal Contribution'];
 
