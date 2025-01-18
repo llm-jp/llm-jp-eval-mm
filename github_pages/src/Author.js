@@ -36,9 +36,10 @@ const Author = ({
       )}
       <span className='author-annotation'>
         {annotation1}
-        {affiliation.map((num) => (
-          <span style={{ color: AFFILIATION_COLORS[num] }} key={num}>
-            {num}
+        {affiliation.map((num, index) => (
+          <span key={num}>
+            <span style={{ color: AFFILIATION_COLORS[num] }}>{num}</span>
+            {index < affiliation.length - 1 && ', '}
           </span>
         ))}
         {annotation2}
