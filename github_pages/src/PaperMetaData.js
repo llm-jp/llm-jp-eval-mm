@@ -50,7 +50,7 @@ const AUTHORS: AuthorProps[] = [
 ];
 
 // Description of annotations
-const AFFILIATIONS = ["dummy for index 0", "Science Tokyo", "Kyoto University", "National Institute of Informatics"];
+const AFFILIATIONS = ["dummy for index 0", "Institute of Science Tokyo", "Kyoto University", "National Institute of Informatics"];
 const ANNOTATION_DESCRIPTION = ["†: Equal Contribution"];
 
 const LINK_BUTTONS = [
