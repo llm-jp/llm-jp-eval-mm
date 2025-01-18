@@ -10,11 +10,7 @@ import { LinkButtonProps } from './LinkButton';
 import './PaperMetaData.css';
 
 // Paper title
-const TITLE = (
-  <>
-    llm-jp-eval-mm
-  </>
-);
+const TITLE = <>llm-jp-eval-mm</>;
 const SUBTITLE = (
   <>Automatic Evaluation Platform for Japanese Visual Language Models</>
 );
