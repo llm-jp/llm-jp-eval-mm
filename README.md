@@ -34,6 +34,7 @@
     - [依存ライブラリの追加方法](#依存ライブラリの追加方法)
     - [ruffを用いたフォーマット, リント](#ruffを用いたフォーマット-リント)
     - [PyPIへのリリース方法](#pypiへのリリース方法)
+    - [Webサイトの更新方法](#webサイトの更新方法)
   - [Reference](#reference)
 
 ## 環境構築
@@ -217,6 +218,10 @@ uv run ruff check --fix src
 git tag -a v0.x.x -m "version 0.x.x"
 git push origin --tags
 ```
+
+### Webサイトの更新方法
+[github_pages/README.md](./github_pages/README.md)を参照ください.
+
 
 ## Reference
 - https://github.com/EvolvingLMMs-Lab/lmms-eval
