@@ -65,7 +65,7 @@ evovlm = [
 ]
 vilaja = [
     "accelerate==0.27.2",
-    "deepspeed==0.9.5",
+    "deepspeed>=0.16.3",
     "einops>=0.8.0",
     "psutils>=3.3.9",
     "s2wrapper",

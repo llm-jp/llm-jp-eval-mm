@@ -12,10 +12,13 @@ from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
-    def __init__(self, model_id: str = "llm-jp/llm-jp-3-vila-14b")-> None:
+    def __init__(self, model_id: str = "llm-jp/llm-jp-3-vila-14b") -> None:
         self.model_id = model_id
         model_name = get_model_name_from_path(self.model_id)
-        self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(self.model_id, model_name)
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(
+            self.model_id, model_name, device=device
+        )
 
     def generate(
         self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
@@ -44,7 +47,7 @@ class VLM(BaseVLM):
                 prompt, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
             )
             .unsqueeze(0)
-            .cuda()
+            .to(self.model.device)
         )
 
         with torch.inference_mode():
