@@ -34,6 +34,7 @@ For details on the data format and the list of supported data, please check [DAT
     - [Formatting and Linting with ruff](#formatting-and-linting-with-ruff)
     - [How to Release to PyPI](#how-to-release-to-pypi)
     - [How to Update the Website](#how-to-update-the-website)
+  - [Acknowledgements](#acknowledgements)
 
 ## Environment Setup
 
@@ -91,7 +92,7 @@ If you want to run an evaluation on a new inference method or a new model, creat
 For example, if you want to evaluate the `llava-hf/llava-1.5-7b-hf` model on the japanese-heron-bench task, run the following command:
 
 ```bash
-uv sync --group normal 
+uv sync --group normal
 uv run --group normal python examples/sample.py \
   --model_id llava-hf/llava-1.5-7b-hf \
   --task_id japanese-heron-bench  \
@@ -172,6 +173,7 @@ If you add a new group, don’t forget to configure [conflict](https://docs.astr
 
 ## License
 
+This repository is licensed under the Apache-2.0 License.
 For the licenses of each evaluation dataset, please see [DATASET.md](./DATASET.md).
 
 ## Contribution
@@ -205,11 +207,19 @@ uv run ruff check --fix src
 ```
 
 ### How to Release to PyPI
+
 ```
 git tag -a v0.x.x -m "version 0.x.x"
 git push origin --tags
 ```
+Or you can manually create a new release on GitHub.
+
 
 ### How to Update the Website
 Please refer to [github_pages/README.md](./github_pages/README.md).
 
+## Acknowledgements
+- [Heron](https://github.com/turingmotors/heron): We refer to the Heron code for the evaluation of the Japanese Heron Bench task.
+- [lmms-eval](https://github.com/EvolvingLMMs-Lab/lmms-eval): We refer to the lmms-eval code for the evaluation of the JMMMU and MMMU tasks.
+
+We also thank the developers of the evaluation datasets for their hard work.
