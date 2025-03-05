@@ -7,6 +7,7 @@ from .scorer import Scorer
 from .jmmmu_scorer import JMMMUScorer
 from .mmmu_scorer import MMMUScorer
 from .jdocqa_scorer import JDocQAScorer
+from .jic_vqa_scorer import JICVQAScorer
 
 
 class ScorerRegistry:
@@ -21,6 +22,7 @@ class ScorerRegistry:
         "jmmmu": JMMMUScorer,
         "jdocqa": JDocQAScorer,
         "mmmu": MMMUScorer,
+        "jic_vqa": JICVQAScorer,
     }
 
     @classmethod

@@ -6,3 +6,4 @@ from .ja_multi_image_vqa import JAMultiImageVQA
 from .jdocqa import JDocQA
 from .mmmu import MMMU
 from .llava_bench_in_the_wild import LlavaBenchIntheWild
+from .jic_vqa import JICVQA
