@@ -1,9 +1,11 @@
 import time
-from pathlib import Path
-from PIL import Image, ImageFile
-import requests
+import warnings
 from io import BytesIO
+
+import requests
+from PIL import Image
 from datasets import Dataset, load_dataset
+from huggingface_hub import cached_assets_path
 
 from ..api.registry import register_task
 from ..api.task import Task
@@ -13,9 +15,10 @@ from eval_mm.metrics import ScorerRegistry
 class JICVQA(Task):
     @staticmethod
     def _prepare_dataset() -> Dataset:
-        wait_time = 1.0
-        cache_dir = Path("/tmp/image_cache")
-        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_dir = cached_assets_path(
+            library_name="datasets", 
+            namespace="JICVQA", 
+            subfolder="download")
 
         dataset = load_dataset("line-corporation/JIC-VQA")
         input_texts = []
@@ -23,9 +26,6 @@ class JICVQA(Task):
         images = []
         question_ids = []
         domains = []
-
-        ImageFile.LOAD_TRUNCATED_IMAGES = True
-        Image.MAX_IMAGE_PIXELS = None
 
         domain_dict = {
             "花": "jaflower30",
@@ -45,17 +45,29 @@ class JICVQA(Task):
             if image_path.exists():
                 return
 
-            try:
-                response = requests.get(url)
-                if response.status_code == 200:
-                    image = Image.open(BytesIO(response.content))
-                    image.save(image_path)
-                    print(f"Downloaded: {image_path}")
-                    time.sleep(wait_time)
-                else:
-                    print(f"Failed to download image: {url}, skipped")
-            except Exception as e:
-                print(f"{e} : Failed to download {url}, skipped")
+            max_attempts = 5
+            attempt_errors = []
+            for _ in range(max_attempts):
+                try:
+                    response = requests.get(url)
+                    if response.status_code == 200:
+                        image = Image.open(BytesIO(response.content))
+                        image.save(image_path)
+                        print(f"Downloaded: {image_path}")
+                        wait_time = 1.0 
+                        time.sleep(wait_time)
+                        return
+                    else:
+                        error_msg = f"Status code: {response.status_code}"
+                        attempt_errors.append(error_msg)
+
+                except Exception as e:
+                    error_msg = f"Exception: {e}"
+                    attempt_errors.append(error_msg)
+
+            warnings.warn(
+                f"Failed to download {url} after {max_attempts} attempts. Errors: {attempt_errors}"
+            )
 
         # Phase 1: Download all images
         for subset in dataset:
@@ -72,18 +84,18 @@ class JICVQA(Task):
                 image_path = cache_dir / f"{image_id}.{img_format}"
 
                 if not image_path.exists():
+                    warnings.warn(f"The image path {image_path} does not exist.")
                     continue  
-                
                 try:
                     image = Image.open(image_path)
-                    images.append(image)
-                    input_texts.append(entry["question"])
-                    answers.append(entry["category"])
-                    question_ids.append(image_id)
-                    domain = get_domain_from_question(entry["question"])
-                    domains.append(domain)
                 except Exception as e:
                     print(f"{e} : Failed to open {image_path}")
+                images.append(image)
+                input_texts.append(entry["question"])
+                answers.append(entry["category"])
+                question_ids.append(image_id)
+                domain = get_domain_from_question(entry["question"])
+                domains.append(domain)
 
         data_dict = {
             "input_text": input_texts,
