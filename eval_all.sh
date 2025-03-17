@@ -15,15 +15,16 @@ declare -A MODEL_GROUP_MAP=(
     ["Qwen/Qwen2-VL-7B-Instruct"]="normal"
     ["OpenGVLab/InternVL2-26B"]="normal"
     ["Qwen/Qwen2-VL-72B-Instruct"]="normal"
+    ["Qwen/Qwen2.5-VL-7B-Instruct"]="normal"
+    ["Qwen/Qwen2.5-VL-72B-Instruct"]="normal"
     ["gpt-4o-2024-05-13"]="normal"
     ["mistralai/Pixtral-12B-2409"]="pixtral"
     ["llm-jp/llm-jp-3-vila-14b"]="vilaja"
     ["Efficient-Large-Model/VILA1.5-13b"]="vilaja"
     ["SakanaAI/Llama-3-EvoVLM-JP-v2"]="evovlm"
+    ["google/gemma-3-4b-it"]="gemma"
+    ["sbintuitions/sarashina2-vision-8b"]="sarashina"
 )
-
-model_name="stabilityai/japanese-instructblip-alpha"
-echo "Model group: ${MODEL_GROUP_MAP[$model_name]}"
 
 # Task list
 declare -a task_list=(
