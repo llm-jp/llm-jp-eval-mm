@@ -193,8 +193,11 @@ uv run ruff check --fix src
 ### Testing
 
 You can test task classes and metric classes with the following command:
-```
+```bash
 bash test.sh
+```
+You can also test each model's inference code with the following command:
+```bash
 bash test_model.sh
 ```
 
