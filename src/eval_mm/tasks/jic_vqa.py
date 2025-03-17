@@ -10,9 +10,10 @@ from huggingface_hub import cached_assets_path
 from ..api.registry import register_task
 from ..api.task import Task
 from eval_mm.metrics import ScorerRegistry
+from tqdm import tqdm
 
 
-@register_task("jic_vqa")
+@register_task("jic-vqa")
 class JICVQA(Task):
     @staticmethod
     def _prepare_dataset() -> Dataset:
@@ -71,7 +72,7 @@ class JICVQA(Task):
 
         # Phase 1: Download all images
         for subset in dataset:
-            for entry in dataset[subset]:
+            for entry in tqdm(dataset[subset], desc=f"Downloading {subset} images"):
                 url = entry["url"]
                 image_id = entry["id"]
                 download_image(url, image_id)
