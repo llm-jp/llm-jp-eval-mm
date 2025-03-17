@@ -22,5 +22,5 @@ class BaseVLM:
         image = Image.open(requests.get(image_file, stream=True).raw)
         image_file2 = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/car.jpg"
         image2 = Image.open(requests.get(image_file2, stream=True).raw)
-        print(self.generate(image, "画像には何が映っていますか?"))
+        print(self.generate([image], "画像には何が映っていますか?"))
         print(self.generate([image, image2], "これらの画像の違いはなんですか?"))

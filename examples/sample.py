@@ -101,11 +101,13 @@ else:
     preds = []
     print(task.dataset)
     for doc in tqdm(task.dataset):
-        image = task.doc_to_visual(doc)
+        images = task.doc_to_visual(doc)
+        if not isinstance(images, list):
+            images = [images]
         text = task.doc_to_text(doc)
         qid = task.doc_to_id(doc)
         try:
-            generated_text = model.generate(image, text, gen_kwargs)
+            generated_text = model.generate(images, text, gen_kwargs)
         except Exception as e:
             print(f"Error occurred for question_id: {qid}")
             print(e)

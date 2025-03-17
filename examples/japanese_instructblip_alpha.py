@@ -151,7 +151,9 @@ def process_images(images, size=1008):
 
 
 class VLM(BaseVLM):
-    def __init__(self, model_id: str = "stabilityai/japanese-instructblip-alpha") -> None:
+    def __init__(
+        self, model_id: str = "stabilityai/japanese-instructblip-alpha"
+    ) -> None:
         self.model_id = model_id
         self.model = AutoModelForVision2Seq.from_pretrained(
             self.model_id,

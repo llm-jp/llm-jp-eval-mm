@@ -7,7 +7,9 @@ from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
-    def __init__(self, model_id: str = "meta-llama/Llama-3.2-11B-Vision-Instruct") -> None:
+    def __init__(
+        self, model_id: str = "meta-llama/Llama-3.2-11B-Vision-Instruct"
+    ) -> None:
         self.model_id = model_id
         self.model = MllamaForConditionalGeneration.from_pretrained(
             self.model_id,

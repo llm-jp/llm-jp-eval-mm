@@ -166,6 +166,7 @@ class VLM(BaseVLM):
                 load_image(image, max_num=12).to(self.model.device).to(self.model.dtype)
             )
         import copy
+
         generation_config = copy.deepcopy(gen_kwargs.__dict__)
         generation_config.pop("use_cache")
 

@@ -22,7 +22,7 @@ conv_templates["llama_3"] = conv_llama_3_elyza
 
 
 class VLM(BaseVLM):
-    def __init__(self, model_id: str = "SakanaAI/Llama-3-EvoVLM-JP-v2")-> None:
+    def __init__(self, model_id: str = "SakanaAI/Llama-3-EvoVLM-JP-v2") -> None:
         self.model_id = model_id
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = LlavaForConditionalGeneration.from_pretrained(
