@@ -114,7 +114,7 @@ class JICVQA(Task):
 
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
-        return doc["image"]
+        return [doc["image"]]
 
     @staticmethod
     def doc_to_id(doc) -> int:

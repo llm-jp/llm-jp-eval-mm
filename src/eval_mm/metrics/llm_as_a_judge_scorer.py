@@ -98,9 +98,8 @@ class LlmAsaJudgeScorer(Scorer):
 
 
 def test_llm_as_a_judge_scorer():
-    from eval_mm.utils.azure_client import OpenAIChatAPI
-
-    client = OpenAIChatAPI()
+    from eval_mm.utils.azure_client import MochChatAPI
+    client = MochChatAPI()
     questions = ["What is the capital of Japan?", "What is the capital of France?"]
     answers = ["Tokyo", "Paris"]
     preds = ["Tokyo", "Paris"]
@@ -114,6 +113,6 @@ def test_llm_as_a_judge_scorer():
         judge_model=model_name,
         batch_size=batch_size,
     )
-    assert scores == [5, 5]
+    assert scores == [1, 1]
     scores = LlmAsaJudgeScorer.aggregate(scores)
-    assert scores == 5.0
+    assert scores == 1.0
