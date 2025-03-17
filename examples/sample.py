@@ -33,6 +33,11 @@ parser.add_argument(
     default="llm_as_a_judge_heron_bench",
     help="metrics to evaluate. You can specify multiple metrics separated by comma (e.g. --metrics exact_match,llm_as_a_judge) You can use rougel,substring_match,jmmmu,jdocqa,llm_as_a_judge_heron_bench,exact_match",
 )
+parser.add_argument(
+    "--rotate_choices",
+    action="store_true",
+    help="If set, rotate the choices of MCQ options for evaluation.",
+)
 
 valid_metrics = [
     "rougel",
@@ -73,6 +78,7 @@ task_config = eval_mm.api.task.TaskConfig(
     max_dataset_len=args.max_dataset_len,
     judge_model=args.judge_model,
     batch_size_for_evaluation=args.batch_size_for_evaluation,
+    rotate_choices=args.rotate_choices,
 )
 task = eval_mm.api.registry.get_task_cls(task_id)(task_config)
 
@@ -145,12 +151,18 @@ for metric in metrics:
     print(f"{metric}: {calculated_metrics[metric]}")
 
 
-with open(os.path.join(prediction_result_file_path), "w") as f:
+with open(prediction_result_file_path, "w") as f:
     for i, pred in enumerate(preds):
         question_id = pred["question_id"]
         text = pred["text"]
         answer = task.doc_to_answer(task.dataset[i])
-        content = {"question_id": question_id, "text": text, "answer": answer}
+        input_text = task.doc_to_text(task.dataset[i])
+        content = {
+            "question_id": question_id,
+            "text": text,
+            "answer": answer,
+            "input_text": input_text,
+        }
         for metric in metrics:
             content[metric] = scores_for_each_metric[metric][i]
         f.write(json.dumps(content, ensure_ascii=False) + "\n")
@@ -160,5 +172,5 @@ eval_result_file_path = os.path.join(
     evaluation_result_dir, f"{args.model_id.replace('/', '-')}.json"
 )
 with open(eval_result_file_path, "w") as f:
-    f.write(json.dumps(calculated_metrics, ensure_ascii=False) + "\n")
+    json.dump(calculated_metrics, ensure_ascii=False, indent=4, fp=f)
 print(f"Evaluation result saved to {eval_result_file_path}")
