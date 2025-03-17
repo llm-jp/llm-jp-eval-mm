@@ -112,6 +112,26 @@ class OpenAIChatAPI:
         return f"{self.__class__.__name__}(client={self.client})"
 
 
+class MochChatAPI:
+    """
+    A mock class for the OpenAI API client.
+    """
+
+    def __init__(self) -> None:
+        pass
+
+    def batch_generate_chat_response(
+        self,
+        chat_messages_list: list[list[dict[str, str]]],
+        model_name: Optional[str] = None,
+        **kwargs,
+    ) -> list[str]:
+        """
+        Generate chat responses for a batch of messages
+        """
+        return ["Test"] * len(chat_messages_list)
+
+
 if __name__ == "__main__":
     # Test code
     client = OpenAIChatAPI()
