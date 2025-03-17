@@ -494,12 +494,13 @@ def test_mmmu_aggregate():
     scores = MMMUScorer.score(ds, preds, docs=ds)
     metric = MMMUScorer.aggregate(scores, docs=ds)
     true_metric = {
-        "Overall-Art and Psychology": {"num": 0, "acc": 0},
-        "Overall-Business": {"num": 10, "acc": 0.3},
-        "Accounting": {"num": 10, "acc": 0.3},
-        "Overall-Science": {"num": 0, "acc": 0},
-        "Overall-Health and Medicine": {"num": 0, "acc": 0},
-        "Overall-Tech and Engineering": {"num": 0, "acc": 0},
-        "Overall": {"num": 10, "acc": 0.3},
+        "Overall-Art and Design": 0,
+        "Overall-Business": 0.3,
+        "Accounting": 0.3,
+        "Overall-Science": 0,
+        "Overall-Health and Medicine": 0,
+        "Overall-Humanities and Social Science": 0,
+        "Overall-Tech and Engineering": 0,
+        "Overall": 0.3,
     }
     assert metric == true_metric
