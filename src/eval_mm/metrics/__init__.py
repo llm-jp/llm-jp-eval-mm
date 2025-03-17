@@ -8,7 +8,7 @@ from .jmmmu_scorer import JMMMUScorer
 from .mmmu_scorer import MMMUScorer
 from .jdocqa_scorer import JDocQAScorer
 from .jic_vqa_scorer import JICVQAScorer
-
+from .mecha_ja_scorer import MECHAJaScorer
 
 class ScorerRegistry:
     """Registry to map metrics to their corresponding scorer classes."""
@@ -23,6 +23,7 @@ class ScorerRegistry:
         "jdocqa": JDocQAScorer,
         "mmmu": MMMUScorer,
         "jic_vqa": JICVQAScorer,
+        "mecha-ja": MECHAJaScorer,
     }
 
     @classmethod

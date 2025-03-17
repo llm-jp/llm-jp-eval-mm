@@ -122,3 +122,6 @@ tmp/
 # verbose output
 *verbose.jsonl
 __depr__/
+
+# examples/llava for evaluating LLM-jp-3 VILA
+examples/llava/*
