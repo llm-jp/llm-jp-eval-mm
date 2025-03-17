@@ -2,7 +2,7 @@ import os
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
-import japanize_matplotlib
+import japanize_matplotlib  # noqa
 import numpy as np
 
 # ======================================

@@ -20,6 +20,7 @@ dependencies = [
     "backoff>=2.2.1",
     "scipy>=1.15.1",
     "torch>=2.5.1",
+    "webdataset>=0.2.111",
 ]
 readme = "README.md"
 license = "Apache-2.0"

@@ -32,6 +32,7 @@ For details on the data format and the list of supported data, please check [DAT
     - [How to Add Inference Code for a VLM Model](#how-to-add-inference-code-for-a-vlm-model)
     - [How to Add Dependencies](#how-to-add-dependencies)
     - [Formatting and Linting with ruff](#formatting-and-linting-with-ruff)
+    - [Testing](#testing)
     - [How to Release to PyPI](#how-to-release-to-pypi)
     - [How to Update the Website](#how-to-update-the-website)
   - [Acknowledgements](#acknowledgements)
@@ -205,6 +206,14 @@ uv add --group <group_name> <package_name>
 uv run ruff format src
 uv run ruff check --fix src
 ```
+
+### Testing
+
+You can test task classes and metric classes with the following command:
+```
+bash test.sh
+```
+
 
 ### How to Release to PyPI
 
