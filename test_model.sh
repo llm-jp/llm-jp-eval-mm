@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # エラーが発生したらスクリプトを停止する
+set -eux  # エラーが発生したらスクリプトを停止する
 
 # Set CUDA devices
 export CUDA_VISIBLE_DEVICES=0
