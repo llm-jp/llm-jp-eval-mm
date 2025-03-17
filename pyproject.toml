@@ -59,6 +59,11 @@ dev = [
     "seaborn>=0.13.2",
 ]
 
+test = [
+    "pytest>=8.3.4",
+    "seaborn>=0.13.2",
+]
+
 evovlm = [
     "transformers==4.42.4",
     "mantis-vl",
