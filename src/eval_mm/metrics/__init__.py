@@ -23,6 +23,7 @@ class ScorerRegistry:
         "jdocqa": JDocQAScorer,
         "mmmu": MMMUScorer,
         "jic_vqa": JICVQAScorer,
+        "mecha-ja": MECHAJaScorer,
     }
 
     @classmethod
