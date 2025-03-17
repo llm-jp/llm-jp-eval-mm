@@ -25,51 +25,29 @@ class VLM(BaseVLM):
     def generate(
         self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ):
-        if "<image>" in text:
-            text = text.replace("<image>", "")
         message = []
-        if isinstance(image, list):
-            image__base64_list = [encode_image_to_base64(img) for img in image]
-            message_base = {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": text,
-                    },
-                ],
-            }
-            for image_base64 in image__base64_list:
-                message_base["content"].append(
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{image_base64}",
-                            "detail": "auto",
-                        },
-                    }
-                )
-            message = [message_base]
-        else:
-            image_base64 = encode_image_to_base64(image)
-            message = [
+        image__base64_list = [encode_image_to_base64(img) for img in image]
+        message_base = {
+            "role": "user",
+            "content": [
                 {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": text,
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{image_base64}",
-                                "detail": "auto",
-                            },
-                        },
-                    ],
+                    "type": "text",
+                    "text": text,
+                },
+            ],
+        }
+        for image_base64 in image__base64_list:
+            message_base["content"].append(
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{image_base64}",
+                        "detail": "auto",
+                    },
                 }
-            ]
+            )
+        message = [message_base]
+
         try:
             response = self.client.chat.completions.create(
                 model=self.model_id,

@@ -24,11 +24,7 @@ class VLM(BaseVLM):
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
-        if "<image>" in text:
-            text = text.replace("<image>", "")
-        num_images = 1
-        if isinstance(images, list):
-            num_images = len(images)
+        num_images = len(images)
         content = [{"type": "image"} for _ in range(num_images)]
         content.extend([{"type": "text", "text": text}])
         messages = [

@@ -86,16 +86,16 @@ if os.path.exists(prediction_path) and not args.overwrite:
     assert (
         len(preds) == len(task.dataset)
     ), f"Prediction result length is not equal to the dataset length. Prediction result length: {len(preds)}, Dataset length: {len(task.dataset)}"
-    print(f"Prediction result loaded from {prediction_result_file_path}")
+    print(f"Prediction result loaded from {prediction_path}")
 else:
     model = get_class_from_model_id(args.model_id)(args.model_id)
     preds = []
     print(task.dataset)
     for doc in tqdm(task.dataset):
         images = task.doc_to_visual(doc)
-        if not isinstance(images, list):
-            images = [images]
         text = task.doc_to_text(doc)
+        if "<image>" in text:
+            text = text.replace("<image>", "")
         qid = task.doc_to_id(doc)
         try:
             generated_text = model.generate(images, text, gen_kwargs)

@@ -10,7 +10,6 @@ import torch
 
 from llava_vila.conversation import SeparatorStyle, conv_templates
 from llava_vila.mm_utils import (
-    KeywordsStoppingCriteria,
     get_model_name_from_path,
     process_images,
     tokenizer_image_token,
@@ -36,12 +35,9 @@ class VLM(BaseVLM):
         self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ):
         qs = text
-        qs = qs.replace("<image>", "")
         if "<image>" not in text:
-            if isinstance(image, list):
-                qs = "<image>\n" * len(image) + text
-            else:
-                qs = "<image>\n" + text
+            qs = "<image>\n" * len(image) + text
+
 
         print("input: ", qs)
 
@@ -74,9 +70,6 @@ class VLM(BaseVLM):
 
         stop_str = conv.sep if conv.sep_style != SeparatorStyle.TWO else conv.sep2
         keywords = [stop_str]
-        stopping_criteria = KeywordsStoppingCriteria(
-            keywords, self.tokenizer, input_ids
-        )
 
         with torch.inference_mode():
             output_ids = self.model.generate(

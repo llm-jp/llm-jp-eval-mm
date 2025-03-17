@@ -9,7 +9,7 @@ class VLM(BaseVLM):
     def __init__(self, model_id: str = "google/gemma-3-4b-it") -> None:
         self.model_id = model_id
         self.model = Gemma3ForConditionalGeneration.from_pretrained(
-            self.model_id, device_map="auto", torch_dtype="bfloat16"
+            self.model_id, torch_dtype="bfloat16"
         ).eval()
         self.processor = AutoProcessor.from_pretrained(self.model_id)
 
@@ -19,8 +19,6 @@ class VLM(BaseVLM):
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
-        if "<image>" in text:
-            text = text.replace("<image>", "")
         image_content = []
         for image in images:
             image_content.append({"type": "image", "image": image})

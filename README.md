@@ -14,7 +14,7 @@ For details on the data format and the list of supported data, please check [DAT
 
 ## Table of Contents
 
-- [LLM-jp-eval-mm](#llm-jp-eval-mm)
+- [llm-jp-eval-mm](#llm-jp-eval-mm)
   - [Table of Contents](#table-of-contents)
   - [Environment Setup](#environment-setup)
     - [Install via PyPI](#install-via-pypi)
@@ -103,7 +103,7 @@ uv run --group normal python examples/sample.py \
 ```
 
 The evaluation score and output results will be saved in
-`test/{task_id}/evaluation/{model_id}.jsonl` and `test/{task_id}/prediction/{model_id}.jsonl`.
+`test/{task_id}/{model_id}/evaluation.jsonl` and `test/{task_id}/{model_id}/prediction/.jsonl`.
 
 If you want to evaluate multiple models on multiple tasks, please check `eval_all.sh`.
 

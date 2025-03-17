@@ -23,14 +23,11 @@ class VLM(BaseVLM):
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
-        if isinstance(images, list):
-            prompt_template = (
-                "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user"
-                + "\n<image>" * len(images)
-                + "\n{text}<|im_end|>\n<|im_start|>assistant\n"
-            )
-        else:
-            prompt_template = "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n<image>\n{text}<|im_end|>\n<|im_start|>assistant\n"
+        prompt_template = (
+            "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user"
+            + "\n<image>" * len(images)
+            + "\n{text}<|im_end|>\n<|im_start|>assistant\n"
+        )
         if "<image>" in text:
             text = text.replace("<image>", "")
         input_text = prompt_template.format(text=text)

@@ -18,11 +18,7 @@ class VLM(BaseVLM):
     def generate(
         self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ):
-        text = text.replace("<image>", "")
-        if isinstance(image, list):
-            text = "<image>" * len(image) + f"{text}"
-        else:
-            text = f"<image>{text}"
+        text = "<image>" * len(image) + f"{text}"
 
         messages = [
             {

@@ -170,10 +170,8 @@ class VLM(BaseVLM):
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
-        text = text.replace("<image>", "")
         prompt = build_prompt(prompt=text)
-        if isinstance(images, list):
-            images = [process_images(images)]
+        images = [process_images(images)]
         inputs = self.processor(images=images, return_tensors="pt", truncation=True)
         text_encoding = self.tokenizer(
             prompt, add_special_tokens=False, return_tensors="pt"

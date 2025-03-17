@@ -140,31 +140,24 @@ class VLM(BaseVLM):
     ):
         text = text.replace("<image>", "")
         if "<image>" not in text:
-            if isinstance(image, list):
-                image_tokens = ["<image>"] * len(image)
-                image_tokens = " ".join(image_tokens)
-                text = f"{image_tokens}\n{text}"
-            else:
-                text = f"<image>\n{text}"
-        if isinstance(image, list):
-            pixel_values_list = []
-            for img in image:
-                pixel_values = (
-                    load_image(img, max_num=12)
-                    .to(self.model.device)
-                    .to(self.model.dtype)
-                )
-                pixel_values_list.append(pixel_values)
-            num_patches_list = [
-                pixel_values.size(0) for pixel_values in pixel_values_list
-            ]
-            pixel_values = torch.cat(pixel_values_list, dim=0)
+            image_tokens = ["<image>"] * len(image)
+            image_tokens = " ".join(image_tokens)
+            text = f"{image_tokens}\n{text}"
 
-        else:
-            num_patches_list = None
+
+        pixel_values_list = []
+        for img in image:
             pixel_values = (
-                load_image(image, max_num=12).to(self.model.device).to(self.model.dtype)
+                load_image(img, max_num=12)
+                .to(self.model.device)
+                .to(self.model.dtype)
             )
+            pixel_values_list.append(pixel_values)
+        num_patches_list = [
+            pixel_values.size(0) for pixel_values in pixel_values_list
+        ]
+        pixel_values = torch.cat(pixel_values_list, dim=0)
+
         import copy
 
         generation_config = copy.deepcopy(gen_kwargs.__dict__)

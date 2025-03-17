@@ -1,20 +1,32 @@
-from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
-from io import BytesIO
-import base64
+from transformers import (
+    Qwen2VLForConditionalGeneration,
+    AutoProcessor,
+    Qwen2_5_VLForConditionalGeneration,
+)
 from qwen_vl_utils import process_vision_info
 from base_vlm import BaseVLM
 from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
-    def __init__(self, model_id: str = "Qwen/Qwen2-VL-7B-Instruct") -> None:
+    def __init__(self, model_id: str = "Qwen/Qwen2-VL-2B-Instruct") -> None:
         self.model_id = model_id
-        self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-            self.model_id,
-            torch_dtype="bfloat16",
-            device_map="auto",
-            attn_implementation="flash_attention_2",
-        )
+
+        if "Qwen2.5-VL" in model_id:
+            self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+                self.model_id,
+                torch_dtype="bfloat16",
+                device_map="auto",
+                attn_implementation="flash_attention_2",
+            )
+        elif "Qwen2-VL" in model_id:
+            self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+                self.model_id,
+                torch_dtype="bfloat16",
+                device_map="auto",
+                attn_implementation="flash_attention_2",
+            )
+
         min_pixels = 256 * 28 * 28
         max_pixels = 1280 * 28 * 28
         self.processor = AutoProcessor.from_pretrained(
@@ -27,45 +39,21 @@ class VLM(BaseVLM):
         if "<image>" in text:
             text = text.replace("<image>", "")
         message = []
-        if isinstance(image, list):
-            image_content = []
+        image_content = []
 
-            for img in image:
-                base64_image = img.convert("RGB")
-                buffer = BytesIO()
-                base64_image.save(buffer, format="JPEG")
-                base64_bytes = base64.b64encode(buffer.getvalue())
-                base64_string = base64_bytes.decode("utf-8")
-                image_content.append(
-                    {
-                        "type": "image",
-                        "image": f"data:image/jpeg;base64,{base64_string}",
-                    }
-                )
-            message.append(
+        for img in image:
+            image_content.append(
                 {
-                    "role": "user",
-                    "content": image_content + [{"type": "text", "text": text}],
+                    "type": "image",
+                    "image": img,
                 }
             )
-        else:
-            base64_image = image.convert("RGB")
-            buffer = BytesIO()
-            base64_image.save(buffer, format="JPEG")
-            base64_bytes = base64.b64encode(buffer.getvalue())
-            base64_string = base64_bytes.decode("utf-8")
-            message = [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image",
-                            "image": f"data:image/jpeg;base64,{base64_string}",
-                        },
-                        {"type": "text", "text": text},
-                    ],
-                }
-            ]
+        message.append(
+            {
+                "role": "user",
+                "content": image_content + [{"type": "text", "text": text}],
+            }
+        )
 
         texts = self.processor.apply_chat_template(
             message, tokenize=False, add_generation_prompt=True

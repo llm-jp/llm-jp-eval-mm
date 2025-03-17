@@ -20,11 +20,8 @@ class VLM(BaseVLM):
         if "<image>" in text:
             prompt = "USER: " + text + "\nASSISTANT: "
         else:
-            if isinstance(image, list):
-                num_images = len(image)
-                prefix = "<image> " * num_images
-            else:
-                prefix = "<image> "
+            num_images = len(image)
+            prefix = "<image> " * num_images
             prompt = "USER: " + prefix + text + "\nASSISTANT: "
 
         inputs = (

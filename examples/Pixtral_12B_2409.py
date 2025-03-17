@@ -1,7 +1,6 @@
 from PIL import Image
 from vllm import LLM
 from vllm.sampling_params import SamplingParams
-from typing import Union
 import base64
 from io import BytesIO
 from base_vlm import BaseVLM
@@ -43,14 +42,11 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: Union[Image.Image, list[Image.Image]],
+        images: list[Image.Image],
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ):
-        if isinstance(images, list):
-            content = [image_to_content(image) for image in images]
-        else:
-            content = [image_to_content(images)]
+        content = [image_to_content(image) for image in images]
         content.extend([{"type": "text", "text": text}])
         messages = [
             {

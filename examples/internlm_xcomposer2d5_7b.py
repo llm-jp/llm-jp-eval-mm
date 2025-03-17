@@ -30,27 +30,17 @@ class VLM(BaseVLM):
     def generate(
         self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ):
-        text = text.replace("<image>", "")
         if "<image>" not in text:
-            if isinstance(image, list):
-                image_tokens = "".join(
-                    [f"Image{i} <ImageHere>; " for i in range(1, len(image) + 1)]
-                )
-                text = f"{image_tokens}{text}"
-            else:
-                text = f"Image1 <ImageHere>; {text}"
-
+            image_tokens = "".join(
+                [f"Image{i} <ImageHere>; " for i in range(1, len(image) + 1)]
+            )
+            text = f"{image_tokens}{text}"
         # make tmp files
         os.makedirs("tmp", exist_ok=True)
         image_files = []
-        if isinstance(image, list):
-            for i, img in enumerate(image):
-                file_path = f"tmp/image_{i}.jpg"
-                img.save(file_path)
-                image_files.append(file_path)
-        else:
-            file_path = "tmp/image_0.jpg"
-            image.save(file_path)
+        for i, img in enumerate(image):
+            file_path = f"tmp/image_{i}.jpg"
+            img.save(file_path)
             image_files.append(file_path)
 
         with torch.autocast(device_type="cuda", dtype=torch.float16):

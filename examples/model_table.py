@@ -16,8 +16,12 @@ MODEL_ID_TO_CLASS_PATH = {
     "SakanaAI/Llama-3-EvoVLM-JP-v2": "Llama_3_EvoVLM_JP_v2.VLM",
     "neulab/Pangea-7B-hf": "Pangea_7B_hf.VLM",
     "mistralai/Pixtral-12B-2409": "Pixtral_12B_2409.VLM",
+    "Qwen/Qwen2-VL-2B-Instruct": "Qwen2_VL.VLM",
     "Qwen/Qwen2-VL-7B-Instruct": "Qwen2_VL.VLM",
     "Qwen/Qwen2-VL-72B-Instruct": "Qwen2_VL.VLM",
+    "Qwen/Qwen2.5-VL-3B-Instruct": "Qwen2_VL.VLM",
+    "Qwen/Qwen2.5-VL-7B-Instruct": "Qwen2_VL.VLM",
+    "Qwen/Qwen2.5-VL-72B-Instruct": "Qwen2_VL.VLM",
     "llm-jp/llm-jp-3-vila-14b": "VILA_ja.VLM",
     "stabilityai/japanese-instructblip-alpha": "japanese_instructblip_alpha.VLM",
     "stabilityai/japanese-stable-vlm": "japanese_stable_vlm.VLM",
@@ -27,6 +31,7 @@ MODEL_ID_TO_CLASS_PATH = {
     "google/gemma-3-4b-it": "gemma3.VLM",
     "google/gemma-3-12b-it": "gemma3.VLM",
     "google/gemma-3-27b-it": "gemma3.VLM",
+    "sbintuitions/sarashina2-vision-8b": "sarashina.VLM",
 }
 
 

@@ -28,9 +28,7 @@ class VLM(BaseVLM):
     ):
         if DEFAULT_IMAGE_TOKEN in text:
             text = text.replace(DEFAULT_IMAGE_TOKEN, "")
-        num_images = 1
-        if isinstance(images, list):
-            num_images = len(images)
+        num_images = len(images)
         content = [{"type": "image"} for _ in range(num_images)]
         content.extend([{"type": "text", "text": text}])
         messages = [

@@ -36,14 +36,9 @@ class VLM(BaseVLM):
     def generate(
         self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ):
-        if isinstance(image, list):
-            if "<image>" not in text:
-                text = "<image> " * len(image) + "\n" + text
-            images = image
-        else:
-            if "<image>" not in text:
-                text = "<image>\n" + text
-            images = [image]
+        if "<image>" not in text:
+            text = "<image> " * len(image) + "\n" + text
+        images = image
         response, history = chat_mllava(
             text, images, self.model, self.processor, **gen_kwargs.__dict__
         )
