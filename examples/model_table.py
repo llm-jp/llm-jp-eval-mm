@@ -23,6 +23,10 @@ MODEL_ID_TO_CLASS_PATH = {
     "stabilityai/japanese-stable-vlm": "japanese_stable_vlm.VLM",
     "cyberagent/llava-calm2-siglip": "llava_calm2_siglip.VLM",
     "Efficient-Large-Model/VILA1.5-13b": "vila.VLM",
+    "google/gemma-3-1b-it": "gemma3.VLM",
+    "google/gemma-3-4b-it": "gemma3.VLM",
+    "google/gemma-3-12b-it": "gemma3.VLM",
+    "google/gemma-3-27b-it": "gemma3.VLM",
 }
 
 

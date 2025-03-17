@@ -75,22 +75,13 @@ task_config = eval_mm.api.task.TaskConfig(
 )
 task = eval_mm.api.registry.get_task_cls(task_id)(task_config)
 
-# save the predictions to jsonl file
-os.makedirs(args.result_dir, exist_ok=True)
-result_dir = f"{args.result_dir}/{task_id}"
-os.makedirs(result_dir, exist_ok=True)
-prediction_result_dir = os.path.join(result_dir, "prediction")
-os.makedirs(prediction_result_dir, exist_ok=True)
-evaluation_result_dir = os.path.join(result_dir, "evaluation")
-os.makedirs(evaluation_result_dir, exist_ok=True)
-
-prediction_result_file_path = os.path.join(
-    prediction_result_dir, f"{args.model_id.replace('/', '-')}.jsonl"
-)
+output_dir = os.path.join(args.result_dir, task_id, args.model_id)
+os.makedirs(output_dir, exist_ok=True)
 
 # if prediciton is already done, load the prediction
-if os.path.exists(prediction_result_file_path) and not args.overwrite:
-    with open(prediction_result_file_path, "r") as f:
+prediction_path = os.path.join(output_dir, "prediction.jsonl")
+if os.path.exists(prediction_path) and not args.overwrite:
+    with open(prediction_path, "r") as f:
         preds = [json.loads(line) for line in f]
     assert (
         len(preds) == len(task.dataset)
@@ -117,7 +108,7 @@ else:
             "text": generated_text,
         }
         preds.append(pred)
-    with open(prediction_result_file_path, "w") as f:
+    with open(prediction_path, "w") as f:
         for pred in preds:
             f.write(json.dumps(pred, ensure_ascii=False) + "\n")
 
@@ -146,7 +137,7 @@ for metric in metrics:
     print(f"{metric}: {calculated_metrics[metric]}")
 
 
-with open(os.path.join(prediction_result_file_path), "w") as f:
+with open(prediction_path, "w") as f:
     for i, pred in enumerate(preds):
         question_id = pred["question_id"]
         text = pred["text"]
@@ -155,11 +146,9 @@ with open(os.path.join(prediction_result_file_path), "w") as f:
         for metric in metrics:
             content[metric] = scores_for_each_metric[metric][i]
         f.write(json.dumps(content, ensure_ascii=False) + "\n")
-print(f"Prediction result saved to {prediction_result_file_path}")
+print(f"Prediction result saved to {prediction_path}")
 
-eval_result_file_path = os.path.join(
-    evaluation_result_dir, f"{args.model_id.replace('/', '-')}.json"
-)
-with open(eval_result_file_path, "w") as f:
+evaluation_path = os.path.join(output_dir, "evaluation.json")
+with open(evaluation_path, "w") as f:
     f.write(json.dumps(calculated_metrics, ensure_ascii=False) + "\n")
-print(f"Evaluation result saved to {eval_result_file_path}")
+print(f"Evaluation result saved to {evaluation_path}")
