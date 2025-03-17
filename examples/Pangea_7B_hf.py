@@ -2,7 +2,6 @@
 from transformers import LlavaNextForConditionalGeneration, AutoProcessor
 import torch
 from PIL import Image
-from typing import Union
 from base_vlm import BaseVLM
 from utils import GenerationConfig
 
@@ -19,10 +18,10 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: Union[Image.Image, list[Image.Image]],
+        images: list[Image.Image],
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
-    ):
+    ) -> str:
         prompt_template = (
             "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user"
             + "\n<image>" * len(images)

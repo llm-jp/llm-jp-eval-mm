@@ -9,10 +9,10 @@ class BaseVLM:
 
     def generate(
         self,
-        image: list[Image.Image] | Image.Image,
+        images: list[Image.Image],
         prompt: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
-    ):
+    ) -> str:
         """Generate a response given an image (or list of images) and a prompt."""
         raise NotImplementedError
 
@@ -22,5 +22,13 @@ class BaseVLM:
         image = Image.open(requests.get(image_file, stream=True).raw)
         image_file2 = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/car.jpg"
         image2 = Image.open(requests.get(image_file2, stream=True).raw)
-        print(self.generate([image], "画像には何が映っていますか?"))
-        print(self.generate([image, image2], "これらの画像の違いはなんですか?"))
+        output = self.generate([image], "画像には何が映っていますか?")
+        print(output)
+        assert isinstance(
+            output, str
+        ), f"Expected output to be a string, but got {type(output)}"
+        output = self.generate([image, image2], "これらの画像の違いはなんですか?")
+        print(output)
+        assert isinstance(
+            output, str
+        ), f"Expected output to be a string, but got {type(output)}"

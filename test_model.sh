@@ -1,19 +1,39 @@
-uv sync --group evovlm
-uv run  --group evovlm examples/EvoVLM_JP_v1_7B.py
+#!/bin/bash
+set -e  # エラーが発生したらスクリプトを停止する
 
-uv sync --group vilaja
-uv run --group vilaja examples/VILA_ja.py
+# Set CUDA devices
+export CUDA_VISIBLE_DEVICES=0
 
-uv sync --group normal --group normal
-uv run --group normal examples/japanese_instructblip_alpha.py
-uv run --group normal examples/japanese_stable_vlm.py
-uv run --group normal examples/llava_1_5.py
-uv run --group normal examples/llava_v1_6_mistral_7b_hf.py
-uv run --group normal examples/Llama_3_2_11B_Vision_Instruct.py
-uv run --group normal examples/llava_calm2_siglip.py
-uv run --group normal examples/Pangea_7B_hf.py
-uv run --group normal examples/InternVL2.py
-uv run --group normal examples/Qwen2_VL.py
+# Model name to group name mapping
+declare -A MODEL_GROUP_MAP=(
+    ["stabilityai/japanese-instructblip-alpha"]="normal"
+    ["stabilityai/japanese-stable-vlm"]="normal"
+    ["cyberagent/llava-calm2-siglip"]="normal"
+    ["llava-hf/llava-1.5-7b-hf"]="normal"
+    ["llava-hf/llava-v1.6-mistral-7b-hf"]="normal"
+    ["neulab/Pangea-7B-hf"]="normal"
+    ["meta-llama/Llama-3.2-11B-Vision-Instruct"]="normal"
+    ["meta-llama/Llama-3.2-90B-Vision-Instruct"]="normal"
+    ["OpenGVLab/InternVL2-8B"]="normal"
+    ["Qwen/Qwen2-VL-7B-Instruct"]="normal"
+    ["OpenGVLab/InternVL2-26B"]="normal"
+    ["Qwen/Qwen2-VL-72B-Instruct"]="normal"
+    ["Qwen/Qwen2.5-VL-7B-Instruct"]="normal"
+    ["Qwen/Qwen2.5-VL-72B-Instruct"]="normal"
+    ["gpt-4o-2024-05-13"]="normal"
+    ["mistralai/Pixtral-12B-2409"]="pixtral"
+    ["llm-jp/llm-jp-3-vila-14b"]="vilaja"
+    ["Efficient-Large-Model/VILA1.5-13b"]="vilaja"
+    ["SakanaAI/Llama-3-EvoVLM-JP-v2"]="evovlm"
+    ["google/gemma-3-4b-it"]="gemma"
+    ["sbintuitions/sarashina2-vision-8b"]="sarashina"
+    ["sbintuitions/sarashina2-vision-14b"]="sarashina"
+)
 
-uv sync --group pixtral
-uv run  --group pixtral examples/Pixtral_12B_2409.py
+for model_name in "${!MODEL_GROUP_MAP[@]}"; do
+    echo "Testing model: $model_name"
+    model_group=${MODEL_GROUP_MAP[$model_name]}
+    uv sync --group $model_group
+    uv run --group $model_group  python examples/test_model.py \
+        --model_id "$model_name"
+done

@@ -28,17 +28,17 @@ class VLM(BaseVLM):
         self.model.tokenizer = self.tokenizer
 
     def generate(
-        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ) -> str:
         if "<image>" not in text:
             image_tokens = "".join(
-                [f"Image{i} <ImageHere>; " for i in range(1, len(image) + 1)]
+                [f"Image{i} <ImageHere>; " for i in range(1, len(images) + 1)]
             )
             text = f"{image_tokens}{text}"
         # make tmp files
         os.makedirs("tmp", exist_ok=True)
         image_files = []
-        for i, img in enumerate(image):
+        for i, img in enumerate(images):
             file_path = f"tmp/image_{i}.jpg"
             img.save(file_path)
             image_files.append(file_path)

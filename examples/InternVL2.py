@@ -136,16 +136,16 @@ class VLM(BaseVLM):
         )
 
     def generate(
-        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ) -> str:
         text = text.replace("<image>", "")
         if "<image>" not in text:
-            image_tokens = ["<image>"] * len(image)
+            image_tokens = ["<image>"] * len(images)
             image_tokens = " ".join(image_tokens)
             text = f"{image_tokens}\n{text}"
 
         pixel_values_list = []
-        for img in image:
+        for img in images:
             pixel_values = (
                 load_image(img, max_num=12).to(self.model.device).to(self.model.dtype)
             )

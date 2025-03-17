@@ -16,8 +16,8 @@ class VLM(BaseVLM):
         self.model.to(self.device)
 
     def generate(
-        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ) -> str:
         text = "<image>" * len(image) + f"{text}"
 
         messages = [
@@ -27,7 +27,7 @@ class VLM(BaseVLM):
             },
             {"role": "user", "content": text},
         ]
-        inputs = self.processor.image_processor(images=image, return_tensors="pt")
+        inputs = self.processor.image_processor(images=images, return_tensors="pt")
         inputs["input_ids"] = self.processor.tokenizer.apply_chat_template(
             messages, return_tensors="pt"
         )

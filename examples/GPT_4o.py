@@ -23,10 +23,10 @@ class VLM(BaseVLM):
         )
 
     def generate(
-        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ) -> str:
         message = []
-        image__base64_list = [encode_image_to_base64(img) for img in image]
+        image__base64_list = [encode_image_to_base64(img) for img in images]
         message_base = {
             "role": "user",
             "content": [

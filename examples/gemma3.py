@@ -18,7 +18,7 @@ class VLM(BaseVLM):
         images: list[Image.Image],
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
-    ):
+    ) -> str:
         image_content = []
         for image in images:
             image_content.append({"type": "image", "image": image})

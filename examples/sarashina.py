@@ -22,7 +22,7 @@ class VLM(BaseVLM):
         images: list[Image.Image],
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
-    ):
+    ) -> str:
         message = [{"role": "user", "content": text}]
 
         text = self.processor.apply_chat_template(message, add_generation_prompt=True)

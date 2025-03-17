@@ -195,6 +195,7 @@ uv run ruff check --fix src
 You can test task classes and metric classes with the following command:
 ```
 bash test.sh
+bash test_model.sh
 ```
 
 

@@ -177,7 +177,7 @@ class VLM(BaseVLM):
 
     def generate(
         self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+    ) -> str:
         # instruct blip does not expect the <image> tag
         prompt = build_prompt(task="vqa", input=text)
         images = [process_images(images)]

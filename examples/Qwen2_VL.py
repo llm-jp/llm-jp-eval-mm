@@ -34,14 +34,14 @@ class VLM(BaseVLM):
         )
 
     def generate(
-        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ) -> str:
         if "<image>" in text:
             text = text.replace("<image>", "")
         message = []
         image_content = []
 
-        for img in image:
+        for img in images:
             image_content.append(
                 {
                     "type": "image",

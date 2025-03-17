@@ -45,7 +45,7 @@ class VLM(BaseVLM):
         images: list[Image.Image],
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
-    ):
+    ) -> str:
         content = [image_to_content(image) for image in images]
         content.extend([{"type": "text", "text": text}])
         messages = [

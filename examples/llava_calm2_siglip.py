@@ -14,18 +14,18 @@ class VLM(BaseVLM):
         self.processor = AutoProcessor.from_pretrained(self.model_id)
 
     def generate(
-        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ) -> str:
         prefix = None
         if "<image>" in text:
             prompt = "USER: " + text + "\nASSISTANT: "
         else:
-            num_images = len(image)
+            num_images = len(images)
             prefix = "<image> " * num_images
             prompt = "USER: " + prefix + text + "\nASSISTANT: "
 
         inputs = (
-            self.processor(text=prompt, images=image, return_tensors="pt")
+            self.processor(text=prompt, images=images, return_tensors="pt")
             .to(self.model.device)
             .to(self.model.dtype)
         )

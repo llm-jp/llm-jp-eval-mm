@@ -32,11 +32,11 @@ class VLM(BaseVLM):
         # self.image_processor = AutoProcessor.from_pretrained("Efficient-Large-Model/VILA-13b")
 
     def generate(
-        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ) -> str:
         qs = text
         if "<image>" not in text:
-            qs = "<image>\n" * len(image) + text
+            qs = "<image>\n" * len(images) + text
 
         print("input: ", qs)
 
@@ -53,10 +53,6 @@ class VLM(BaseVLM):
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
         prompt = conv.get_prompt()
-        if isinstance(image, list):
-            images = image
-        else:
-            images = [image]
 
         images_tensor = process_images(
             images, self.image_processor, self.model.config

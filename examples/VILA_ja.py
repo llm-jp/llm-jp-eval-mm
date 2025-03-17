@@ -21,24 +21,16 @@ class VLM(BaseVLM):
         )
 
     def generate(
-        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
-    ):
+        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ) -> str:
         qs = text
-        qs = qs.replace("<image>", "")
         if "<image>" not in text:
-            if isinstance(image, list):
-                qs = "<image>\n" * len(image) + text
-            else:
-                qs = "<image>\n" + text
+            qs = "<image>\n" * len(images) + text
         conv_mode = "llmjp_v3"
         conv = conv_templates[conv_mode].copy()
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
         prompt = conv.get_prompt()
-        if isinstance(image, list):
-            images = image
-        else:
-            images = [image]
         images_tensor = process_images(
             images, self.image_processor, self.model.config
         ).to(self.model.device, dtype=torch.float16)
