@@ -10,6 +10,7 @@ class TaskConfig:
     max_dataset_len: int | None = None
     judge_model: str = "gpt-4o-mini-2024-07-18"
     batch_size_for_evaluation: int = 10
+    rotate_choices: bool = False
 
 
 class Task(abc.ABC):

@@ -44,6 +44,7 @@ valid_metrics = [
     "llm_as_a_judge",
     "mmmu",
     "jic_vqa",
+    "mecha-ja",
 ]
 
 
