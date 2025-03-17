@@ -10,6 +10,7 @@ from .jdocqa_scorer import JDocQAScorer
 from .jic_vqa_scorer import JICVQAScorer
 from .mecha_ja_scorer import MECHAJaScorer
 
+
 class ScorerRegistry:
     """Registry to map metrics to their corresponding scorer classes."""
 

@@ -144,18 +144,13 @@ class VLM(BaseVLM):
             image_tokens = " ".join(image_tokens)
             text = f"{image_tokens}\n{text}"
 
-
         pixel_values_list = []
         for img in image:
             pixel_values = (
-                load_image(img, max_num=12)
-                .to(self.model.device)
-                .to(self.model.dtype)
+                load_image(img, max_num=12).to(self.model.device).to(self.model.dtype)
             )
             pixel_values_list.append(pixel_values)
-        num_patches_list = [
-            pixel_values.size(0) for pixel_values in pixel_values_list
-        ]
+        num_patches_list = [pixel_values.size(0) for pixel_values in pixel_values_list]
         pixel_values = torch.cat(pixel_values_list, dim=0)
 
         import copy

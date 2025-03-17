@@ -38,7 +38,6 @@ class VLM(BaseVLM):
         if "<image>" not in text:
             qs = "<image>\n" * len(image) + text
 
-
         print("input: ", qs)
 
         if "llama-2" in self.model_name.lower():

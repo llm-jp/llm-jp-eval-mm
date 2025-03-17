@@ -26,6 +26,10 @@ class VLM(BaseVLM):
         message = [{"role": "user", "content": text}]
 
         text = self.processor.apply_chat_template(message, add_generation_prompt=True)
+        # insert <|prefix|><|file|><|suffix|> after <s>
+        text = text.replace(
+            "<|prefix|><|file|><|suffix|>", "<|prefix|><|file|><|suffix|>" * len(images)
+        )
         inputs = self.processor(
             text=[text],
             images=images,
