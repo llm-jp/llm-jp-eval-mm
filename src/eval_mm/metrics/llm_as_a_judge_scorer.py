@@ -98,9 +98,9 @@ class LlmAsaJudgeScorer(Scorer):
 
 
 def test_llm_as_a_judge_scorer():
-    from eval_mm.utils.azure_client import MochChatAPI
+    from eval_mm.utils.azure_client import MockChatAPI
 
-    client = MochChatAPI()
+    client = MockChatAPI()
     questions = ["What is the capital of Japan?", "What is the capital of France?"]
     answers = ["Tokyo", "Paris"]
     preds = ["Tokyo", "Paris"]

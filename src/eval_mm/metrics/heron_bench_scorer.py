@@ -156,12 +156,12 @@ class HeronBenchScorer:
 
 def test_heron_bench_scorer():
     from datasets import load_dataset
-    from eval_mm.utils.azure_client import MochChatAPI
+    from eval_mm.utils.azure_client import MockChatAPI
 
     docs = load_dataset("Silviase/Japanese-Heron-Bench", split="train").select(range(1))
     docs = docs.rename_column("text", "input_text")
     pred_texts = ["This is a test."]
-    client = MochChatAPI()
+    client = MockChatAPI()
     judge_model = "gpt-4o-mini-2024-07-18"
     refs = [doc["answer"]["gpt-4-0125-preview"] for doc in docs]
     scores = HeronBenchScorer.score(

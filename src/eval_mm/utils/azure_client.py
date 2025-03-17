@@ -112,7 +112,7 @@ class OpenAIChatAPI:
         return f"{self.__class__.__name__}(client={self.client})"
 
 
-class MochChatAPI:
+class MockChatAPI:
     """
     A mock class for the OpenAI API client.
     """
