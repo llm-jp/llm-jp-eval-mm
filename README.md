@@ -16,9 +16,7 @@ For details on the data format and the list of supported data, please check [DAT
 
 - [llm-jp-eval-mm](#llm-jp-eval-mm)
   - [Table of Contents](#table-of-contents)
-  - [Environment Setup](#environment-setup)
-    - [Install via PyPI](#install-via-pypi)
-    - [Clone the GitHub Repo](#clone-the-github-repo)
+  - [Getting Started](#getting-started)
   - [How to Evaluate](#how-to-evaluate)
     - [Running an Evaluation](#running-an-evaluation)
     - [Leaderboard](#leaderboard)
@@ -37,52 +35,28 @@ For details on the data format and the list of supported data, please check [DAT
     - [How to Update the Website](#how-to-update-the-website)
   - [Acknowledgements](#acknowledgements)
 
-## Environment Setup
+## Getting Started
 
-You can also use this tool via PyPI.
+You can use this tool via GitHub (Recommended).
 
-### Install via PyPI
+```bash
+git clone git@github.com:llm-jp/llm-jp-eval-mm.git
+cd llm-jp-eval-mm
+uv sync
+```
 
-1. Use the `pip` command to include `eval_mm` in the virtual environment where you want to run it:
+Or you can install it via PyPI.
+```bash
+pip install eval_mm
+```
 
-   ```bash
-   pip install eval_mm
-   ```
+This tool uses the LLM-as-a-judge method for evaluation, which sends requests to GPT-4o via the OpenAI API. Please create a `.env` file and set `AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_KEY` if you’re using Azure, or `OPENAI_API_KEY` if you’re using the OpenAI API.
 
-2. This tool uses the LLM-as-a-judge method for evaluation, which sends requests to GPT-4o via the OpenAI API. Please create a `.env` file and set `AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_KEY` if you’re using Azure, or `OPENAI_API_KEY` if you’re using the OpenAI API.
-
-That’s it for environment setup.
-
-If you prefer to clone the repository and use it, please follow the instructions below.
-
-### Clone the GitHub Repo
-
-`eval-mm` uses `uv` to manage virtual environments.
-
-1. Clone the repository and move into it:
-   ```bash
-   git clone git@github.com:llm-jp/llm-jp-eval-mm.git
-   cd llm-jp-eval-mm
-   ```
-
-2. Build the environment with `uv`.
-
-   Please install `uv` by referring to the [official doc](https://docs.astral.sh/uv/getting-started/installation/).
-
-   ```bash
-   cd llm-jp-eval-mm
-   uv sync
-   ```
-
-3. Following the sample [.env.sample](./.env.sample), create a `.env` file and set `AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_KEY`, or `OPENAI_API_KEY`.
-
-That’s all you need for the setup.
+That’s it! You’re ready to evaluate your VLM model.
 
 ## How to Evaluate
 
 ### Running an Evaluation
-
-(Currently, the llm-jp-eval-mm repository is private. You can download the `examples` directory from the Source Distribution at [https://pypi.org/project/eval-mm/#files](https://pypi.org/project/eval-mm/#files).)
 
 We provide a sample code `examples/sample.py` for running an evaluation.
 
@@ -90,7 +64,7 @@ Models listed as `examples/{model_name}.py` are supported only in terms of their
 
 If you want to run an evaluation on a new inference method or a new model, create a similar file referencing existing `examples/{model_name}.py`, and you can run the evaluation in the same way.
 
-For example, if you want to evaluate the `llava-hf/llava-1.5-7b-hf` model on the japanese-heron-bench task, run the following command:
+For example, if you want to evaluate the `llava-hf/llava-1.5-7b-hf` model on japanese-heron-bench task, run the following command:
 
 ```bash
 uv sync --group normal
@@ -167,11 +141,20 @@ If you add a new group, don’t forget to configure [conflict](https://docs.astr
 ## Benchmark-Specific Required Libraries
 
 - JDocQA
-  For constructing the JDocQA dataset, you need the [pdf2image](https://pypi.org/project/pdf2image/) library. Since pdf2image depends on poppler-utils, please install it with:
 
-  ```bash
-  sudo apt-get install poppler-utils
-  ```
+To prepare the JDocQA dataset, [pdf2image](https://pypi.org/project/pdf2image/) library is needed. Since pdf2image depends on poppler-utils, please install it with:
+
+```bash
+sudo apt-get install poppler-utils
+```
+
+- JIC-VQA
+
+JIC-VQA only provide the image URL, so you need to download the images from the URL. You can use the following code to prepare the JIC-VQA dataset with the image download.
+
+```python
+python scripts/prepare_jic_vqa.py
+```
 
 ## License
 
@@ -179,7 +162,7 @@ This repository is licensed under the Apache-2.0 License.
 
 ## Contribution
 
-- If you find any issues or have suggestions, please report them on the Issue tracker.
+- If you find any issues or have suggestions, please report them on the Issue.
 - If you add new benchmark tasks, metrics, or VLM model inference code, or if you fix bugs, please send us a Pull Request.
 
 ### How to Add a Benchmark Task
@@ -192,7 +175,7 @@ Please reference the code in [src/eval_mm/metrics](https://github.com/llm-jp/llm
 
 ### How to Add Inference Code for a VLM Model
 Inference code for VLM models is defined in the `VLM` class.
-Please reference [examples/base_vlm](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/examples/base_vlm.py) and implement your `VLM` class. You’ll need a `generate()` method to produce output text from images and prompts.
+Please reference [examples/base_vlm](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/examples/base_vlm.py) and implement your `VLM` class. You’ll need a `generate()` method to output text given images and text inputs.
 
 ### How to Add Dependencies
 
