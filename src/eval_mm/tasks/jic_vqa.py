@@ -11,14 +11,14 @@ from ..api.registry import register_task
 from ..api.task import Task
 from eval_mm.metrics import ScorerRegistry
 
+
 @register_task("jic_vqa")
 class JICVQA(Task):
     @staticmethod
     def _prepare_dataset() -> Dataset:
         cache_dir = cached_assets_path(
-            library_name="datasets", 
-            namespace="JICVQA", 
-            subfolder="download")
+            library_name="datasets", namespace="JICVQA", subfolder="download"
+        )
 
         dataset = load_dataset("line-corporation/JIC-VQA")
         input_texts = []
@@ -31,7 +31,7 @@ class JICVQA(Task):
             "花": "jaflower30",
             "食べ物": "jafood101",
             "ランドマーク": "jalandmark10",
-            "施設": "jafacility20"
+            "施設": "jafacility20",
         }
 
         def get_domain_from_question(question):
@@ -40,7 +40,7 @@ class JICVQA(Task):
                     return domain
 
         def download_image(url, image_id):
-            img_format = url.split('.')[-1]
+            img_format = url.split(".")[-1]
             image_path = cache_dir / f"{image_id}.{img_format}"
             if image_path.exists():
                 return
@@ -54,7 +54,7 @@ class JICVQA(Task):
                         image = Image.open(BytesIO(response.content))
                         image.save(image_path)
                         print(f"Downloaded: {image_path}")
-                        wait_time = 1.0 
+                        wait_time = 1.0
                         time.sleep(wait_time)
                         return
                     else:
@@ -80,12 +80,12 @@ class JICVQA(Task):
         for subset in dataset:
             for entry in dataset[subset]:
                 image_id = entry["id"]
-                img_format = entry["url"].split('.')[-1]
+                img_format = entry["url"].split(".")[-1]
                 image_path = cache_dir / f"{image_id}.{img_format}"
 
                 if not image_path.exists():
                     warnings.warn(f"The image path {image_path} does not exist.")
-                    continue  
+                    continue
                 try:
                     image = Image.open(image_path)
                 except Exception as e:
@@ -102,27 +102,27 @@ class JICVQA(Task):
             "answer": answers,
             "image": images,
             "question_id": question_ids,
-            "domain": domains
+            "domain": domains,
         }
         return Dataset.from_dict(data_dict)
 
     @staticmethod
-    def doc_to_text(doc):
+    def doc_to_text(doc) -> str:
         return doc["input_text"]
 
     @staticmethod
-    def doc_to_visual(doc):
+    def doc_to_visual(doc) -> list[Image.Image]:
         return doc["image"]
 
     @staticmethod
-    def doc_to_id(doc):
+    def doc_to_id(doc) -> int:
         return doc["question_id"]
 
     @staticmethod
-    def doc_to_answer(doc):
+    def doc_to_answer(doc) -> str:
         return doc["answer"]
 
-    def calc_scores(self, preds: list, metric: str) -> list:
+    def calc_scores(self, preds: list[dict], metric: str) -> list:
         """Calculate scores of each prediction based on the metric."""
         docs = self.dataset
         refs = [doc["answer"] for doc in docs]
@@ -140,3 +140,18 @@ class JICVQA(Task):
         scorer = ScorerRegistry.get_scorer(metric)
         kwargs = {"docs": self.dataset}
         return scorer.aggregate(scores, **kwargs)
+
+
+def test_task():
+    from eval_mm.api.task import TaskConfig
+
+    task = JICVQA(TaskConfig())
+    ds = task.dataset
+    print(ds[0])
+    assert isinstance(task.doc_to_text(ds[0]), str)
+    assert isinstance(task.doc_to_visual(ds[0]), list)
+    assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
+    assert isinstance(task.doc_to_id(ds[0]), int)
+    assert isinstance(task.doc_to_answer(ds[0]), str)
+    assert isinstance(task.calc_scores([{"text": "dummy"}], "rougel"), list)
+    assert isinstance(task.gather_scores([0.0, 100.0], "rougel"), float)

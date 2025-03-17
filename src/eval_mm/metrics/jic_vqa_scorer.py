@@ -29,8 +29,8 @@ class JICVQAScorer(Scorer):
 
         # Calculate the average of all domain averages
         if domain_averages:
-            result['average'] = sum(domain_averages) / len(domain_averages)
+            result["average"] = sum(domain_averages) / len(domain_averages)
         else:
-            result['average'] = 0.0
+            result["average"] = 0.0
 
         return result

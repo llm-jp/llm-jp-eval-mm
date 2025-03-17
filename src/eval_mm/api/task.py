@@ -3,6 +3,7 @@ import abc
 from dataclasses import dataclass
 from eval_mm.utils.azure_client import OpenAIChatAPI
 from datasets import Dataset
+from PIL import Image
 
 
 @dataclass
@@ -37,22 +38,22 @@ class Task(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def doc_to_text(self, doc):
+    def doc_to_text(self, doc) -> str:
         """Converts a document to text."""
         pass
 
     @abc.abstractmethod
-    def doc_to_visual(self, doc):
+    def doc_to_visual(self, doc) -> list[Image.Image]:
         """Converts a document to visual."""
         pass
 
     @abc.abstractmethod
-    def doc_to_id(self, doc):
+    def doc_to_id(self, doc) -> int:
         """Converts a document to id."""
         pass
 
     @abc.abstractmethod
-    def doc_to_answer(self, doc):
+    def doc_to_answer(self, doc) -> str:
         """Converts a document to answer."""
         pass
 
