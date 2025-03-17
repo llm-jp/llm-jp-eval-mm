@@ -41,6 +41,7 @@ class JICVQA(Task):
                     return domain
 
         def download_image(url, image_id):
+            # TODO: Multi-threading for faster download
             img_format = url.split(".")[-1]
             image_path = cache_dir / f"{image_id}.{img_format}"
             if image_path.exists():
