@@ -22,8 +22,9 @@ declare -A MODEL_GROUP_MAP=(
     ["llm-jp/llm-jp-3-vila-14b"]="vilaja"
     ["Efficient-Large-Model/VILA1.5-13b"]="vilaja"
     ["SakanaAI/Llama-3-EvoVLM-JP-v2"]="evovlm"
-    ["google/gemma-3-4b-it"]="gemma"
+    ["google/gemma-3-12b-it"]="gemma"
     ["sbintuitions/sarashina2-vision-8b"]="sarashina"
+    ["sbintuitions/sarashina2-vision-14b"]="sarashina"
 )
 
 # Task list
@@ -50,7 +51,7 @@ declare -A METRIC_MAP=(
     ["jdocqa"]="jdocqa,llm_as_a_judge"
     ["mmmu"]="mmmu"
     ["llava-bench-in-the-wild"]="llm_as_a_judge,rougel"
-    ["jic-vqa"]="jic-vqa"
+    ["jic-vqa"]="jic_vqa"
     ["mecha-ja"]="mecha-ja"
 )
 
