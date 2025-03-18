@@ -50,7 +50,8 @@ exclude = [
 [tool.uv.sources]
 mantis-vl = { git = "https://github.com/TIGER-AI-Lab/Mantis" }
 s2wrapper = { git = "https://github.com/bfshi/scaling_on_scales.git" }
-transformers = { git = "https://github.com/huggingface/transformers", rev = "v4.49.0-Gemma-3" }
+# You need to comment out the following line when you use gemmm3
+# transformers = { git = "https://github.com/huggingface/transformers", rev = "v4.49.0-Gemma-3" }
 
 [tool.hatch.metadata]
 allow-direct-references = true
