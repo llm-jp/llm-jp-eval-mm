@@ -23,7 +23,7 @@ class ScorerRegistry:
         "jmmmu": JMMMUScorer,
         "jdocqa": JDocQAScorer,
         "mmmu": MMMUScorer,
-        "jic_vqa": JICVQAScorer,
+        "jic-vqa": JICVQAScorer,
         "mecha-ja": MECHAJaScorer,
     }
 

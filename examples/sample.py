@@ -55,7 +55,7 @@ VALID_METRICS = [
     "exact_match",
     "llm_as_a_judge",
     "mmmu",
-    "jic_vqa",
+    "jic-vqa",
     "mecha-ja",
 ]
 
