@@ -104,12 +104,7 @@ else:
         if "<image>" in text:
             text = text.replace("<image>", "")
         qid = task.doc_to_id(doc)
-        try:
-            generated_text = model.generate(images, text, gen_kwargs)
-        except Exception as e:
-            print(f"Error occurred for question_id: {qid}")
-            print(e)
-            generated_text = ""
+        generated_text = model.generate(images, text, gen_kwargs)
         pred = {
             "question_id": qid,
             "text": generated_text,

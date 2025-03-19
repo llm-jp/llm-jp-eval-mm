@@ -91,6 +91,10 @@ class LlmAsaJudgeScorer(Scorer):
                 return 1
 
         scores = [parse_score(completion) for completion in completion]
+        # if preds is empty, return 0 (TODO: this process should be done before calling llm)
+        for i, pred in enumerate(preds):
+            if pred == "":
+                scores[i] = 0
         return scores
 
     def aggregate(scores: list, **kwargs) -> float:
@@ -117,3 +121,17 @@ def test_llm_as_a_judge_scorer():
     assert scores == [1, 1]
     scores = LlmAsaJudgeScorer.aggregate(scores)
     assert scores == 1.0
+
+    # check empty preds
+    preds = ["", ""]
+    scores = LlmAsaJudgeScorer.score(
+        answers,
+        preds,
+        docs={"input_text": questions},
+        client=client,
+        judge_model=model_name,
+        batch_size=batch_size,
+    )
+    assert scores == [0, 0]
+    scores = LlmAsaJudgeScorer.aggregate(scores)
+    assert scores == 0.0
