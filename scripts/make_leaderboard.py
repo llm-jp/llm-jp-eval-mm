@@ -73,6 +73,8 @@ def main(result_dir: str, model_list: List[str], output_path: Optional[str] = No
             for k in df.columns
         }
     )
+    # sort columns
+    df = df.reindex(sorted(df.columns), axis=1)
 
     print(df.to_markdown(mode="github"))
 
