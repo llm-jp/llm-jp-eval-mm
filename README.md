@@ -84,7 +84,19 @@ If you want to evaluate multiple models on multiple tasks, please check `eval_al
 
 ### Leaderboard
 
-Leaderboard is [here](https://llm-jp.github.io/llm-jp-eval-mm/)
+You can create a leaderboard.md file by running the following command:
+```bash
+python scripts/make_leaderboard.py --result_dir result
+```
+
+Table like below will be created in `leaderboard.md` file.
+| Model                    | Heron/LLM | JVB-ItW/LLM | JVB-ItW/Rouge |
+| :----------------------- | --------: | ----------: | ------------: |
+| llava-hf/llava-1.5-7b-hf |   36.9038 |         2.7 |       40.7525 |
+
+
+
+Official Leaderboard is [here](https://llm-jp.github.io/llm-jp-eval-mm/)
 
 ## Supported Tasks
 

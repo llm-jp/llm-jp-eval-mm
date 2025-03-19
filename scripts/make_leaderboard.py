@@ -3,134 +3,23 @@ import os
 import pandas as pd
 from argparse import ArgumentParser
 from typing import Dict, List, Optional
+from loguru import logger
 
-BENCHMARK_METRICS = {
-    "japanese-heron-bench": [
-        "conv",
-        "detail",
-        "complex",
-        "overall",
-        "conv_rel",
-        "detail_rel",
-        "complex_rel",
-        "overall_rel",
-    ],
-    "ja-vlm-bench-in-the-wild": [
-        "rougel",
-        "llm_as_a_judge",
-    ],
-    "ja-vg-vqa-500": [
-        "rougel",
-        "llm_as_a_judge",
-    ],
-    "jdocqa": [
-        "yesno_exact",
-        "factoid_exact",
-        "numerical_exact",
-        "open-ended_bleu",
-        "overall",
-    ],
-    "ja-multi-image-vqa": [
-        "rougel",
-        "llm_as_a_judge",
-    ],
-    "jmmmu": [
-        "Overall-Art and Psychology",
-        "Design",
-        "Music",
-        "Psychology",
-        "Overall-Business",
-        "Accounting",
-        "Economics",
-        "Finance",
-        "Manage",
-        "Marketing",
-        "Overall-Science",
-        "Biology",
-        "Chemistry",
-        "Math",
-        "Physics",
-        "Overall-Health and Medicine",
-        "Basic_Medical_Science",
-        "Clinical_Medicine",
-        "Diagnostics_and_Laboratory_Medicine",
-        "Pharmacy",
-        "Public_Health",
-        "Overall-Tech and Engineering",
-        "Agriculture",
-        "Architecture_and_Engineering",
-        "Computer_Science",
-        "Electronics",
-        "Energy_and_Power",
-        "Materials",
-        "Mechanical_Engineering",
-        "Overall",
-    ],
-    "jic_vqa": ["jafacility20", "jaflower30", "jafood101", "jalandmark10", "average"],
-    "mecha-ja": [
-        "overall",
-        "Factoid",
-        "Non-Factoid",
-        "with_background",
-        "without_background",
-    ],
-    "llava-bench-in-the-wild": [
-        "rougel",
-        "llm_as_a_judge",
-    ],
-    "mmmu": [
-        "Overall-Art and Design",
-        "Art",
-        "Art_Theory",
-        "Design",
-        "Music",
-        "Overall-Business",
-        "Accounting",
-        "Economics",
-        "Finance",
-        "Manage",
-        "Marketing",
-        "Overall-Science",
-        "Biology",
-        "Chemistry",
-        "Geography",
-        "Math",
-        "Physics",
-        "Overall-Health and Medicine",
-        "Basic_Medical_Science",
-        "Clinical_Medicine",
-        "Diagnostics_and_Laboratory_Medicine",
-        "Pharmacy",
-        "Public_Health",
-        "Overall-Humanities and Social Science",
-        "History",
-        "Literature",
-        "Sociology",
-        "Psychology",
-        "Overall-Tech and Engineering",
-        "Agriculture",
-        "Architecture_and_Engineering",
-        "Computer_Science",
-        "Electronics",
-        "Energy_and_Power",
-        "Materials",
-        "Mechanical_Engineering",
-        "Overall",
-    ],
-}
+VALID_METRICS = [
+    "rougel",
+    "substring_match",
+    "jmmmu",
+    "jdocqa",
+    "llm_as_a_judge_heron_bench",
+    "exact_match",
+    "llm_as_a_judge",
+    "mmmu",
+    "jic_vqa",
+    "mecha-ja",
+]
 
-MAIN_METRICS = {
-    "japanese-heron-bench": ["llm_as_a_judge_heron_bench-overall_rel"],
-    "ja-vlm-bench-in-the-wild": ["llm_as_a_judge", "rougel"],
-    "ja-vg-vqa-500": ["llm_as_a_judge"],
-    "jdocqa": ["jdocqa-overall"],
-    "ja-multi-image-vqa": ["rougel"],
-    "jmmmu": ["jmmmu-Overall"],
-    "jic-vqa": ["jic_vqa-average"],
-    "mecha-ja": ["mecha-ja-overall"],
-    "llava-bench-in-the-wild": ["llm_as_a_judge"],
-    "mmmu": ["mmmu-Overall"],
-}
+# {"llm_as_a_judge_heron_bench": {"overall_score": 36.9037848990212, "details": {"conv": 3.238095238095238, "conv_rel": 35.78947368421053, "detail": 3.1904761904761907, "detail_rel": 36.61202185792351, "complex": 3.4, "complex_rel": 38.309859154929576, "parse_error_count": 0, "overall": 3.29126213592233, "overall_rel": 36.9037848990212}}}
+
 
 TASK_ALIAS = {
     "japanese-heron-bench": "Heron",
@@ -146,92 +35,78 @@ TASK_ALIAS = {
 }
 
 METRIC_ALIAS = {
-    "llm_as_a_judge_heron_bench-overall_rel": "LLM",
+    "llm_as_a_judge_heron_bench": "LLM",
     "llm_as_a_judge": "LLM",
     "rougel": "Rouge",
-    "jdocqa-overall": "Acc",
-    "jmmmu-Overall": "Acc",
-    "jic_vqa-average": "Acc",
-    "mecha-ja-overall": "Acc",
-    "mmmu-Overall": "Acc",
+    "jdocqa": "Acc",
+    "jmmmu": "Acc",
+    "jic_vqa": "Acc",
+    "mecha-ja": "Acc",
+    "mmmu": "Acc",
 }
-
-
-def read_evaluation_jsonl(file_path: str) -> Dict:
-    merged_result = {}
-    with open(file_path, "r") as f:
-        for line in f:
-            data = json.loads(line)
-            merged_result.update(data)
-    return merged_result
 
 
 def main(result_dir: str, model_list: List[str], output_path: Optional[str] = None):
     task_dirs = [d for d in os.listdir(result_dir) if not d.startswith(".")]
 
-    print(f"Tasks found: {task_dirs}")
     df = pd.DataFrame()
 
     for model in model_list:
         model_results = {"Model": model}
 
         for task_dir in task_dirs:
-            eval_path = os.path.join(result_dir, task_dir, model, "evaluation.json")
+            logger.info(f"Reading {task_dir} evaluation results for {model}")
+            eval_path = os.path.join(result_dir, task_dir, model, "evaluation.jsonl")
             if not os.path.exists(eval_path):
-                print(f"Warning: {eval_path} not found.")
+                logger.warning(f"{eval_path} not found. Skipping...")
                 continue
 
-            evaluation = read_evaluation_jsonl(eval_path)
+            with open(eval_path, "r") as f:
+                evaluation = json.load(f)
+            logger.info(f"Results: {evaluation}")
+            # {'llm_as_a_judge': {'overall_score': 2.7, 'details': {'llm_as_a_judge': 2.7}}, 'rougel': {'overall_score': 40.75248314834134, 'details': {'rougel': 40.75248314834134}}}
 
-            # ネストされている形式にも対応
-            for key, val in evaluation.items():
-                if isinstance(val, dict):
-                    for sub_metric, sub_val in val.items():
-                        if sub_metric == "parse_error_count":
-                            continue  # スキップしたい項目
-                        model_results[f"{task_dir}-{key}-{sub_metric}"] = sub_val
-                else:
-                    model_results[f"{task_dir}-{key}"] = val
+            for metric, aggregate_output in evaluation.items():
+                if metric not in VALID_METRICS:
+                    continue
 
-        df = pd.concat([df, pd.DataFrame([model_results])], ignore_index=True)
-
-    # 全体結果出力
-    print("\n## Full Benchmark Result")
-    print(df.to_markdown(mode="github", index=False))
-
-    # メインのメトリクスだけを抽出
-    main_df = df[["Model"]]
-    for task, metrics in MAIN_METRICS.items():
-        for metric in metrics:
-            print(f"{task}-{metric}")
-            if f"{task}-{metric}" in df.columns:
-                print(f"{metric}: {df[f'{task}-{metric}'].mean()}")
-                main_df[f"{TASK_ALIAS[task]}-{METRIC_ALIAS[metric]}"] = df[
-                    f"{task}-{metric}"
+                model_results[f"{task_dir}/{metric}"] = aggregate_output[
+                    "overall_score"
                 ]
-            else:
-                main_df[f"{TASK_ALIAS[task]}-{METRIC_ALIAS[metric]}"] = None
 
-    print("\n## Main Metrics")
-    print(main_df.to_markdown(mode="github", index=False))
+        df = df._append(model_results, ignore_index=True)
 
-    if output_path:
-        with open(output_path, "w") as f:
-            f.write(main_df.to_markdown(mode="github", index=False))
+    df = df.set_index("Model")
+    df = df.rename(
+        columns={
+            k: f"{TASK_ALIAS[k.split('/')[0]]}/{METRIC_ALIAS[k.split('/')[1]]}"
+            for k in df.columns
+        }
+    )
+
+    print(df.to_markdown(mode="github"))
+
+    with open(output_path, "w") as f:
+        f.write(df.to_markdown(mode="github"))
+
+
+def parse_args():
+    parser = ArgumentParser()
+    parser.add_argument("--result_dir", type=str, default="result")
+    parser.add_argument("--output_path", type=str, default="leaderboard.md")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("--result_dir", type=str, default="paper")
-    parser.add_argument("--output_path", type=str, default="leaderboard.md")
-    args = parser.parse_args()
+    args = parse_args()
 
     # モデルは実行時引数でも取れるようにしても良い
     model_list = [
-        "Qwen/Qwen2.5-VL-7B-Instruct",
-        "sbintuitions/sarashina2-vision-8b",
-        "sbintuitions/sarashina2-vision-14b",
-        "google/gemma-3-12b-it",
+        # "Qwen/Qwen2.5-VL-7B-Instruct",
+        # "sbintuitions/sarashina2-vision-8b",
+        # "sbintuitions/sarashina2-vision-14b",
+        # "google/gemma-3-12b-it",
+        "llava-hf/llava-1.5-7b-hf"
     ]
 
     main(args.result_dir, model_list, args.output_path)
