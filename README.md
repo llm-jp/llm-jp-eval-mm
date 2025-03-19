@@ -108,6 +108,7 @@ Japanese Task:
 - [JDocQA](https://github.com/mizuumi/JDocQA)
 - [JMMMU](https://huggingface.co/datasets/JMMMU/JMMMU)
 - [JIC-VQA](https://huggingface.co/datasets/line-corporation/JIC-VQA)
+- [MECHA-ja](https://huggingface.co/datasets/llm-jp/MECHA-ja)
 
 English Task:
 - [MMMU](https://huggingface.co/datasets/MMMU/MMMU)
