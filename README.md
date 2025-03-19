@@ -10,8 +10,6 @@ This tool automatically evaluates Japanese multi-modal large language models acr
 
 ![What llm-jp-eval-mm provides](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/assets/teaser.png)
 
-For details on the data format and the list of supported data, please check [DATASET.md](./DATASET.md).
-
 ## Table of Contents
 
 - [llm-jp-eval-mm](#llm-jp-eval-mm)
