@@ -41,7 +41,10 @@ class LlmAsaJudgeScorer(Scorer):
             content = INSTRUCTION.format(
                 Question=question, Answer=answer, Prediction=pred
             )
-            message = [{"role": "user", "content": content}]
+            message = [
+                {"role": "system", "content": "You are an expert evaluator."},
+                {"role": "user", "content": content},
+            ]
             return message
 
         messages = [
@@ -125,7 +128,11 @@ def test_llm_as_a_judge_scorer():
             "国内の日本語教育の概要において、外国人に対する日本語教育の現状として、日本語教師数の数は34392人、学習者の数は139613人となっています。",
         ]
 
-        preds = ["", "", ""]
+        preds = [
+            "7割",
+            "",
+            "日本語教師数の数は34392人、学習者の数は139613人となっています。",
+        ]
         model_name = "gpt-4o-2024-05-13"
         scores = LlmAsaJudgeScorer.score(
             answers,
@@ -135,4 +142,4 @@ def test_llm_as_a_judge_scorer():
             judge_model=model_name,
             batch_size=batch_size,
         )
-        assert scores == [1, 1, 1]
+        assert scores == [5, 1, 5]
