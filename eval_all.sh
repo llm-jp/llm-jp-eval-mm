@@ -43,21 +43,21 @@ declare -a task_list=(
 
 # Define metrics per task
 declare -A METRIC_MAP=(
-    ["japanese-heron-bench"]="llm_as_a_judge_heron_bench"
-    ["ja-vlm-bench-in-the-wild"]="llm_as_a_judge,rougel"
-    ["ja-vg-vqa-500"]="llm_as_a_judge,rougel"
+    ["japanese-heron-bench"]="heron-bench"
+    ["ja-vlm-bench-in-the-wild"]="llm-as-a-judge,rougel"
+    ["ja-vg-vqa-500"]="llm-as-a-judge,rougel"
     ["jmmmu"]="jmmmu"
-    ["ja-multi-image-vqa"]="llm_as_a_judge,rougel"
-    ["jdocqa"]="jdocqa,llm_as_a_judge"
+    ["ja-multi-image-vqa"]="llm-as-a-judge,rougel"
+    ["jdocqa"]="jdocqa,llm-as-a-judge"
     ["mmmu"]="mmmu"
-    ["llava-bench-in-the-wild"]="llm_as_a_judge,rougel"
-    ["jic-vqa"]="jic_vqa"
+    ["llava-bench-in-the-wild"]="llm-as-a-judge,rougel"
+    ["jic-vqa"]="jic-vqa"
     ["mecha-ja"]="mecha-ja"
 )
 
 # Result directories
 declare -a result_dir_list=(
-    "test"
+    "result"
 )
 
 # Main evaluation loop

@@ -36,7 +36,7 @@ def parse_args():
         "--metrics",
         type=str,
         default="llm_as_a_judge_heron_bench",
-        help="metrics to evaluate. You can specify multiple metrics separated by comma (e.g. --metrics exact_match,llm_as_a_judge) You can use rougel,substring_match,jmmmu,jdocqa,llm_as_a_judge_heron_bench,exact_match",
+        help=f"metrics to evaluate. You can specify multiple metrics separated by comma (e.g. --metrics exact_match,llm_as_a_judge) You can use the following metrics: {list(eval_mm.metrics.ScorerRegistry._scorers.keys())}",
     )
     parser.add_argument(
         "--rotate_choices",
@@ -46,30 +46,19 @@ def parse_args():
     return parser.parse_args()
 
 
-VALID_METRICS = [
-    "rougel",
-    "substring_match",
-    "jmmmu",
-    "jdocqa",
-    "llm_as_a_judge_heron_bench",
-    "exact_match",
-    "llm_as_a_judge",
-    "mmmu",
-    "jic-vqa",
-    "mecha-ja",
-]
-
-
 def validate_metrics(metrics: list[str]):
     for metric in metrics:
-        if metric not in VALID_METRICS:
+        if metric not in list(eval_mm.metrics.ScorerRegistry._scorers.keys()):
             raise ValueError(
-                f"Invalid metric: {metric}. Valid metrics are {VALID_METRICS}"
+                f"Invalid metric: {metric}. You can use the following metrics: {list(eval_mm.metrics.ScorerRegistry._scorers.keys())}"
             )
 
 
 if __name__ == "__main__":
     args = parse_args()
+    metrics = args.metrics.split(",")
+    validate_metrics(metrics)
+
     gen_kwargs = GenerationConfig(
         max_new_tokens=args.max_new_tokens,
         temperature=args.temperature,
@@ -124,9 +113,6 @@ if __name__ == "__main__":
         exit()
     logger.info("Evaluation start")
     # evaluate the predictions
-
-    metrics = args.metrics.split(",")
-    validate_metrics(metrics)
 
     scores_for_each_metric = {}
     calculated_metrics = {}

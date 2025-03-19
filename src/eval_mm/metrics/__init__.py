@@ -15,11 +15,11 @@ class ScorerRegistry:
     """Registry to map metrics to their corresponding scorer classes."""
 
     _scorers = {
-        "llm_as_a_judge_heron_bench": HeronBenchScorer,
-        "exact_match": ExactMatchScorer,
-        "llm_as_a_judge": LlmAsaJudgeScorer,
+        "heron-bench": HeronBenchScorer,
+        "exact-match": ExactMatchScorer,
+        "llm-as-a-judge": LlmAsaJudgeScorer,
         "rougel": RougeLScorer,
-        "substring_match": SubstringMatchScorer,
+        "substring-match": SubstringMatchScorer,
         "jmmmu": JMMMUScorer,
         "jdocqa": JDocQAScorer,
         "mmmu": MMMUScorer,

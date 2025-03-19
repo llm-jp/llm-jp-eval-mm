@@ -4,19 +4,8 @@ import pandas as pd
 from argparse import ArgumentParser
 from typing import Dict, List, Optional
 from loguru import logger
-
-VALID_METRICS = [
-    "rougel",
-    "substring_match",
-    "jmmmu",
-    "jdocqa",
-    "llm_as_a_judge_heron_bench",
-    "exact_match",
-    "llm_as_a_judge",
-    "mmmu",
-    "jic_vqa",
-    "mecha-ja",
-]
+import eval_mm
+import eval_mm.metrics
 
 # {"llm_as_a_judge_heron_bench": {"overall_score": 36.9037848990212, "details": {"conv": 3.238095238095238, "conv_rel": 35.78947368421053, "detail": 3.1904761904761907, "detail_rel": 36.61202185792351, "complex": 3.4, "complex_rel": 38.309859154929576, "parse_error_count": 0, "overall": 3.29126213592233, "overall_rel": 36.9037848990212}}}
 
@@ -35,12 +24,12 @@ TASK_ALIAS = {
 }
 
 METRIC_ALIAS = {
-    "llm_as_a_judge_heron_bench": "LLM",
-    "llm_as_a_judge": "LLM",
+    "heron-bench": "LLM",
+    "llm-as-a-judge": "LLM",
     "rougel": "Rouge",
     "jdocqa": "Acc",
     "jmmmu": "Acc",
-    "jic_vqa": "Acc",
+    "jic-vqa": "Acc",
     "mecha-ja": "Acc",
     "mmmu": "Acc",
 }
@@ -67,7 +56,8 @@ def main(result_dir: str, model_list: List[str], output_path: Optional[str] = No
             # {'llm_as_a_judge': {'overall_score': 2.7, 'details': {'llm_as_a_judge': 2.7}}, 'rougel': {'overall_score': 40.75248314834134, 'details': {'rougel': 40.75248314834134}}}
 
             for metric, aggregate_output in evaluation.items():
-                if metric not in VALID_METRICS:
+                if metric not in list(eval_mm.metrics.ScorerRegistry._scorers.keys()):
+                    logger.warning(f"Skipping unsupported metric: {metric}")
                     continue
 
                 model_results[f"{task_dir}/{metric}"] = aggregate_output[
@@ -102,11 +92,11 @@ if __name__ == "__main__":
 
     # モデルは実行時引数でも取れるようにしても良い
     model_list = [
-        # "Qwen/Qwen2.5-VL-7B-Instruct",
-        # "sbintuitions/sarashina2-vision-8b",
-        # "sbintuitions/sarashina2-vision-14b",
-        # "google/gemma-3-12b-it",
-        "llava-hf/llava-1.5-7b-hf"
+        "Qwen/Qwen2.5-VL-7B-Instruct",
+        "sbintuitions/sarashina2-vision-8b",
+        "sbintuitions/sarashina2-vision-14b",
+        "google/gemma-3-12b-it",
+        "llava-hf/llava-1.5-7b-hf",
     ]
 
     main(args.result_dir, model_list, args.output_path)
