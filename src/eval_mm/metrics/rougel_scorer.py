@@ -5,7 +5,7 @@ from rouge_score import rouge_scorer, scoring
 from fugashi import Tagger
 import emoji
 import unicodedata
-from .scorer import Scorer
+from .scorer import Scorer, AggregateOutput
 from concurrent.futures import ProcessPoolExecutor
 
 
@@ -84,8 +84,9 @@ class RougeLScorer(Scorer):
         return scores
 
     @staticmethod
-    def aggregate(scores: list[dict], **kwargs) -> float:
-        return sum(scores) / len(scores)
+    def aggregate(scores: list[dict], **kwargs) -> AggregateOutput:
+        mean = sum(scores) / len(scores)
+        return AggregateOutput(mean, {"rougel": mean})
 
 
 def test_rouge_ja():
@@ -121,6 +122,5 @@ def test_rougel_scorer():
     preds = ["たかしが公園にいたようだ。"]
     scores = RougeLScorer.score(refs, preds)
     assert pytest.approx(scores[0], 0.01) == 66.66
-
-    assert RougeLScorer.aggregate([100.0, 100.0, 100.0, 0.0]) == 75.0
-    assert RougeLScorer.aggregate([100.0, 100.0, 0.0, 0.0]) == 50.0
+    output = RougeLScorer.aggregate(scores)
+    assert pytest.approx(output.overall_score, 0.01) == 66.66

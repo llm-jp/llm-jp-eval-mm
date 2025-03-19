@@ -1,7 +1,6 @@
 from datasets import Dataset, load_dataset
 from ..api.registry import register_task
 from ..api.task import Task
-from eval_mm.metrics import ScorerRegistry
 from PIL import Image
 
 MULTI_CHOICE_PROMPT = (
@@ -158,20 +157,6 @@ class MECHAJa(Task):
     def doc_to_answer(doc) -> str:
         return doc["answer_text"]
 
-    def calc_scores(self, preds: list, metric: str) -> list:
-        scorer = ScorerRegistry.get_scorer(metric)
-        refs = [doc["answer_text"] for doc in self.dataset]
-        pred_texts = [p["text"] for p in preds]
-        kwargs = {
-            "docs": self.dataset,
-            "batch_size": self.config.batch_size_for_evaluation,
-        }
-        return scorer.score(refs, pred_texts, **kwargs)
-
-    def gather_scores(self, scores: list[dict], metric: str) -> dict:
-        scorer = ScorerRegistry.get_scorer(metric)
-        return scorer.aggregate(scores, docs=self.dataset)
-
 
 def test_task():
     from eval_mm.api.task import TaskConfig
@@ -184,5 +169,3 @@ def test_task():
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
     assert isinstance(task.doc_to_id(ds[0]), str)
     assert isinstance(task.doc_to_answer(ds[0]), str)
-    assert isinstance(task.calc_scores([{"text": "dummy"}], "rougel"), list)
-    assert isinstance(task.gather_scores([0.0, 100.0], "rougel"), float)

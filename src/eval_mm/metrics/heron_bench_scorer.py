@@ -1,6 +1,8 @@
 from eval_mm.utils.azure_client import OpenAIChatAPI
 from collections import defaultdict
 import numpy as np
+from eval_mm.metrics.scorer import Scorer, AggregateOutput
+from loguru import logger
 
 RULES: dict = {
     "coding": {
@@ -50,11 +52,10 @@ def parse_score(review: str) -> dict[str, int]:
         if len(sp) == 2:
             return {"score": int(sp[1]), "score_gpt": int(sp[0])}
         else:
-            print("error", review)
+            logger.error(f"error: {review}")
             return {"score": -1, "score_gpt": -1}
     except Exception as e:
-        print(e)
-        print("error", review)
+        logger.error(f"error: {e}")
         return {"score": -1, "score_gpt": -1}
 
 
@@ -92,7 +93,7 @@ def build_content(context, input_text, ref_answer, pred_answer, role, prompt):
     )
 
 
-class HeronBenchScorer:
+class HeronBenchScorer(Scorer):
     @staticmethod
     def score(refs, preds: list[str], **kwargs) -> list[dict[str, int]]:
         docs = kwargs["docs"]
@@ -115,7 +116,7 @@ class HeronBenchScorer:
         return scores
 
     @staticmethod
-    def aggregate(scores: list[dict[str, int]], **kwargs) -> dict[str, float]:
+    def aggregate(scores: list[dict[str, int]], **kwargs) -> AggregateOutput:
         docs = kwargs["docs"]
         category_list = ["conv", "detail", "complex"]
         heron_metrics = defaultdict(float)
@@ -151,27 +152,33 @@ class HeronBenchScorer:
         heron_metrics["overall_rel"] = sum(
             [heron_metrics[category + "_rel"] for category in category_list]
         ) / len(category_list)
-        return heron_metrics
+        output = AggregateOutput(
+            overall_score=heron_metrics["overall_rel"],
+            details=heron_metrics,
+        )
+        return output
 
 
 def test_heron_bench_scorer():
-    from datasets import load_dataset
     from eval_mm.utils.azure_client import MockChatAPI
 
-    docs = load_dataset("Silviase/Japanese-Heron-Bench", split="train").select(range(1))
-    docs = docs.rename_column("text", "input_text")
-    pred_texts = ["This is a test."]
-    client = MockChatAPI()
-    judge_model = "gpt-4o-mini-2024-07-18"
-    refs = [doc["answer"]["gpt-4-0125-preview"] for doc in docs]
+    refs = ["私は猫です。"]
+    preds = ["私は犬です。"]
+    docs = [{"context": "hoge", "input_text": "fuga", "category": "conv"}]
     scores = HeronBenchScorer.score(
-        refs, pred_texts, docs=docs, client=client, judge_model=judge_model
+        refs, preds, docs=docs, client=MockChatAPI(), judge_model="gpt-4o-2024-05-13"
     )
-    assert len(scores) == 1
-    print(scores)
-    calculated_metric = HeronBenchScorer.aggregate(scores, docs=docs)
-    assert "overall" in calculated_metric
-    print(calculated_metric)
+    assert scores == [{"score": -1, "score_gpt": -1}]
+    output = HeronBenchScorer.aggregate(scores, docs=docs)
+    assert output.overall_score == 0.0
+    assert output.details == {
+        "parse_error_count": 1,
+        "overall": -1.0,
+        "conv_rel": 0.0,
+        "detail_rel": 0.0,
+        "complex_rel": 0.0,
+        "overall_rel": 0.0,
+    }
 
 
 if __name__ == "__main__":
@@ -192,3 +199,6 @@ if __name__ == "__main__":
         refs, pred_texts, docs=ds, client=client, judge_model=judge_model
     )
     print(scores)
+
+    output = HeronBenchScorer.aggregate(scores, docs=ds)
+    print(output)

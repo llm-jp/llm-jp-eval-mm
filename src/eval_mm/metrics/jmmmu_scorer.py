@@ -4,6 +4,7 @@ import random
 import re
 import numpy as np
 from datasets import Dataset
+from eval_mm.metrics.scorer import Scorer, AggregateOutput
 
 
 DOMAIN_CAT2SUB_CAT = {
@@ -406,7 +407,7 @@ def get_score(doc: Dataset, pred: str) -> int:
     return score
 
 
-class JMMMUScorer:
+class JMMMUScorer(Scorer):
     @staticmethod
     def score(refs: list[str], preds: list[str], **kwargs) -> list[int]:
         docs = kwargs["docs"]
@@ -417,7 +418,7 @@ class JMMMUScorer:
         return scores
 
     @staticmethod
-    def aggregate(scores: list[int], **kwargs) -> float:
+    def aggregate(scores: list[int], **kwargs) -> AggregateOutput:
         docs = kwargs["docs"]
         evaluation_result = {}
         subset_to_eval_samples = defaultdict(list)
@@ -449,57 +450,32 @@ class JMMMUScorer:
                 printable_results[cat_name] = round(cat_results["acc"], 5)
         all_ins_acc = calculate_ins_level_acc(evaluation_result)
         printable_results["Overall"] = round(all_ins_acc, 5)
-        return printable_results
+        output = AggregateOutput(all_ins_acc, printable_results)
+        return output
 
 
-def test_jmmmu_score():
-    from datasets import load_dataset
-
-    ds = load_dataset("JMMMU/JMMMU", name="Accounting", split="test")
-    ds = ds.map(
-        lambda x: {
-            "input_text": jmmmu_doc_to_text(x),
-            "question_id": x["id"],
-            "answer": x["answer"],
+def test_jmmmu_scorer():
+    refs = ["A"]
+    preds = ["A"]
+    docs = [
+        {
+            "question_type": "multiple-choice",
+            "options": '["A", "B", "C", "D"]',
+            "answer": "A",
+            "id": "validation_Accounting_1",
         }
-    )
-    ds = ds.select(range(10))
-    assert JMMMUScorer.score(ds, ["A" for _ in range(10)], docs=ds) == [
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
     ]
-
-
-def test_jmmmu_aggregate():
-    from datasets import load_dataset
-
-    ds = load_dataset("JMMMU/JMMMU", name="Accounting", split="test")
-    ds = ds.map(
-        lambda x: {
-            "input_text": jmmmu_doc_to_text(x),
-            "question_id": x["id"],
-            "answer": x["answer"],
-        }
-    )
-    ds = ds.select(range(10))
-    preds = ["A" for _ in range(10)]
-    scores = JMMMUScorer.score(ds, preds, docs=ds)
-    metric = JMMMUScorer.aggregate(scores, docs=ds)
-    true_metric = {
+    scores = JMMMUScorer.score(refs, preds, docs=docs)
+    assert scores == [1]
+    output = JMMMUScorer.aggregate(scores, docs=docs)
+    assert output.overall_score == 1.0
+    print(output)
+    assert output.details == {
         "Overall-Art and Psychology": 0,
-        "Overall-Business": 0.3,
-        "Accounting": 0.3,
+        "Overall-Business": 1.0,
+        "Accounting": 1.0,
         "Overall-Science": 0,
         "Overall-Health and Medicine": 0,
         "Overall-Tech and Engineering": 0,
-        "Overall": 0.3,
+        "Overall": 1.0,
     }
-    assert metric == true_metric

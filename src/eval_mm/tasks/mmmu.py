@@ -13,7 +13,6 @@ from PIL import Image
 
 import ast
 import re
-from eval_mm.metrics import ScorerRegistry
 
 MULTI_CHOICE_PROMPT = "Answer with the option's letter from the given choices directly."
 OPEN_ENDED_PROMPT = "Answer the question using a single word or phrase."
@@ -118,26 +117,6 @@ class MMMU(Task):
     def doc_to_answer(doc) -> str:
         return doc["answer"]
 
-    def calc_scores(self, preds: list[dict], metric: str) -> list:
-        """Calculate scores of each prediction based on the metric."""
-        docs = self.dataset
-        refs = [doc["answer"] for doc in docs]
-        pred_texts = [pred["text"] for pred in preds]
-        scorer = ScorerRegistry.get_scorer(metric)
-        kwargs = {
-            "docs": docs,
-            "client": self.client,
-            "batch_size": self.config.batch_size_for_evaluation,
-            "judge_model": self.config.judge_model,
-        }
-        return scorer.score(refs, pred_texts, **kwargs)
-
-    def gather_scores(self, scores: list[dict], metric: str) -> dict:
-        """Gather scores of each prediction based on the metric."""
-        kwargs = {"docs": self.dataset}
-        scorer = ScorerRegistry.get_scorer(metric)
-        return scorer.aggregate(scores, **kwargs)
-
 
 def test_task():
     from eval_mm.api.task import TaskConfig
@@ -150,5 +129,3 @@ def test_task():
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
     assert isinstance(task.doc_to_id(ds[0]), str)
     assert isinstance(task.doc_to_answer(ds[0]), str)
-    assert isinstance(task.calc_scores([{"text": "dummy"}], "rougel"), list)
-    assert isinstance(task.gather_scores([0.0, 100.0], "rougel"), float)

@@ -1,5 +1,5 @@
 # mecha-ja-scorer.py
-from .scorer import Scorer
+from .scorer import Scorer, AggregateOutput
 import re
 from collections import defaultdict
 
@@ -36,7 +36,7 @@ class MECHAJaScorer(Scorer):
         return scores
 
     @staticmethod
-    def aggregate(scores: list[int], docs: list[dict], **kwargs) -> dict:
+    def aggregate(scores: list[int], docs: list[dict], **kwargs) -> AggregateOutput:
         """
         回転IDごとにスコアを集計して、以下のような構造を返す:
         {
@@ -115,5 +115,39 @@ class MECHAJaScorer(Scorer):
                 "with_background": avg(cat_scores["with_bg"]),
                 "without_background": avg(cat_scores["without_bg"]),
             }
+        output = AggregateOutput(result["overall"], result)
 
-        return result
+        return output
+
+
+def test_mechaja_scorer():
+    refs = ["私は猫です。"]
+    preds = ["私は猫です。"]
+    scores = MECHAJaScorer.score(refs, preds)
+
+    assert scores == [1]
+    output = MECHAJaScorer.aggregate(
+        scores,
+        docs=[
+            {
+                "question_id": "q1",
+                "answer_type": 0,
+                "background_text": "",
+            }
+        ],
+    )
+    assert output.overall_score == 1.0
+    assert output.details == {
+        "overall": 1.0,
+        "Factoid": 1.0,
+        "Non-Factoid": 0.0,
+        "with_background": 0.0,
+        "without_background": 1.0,
+        "rot_no_rot": {
+            "overall": 1.0,
+            "Factoid": 1.0,
+            "Non-Factoid": 0.0,
+            "with_background": 0.0,
+            "without_background": 1.0,
+        },
+    }

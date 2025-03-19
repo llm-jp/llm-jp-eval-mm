@@ -1,4 +1,4 @@
-from eval_mm.metrics.scorer import Scorer
+from eval_mm.metrics.scorer import Scorer, AggregateOutput
 from tqdm import tqdm
 import re
 
@@ -76,8 +76,9 @@ class LlmAsaJudgeScorer(Scorer):
         #         scores[i] = 0
         return scores
 
-    def aggregate(scores: list, **kwargs) -> float:
-        return sum([score for score in scores]) / len(scores)
+    def aggregate(scores: list, **kwargs) -> AggregateOutput:
+        mean = sum(scores) / len(scores)
+        return AggregateOutput(mean, {"llm_as_a_judge": mean})
 
 
 def test_llm_as_a_judge_scorer():
@@ -96,8 +97,9 @@ def test_llm_as_a_judge_scorer():
         batch_size=batch_size,
     )
     assert scores == [0, 0]
-    scores = LlmAsaJudgeScorer.aggregate(scores)
-    assert scores == 0.0
+    output = LlmAsaJudgeScorer.aggregate(scores)
+    assert output.overall_score == 0.0
+    assert output.details == {"llm_as_a_judge": 0.0}
 
     import os
 

@@ -1,4 +1,4 @@
-from .scorer import Scorer
+from .scorer import Scorer, AggregateOutput
 
 
 class JICVQAScorer(Scorer):
@@ -8,7 +8,7 @@ class JICVQAScorer(Scorer):
         return scores
 
     @staticmethod
-    def aggregate(scores: list[int], **kwargs) -> float:
+    def aggregate(scores: list[int], **kwargs) -> AggregateOutput:
         docs = kwargs["docs"]
         domain_scores = {}
 
@@ -32,5 +32,15 @@ class JICVQAScorer(Scorer):
             result["average"] = sum(domain_averages) / len(domain_averages)
         else:
             result["average"] = 0.0
+        output = AggregateOutput(result["average"], result)
+        return output
 
-        return result
+
+def test_jic_vqa_test():
+    refs = ["私は猫です。"]
+    preds = ["私は猫です。"]
+    scores = JICVQAScorer.score(refs, preds, docs={"domain": ["test"]})
+    assert scores == [1]
+    output = JICVQAScorer.aggregate(scores, docs={"domain": ["test"]})
+    assert output.overall_score == 1.0
+    assert output.details == {"test": 1.0, "average": 1.0}

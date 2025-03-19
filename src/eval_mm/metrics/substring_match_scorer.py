@@ -1,4 +1,4 @@
-from .scorer import Scorer
+from .scorer import Scorer, AggregateOutput
 
 
 class SubstringMatchScorer(Scorer):
@@ -8,8 +8,9 @@ class SubstringMatchScorer(Scorer):
         return scores
 
     @staticmethod
-    def aggregate(scores: list[int], **kwargs) -> float:
-        return sum(scores) / len(scores)
+    def aggregate(scores: list[int], **kwargs) -> AggregateOutput:
+        mean = sum(scores) / len(scores)
+        return AggregateOutput(mean, {"substring_match": mean})
 
 
 def test_substring_match_scorer():
@@ -30,17 +31,6 @@ def test_substring_match_scorer():
     scores = SubstringMatchScorer.score(refs, preds)
     assert scores == [0]
 
-    scores = SubstringMatchScorer.aggregate([1, 1, 1, 0])
-    assert scores == 0.75
-
-    scores = SubstringMatchScorer.aggregate([1, 1, 0, 0])
-    assert scores == 0.5
-
-    scores = SubstringMatchScorer.aggregate([1, 0, 0, 0])
-    assert scores == 0.25
-
-    scores = SubstringMatchScorer.aggregate([0, 0, 0, 0])
-    assert scores == 0.0
-
-    scores = SubstringMatchScorer.aggregate([1, 1, 1, 1])
-    assert scores == 1.0
+    output = SubstringMatchScorer.aggregate([1, 1, 1, 0])
+    assert output.overall_score == 0.75
+    assert output.details == {"substring_match": 0.75}

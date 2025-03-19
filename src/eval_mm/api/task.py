@@ -57,13 +57,3 @@ class Task(abc.ABC):
     def doc_to_answer(self, doc) -> str:
         """Converts a document to answer."""
         pass
-
-    @abc.abstractmethod
-    def calc_scores(self, preds: list, metric: str) -> list:
-        """Calculates scores for the predictions."""
-        pass
-
-    @abc.abstractmethod
-    def gather_scores(self, scores: list[dict], metric: str) -> dict:
-        """Aggregates the scores."""
-        pass

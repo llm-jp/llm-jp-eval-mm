@@ -1,4 +1,4 @@
-from eval_mm.metrics.scorer import Scorer
+from eval_mm.metrics.scorer import Scorer, AggregateOutput
 from sacrebleu import sentence_bleu
 from unicodedata import normalize
 
@@ -64,7 +64,7 @@ class JDocQAScorer(Scorer):
         return scores
 
     @staticmethod
-    def aggregate(scores: list[int], **kwargs) -> dict:
+    def aggregate(scores: list[int], **kwargs) -> AggregateOutput:
         docs = kwargs["docs"]
         metrics = {
             "yesno_exact": [],
@@ -85,8 +85,25 @@ class JDocQAScorer(Scorer):
                 continue
             metrics[key] = sum(value) / len(value)
         metrics["overall"] = sum(scores) / len(scores)
+        output = AggregateOutput(metrics["overall"], metrics)
 
-        return metrics
+        return output
+
+
+def test_jdocqa_scorer():
+    refs = ["私は猫です。"]
+    preds = ["私は猫です。"]
+    scores = JDocQAScorer.score(refs, preds, docs=[{"answer_type": 1}])
+    assert scores == [1.0]
+    output = JDocQAScorer.aggregate(scores, docs=[{"answer_type": 1}])
+    assert output.overall_score == 1.0
+    assert output.details == {
+        "factoid_exact": 1.0,
+        "yesno_exact": 0,
+        "numerical_exact": 0,
+        "open-ended_bleu": 0,
+        "overall": 1.0,
+    }
 
 
 if __name__ == "__main__":
