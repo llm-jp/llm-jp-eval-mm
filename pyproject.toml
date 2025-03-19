@@ -22,6 +22,7 @@ dependencies = [
     "torch>=2.5.1",
     "webdataset>=0.2.111",
     "av>=14.1.0",
+    "loguru>=0.7.3",
 ]
 readme = "README.md"
 license = "Apache-2.0"
@@ -58,6 +59,7 @@ allow-direct-references = true
 
 [dependency-groups]
 dev = [
+    "mypy>=1.15.0",
     "pytest>=8.3.4",
     "seaborn>=0.13.2",
 ]

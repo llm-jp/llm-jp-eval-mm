@@ -103,7 +103,7 @@ if __name__ == "__main__":
         model = get_class_from_model_id(args.model_id)(args.model_id)
         preds = []
         logger.info(task.dataset)
-        for doc in tqdm(task.dataset.select(range(task.config.max_dataset_len))):
+        for doc in tqdm(task.dataset):
             images = task.doc_to_visual(doc)
             text = task.doc_to_text(doc)
             if "<image>" in text:
