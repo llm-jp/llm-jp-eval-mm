@@ -1,4 +1,4 @@
-name: Example
+name: Test workflow
 
 on:
   push:

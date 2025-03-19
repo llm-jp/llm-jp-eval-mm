@@ -129,7 +129,7 @@ class MockChatAPI:
         """
         Generate chat responses for a batch of messages
         """
-        return ["Test"] * len(chat_messages_list)
+        return ["Mock"] * len(chat_messages_list)
 
 
 if __name__ == "__main__":
