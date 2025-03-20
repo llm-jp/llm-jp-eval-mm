@@ -10,6 +10,8 @@ from PIL import Image
 
 @register_task("ja-multi-image-vqa")
 class JAMultiImageVQA(Task):
+    default_metric = "rougel"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         ds = load_dataset("SakanaAI/JA-Multi-Image-VQA", split="test")

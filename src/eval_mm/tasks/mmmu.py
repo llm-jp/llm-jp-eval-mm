@@ -78,6 +78,8 @@ def mmmu_doc_to_visual(doc):
 
 @register_task("mmmu")
 class MMMU(Task):
+    default_metric = "mmmu"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         configs = get_dataset_config_names("MMMU/MMMU")

@@ -8,6 +8,8 @@ import os
 
 @register_task("jic-vqa")
 class JICVQA(Task):
+    default_metric = "jic-vqa"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         if not os.path.exists("dataset/jic_vqa.parquet"):

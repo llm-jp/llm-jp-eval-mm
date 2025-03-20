@@ -81,6 +81,8 @@ def jmmmu_doc_to_visual(doc):
 
 @register_task("jmmmu")
 class JMMMU(Task):
+    default_metric = "jmmmu"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         configs = get_dataset_config_names("JMMMU/JMMMU")

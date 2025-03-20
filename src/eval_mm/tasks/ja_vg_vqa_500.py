@@ -7,6 +7,8 @@ from PIL import Image
 
 @register_task("ja-vg-vqa-500")
 class JaVGVQA500(Task):
+    default_metric = "rougel"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         ds = load_dataset("SakanaAI/JA-VG-VQA-500", split="test")

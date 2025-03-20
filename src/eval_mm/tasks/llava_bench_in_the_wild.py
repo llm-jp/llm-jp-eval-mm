@@ -7,6 +7,8 @@ from PIL import Image
 
 @register_task("llava-bench-in-the-wild")
 class LlavaBenchIntheWild(Task):
+    default_metric = "rougel"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         # データセットをロード

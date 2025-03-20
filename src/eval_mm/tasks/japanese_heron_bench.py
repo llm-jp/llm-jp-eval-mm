@@ -7,6 +7,8 @@ from PIL import Image
 
 @register_task("japanese-heron-bench")
 class JapaneseHeronBench(Task):
+    default_metric = "heron-bench"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         ds = load_dataset("Silviase/Japanese-Heron-Bench", split="train")

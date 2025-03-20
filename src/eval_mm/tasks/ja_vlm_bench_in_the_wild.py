@@ -7,6 +7,8 @@ from PIL import Image
 
 @register_task("ja-vlm-bench-in-the-wild")
 class JaVLMBenchIntheWild(Task):
+    default_metric = "rougel"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         # データセットをロード

@@ -30,6 +30,8 @@ def get_elements_from_index(indices_str, array):
 
 @register_task("jdocqa")
 class JDocQA(Task):
+    default_metric = "jdocqa"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         ds = load_dataset(
