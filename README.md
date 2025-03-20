@@ -1,5 +1,5 @@
 # llm-jp-eval-mm
-[![pypi](https://img.shields.io/pypi/v/eval-mm.svg)](https://pypi.python.org/pypi/eval-mm)
+[![pypi](https://img.shields.io/pypi/v/eval-mm.svg)](https://pypi.python.org/pypi/eval-mm) [![Test workflow](https://github.com/llm-jp/llm-jp-eval-mm/actions/workflows/test.yml/badge.svg)](https://github.com/llm-jp/llm-jp-eval-mm/actions/workflows/test.yml) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [ [**Japanese**](./README_ja.md) | English ]
 
@@ -70,13 +70,13 @@ uv run --group normal python examples/sample.py \
   --model_id llava-hf/llava-1.5-7b-hf \
   --task_id japanese-heron-bench  \
   --result_dir test  \
-  --metrics "llm_as_a_judge_heron_bench" \
+  --metrics "heron-bench" \
   --judge_model "gpt-4o-2024-05-13" \
   --overwrite
 ```
 
 The evaluation score and output results will be saved in
-`test/{task_id}/{model_id}/evaluation.jsonl` and `test/{task_id}/{model_id}/prediction/.jsonl`.
+`test/{task_id}/{model_id}/evaluation.jsonl` and `test/{task_id}/{model_id}/prediction.jsonl`.
 
 If you want to evaluate multiple models on multiple tasks, please check `eval_all.sh`.
 
@@ -195,11 +195,6 @@ uv add <package_name>
 uv add --group <group_name> <package_name>
 ```
 
-### Formatting and Linting with ruff
-```
-uv run ruff format src
-uv run ruff check --fix src
-```
 
 ### Testing
 
@@ -212,6 +207,11 @@ You can also test each model's inference code with the following command:
 bash test_model.sh
 ```
 
+### Formatting and Linting with ruff
+```
+uv run ruff format src
+uv run ruff check --fix src
+```
 
 ### How to Release to PyPI
 
