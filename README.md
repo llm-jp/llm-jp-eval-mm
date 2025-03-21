@@ -27,8 +27,8 @@ This tool automatically evaluates Japanese multi-modal large language models acr
     - [How to Add a Metric](#how-to-add-a-metric)
     - [How to Add Inference Code for a VLM Model](#how-to-add-inference-code-for-a-vlm-model)
     - [How to Add Dependencies](#how-to-add-dependencies)
-    - [Formatting and Linting with ruff](#formatting-and-linting-with-ruff)
     - [Testing](#testing)
+    - [Formatting and Linting with ruff](#formatting-and-linting-with-ruff)
     - [How to Release to PyPI](#how-to-release-to-pypi)
     - [How to Update the Website](#how-to-update-the-website)
   - [Acknowledgements](#acknowledgements)
@@ -150,14 +150,6 @@ $ uv run --group normal python ...
 If you add a new group, don’t forget to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
 
 ## Benchmark-Specific Required Libraries
-
-- JDocQA
-
-To prepare the JDocQA dataset, [pdf2image](https://pypi.org/project/pdf2image/) library is needed. Since pdf2image depends on poppler-utils, please install it with:
-
-```bash
-sudo apt-get install poppler-utils
-```
 
 - JIC-VQA
 
