@@ -48,18 +48,14 @@ class VLM(BaseVLM):
             )
         message = [message_base]
 
-        try:
-            response = self.client.chat.completions.create(
-                model=self.model_id,
-                messages=message,
-                max_tokens=gen_kwargs.max_new_tokens,
-                temperature=gen_kwargs.temperature,
-                top_p=gen_kwargs.top_p,
-            )
-            return response.choices[0].message.content
-        except Exception as e:
-            print("Error:", e)
-            return "Error"
+        response = self.client.chat.completions.create(
+            model=self.model_id,
+            messages=message,
+            max_tokens=gen_kwargs.max_new_tokens,
+            temperature=gen_kwargs.temperature,
+            top_p=gen_kwargs.top_p,
+        )
+        return response.choices[0].message.content
 
 
 if __name__ == "__main__":
