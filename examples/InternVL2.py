@@ -6,6 +6,7 @@ from transformers import AutoModel, AutoTokenizer
 from typing import Union
 from base_vlm import BaseVLM
 from utils import GenerationConfig
+import copy
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -138,7 +139,6 @@ class VLM(BaseVLM):
     def generate(
         self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ) -> str:
-        text = text.replace("<image>", "")
         if "<image>" not in text:
             image_tokens = ["<image>"] * len(images)
             image_tokens = " ".join(image_tokens)
@@ -151,9 +151,10 @@ class VLM(BaseVLM):
             )
             pixel_values_list.append(pixel_values)
         num_patches_list = [pixel_values.size(0) for pixel_values in pixel_values_list]
-        pixel_values = torch.cat(pixel_values_list, dim=0)
-
-        import copy
+        if len(images) == 0:
+            pixel_values = None
+        else:
+            pixel_values = torch.cat(pixel_values_list, dim=0)
 
         generation_config = copy.deepcopy(gen_kwargs.__dict__)
         generation_config.pop("use_cache")

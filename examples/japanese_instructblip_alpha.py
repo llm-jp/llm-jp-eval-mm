@@ -170,8 +170,7 @@ class VLM(BaseVLM):
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
         prompt = build_prompt(prompt=text)
-        images = [process_images(images)]
-        inputs = self.processor(images=images, return_tensors="pt", truncation=True)
+
         text_encoding = self.tokenizer(
             prompt, add_special_tokens=False, return_tensors="pt"
         )
@@ -179,7 +178,15 @@ class VLM(BaseVLM):
         text_encoding["qformer_attention_mask"] = text_encoding[
             "attention_mask"
         ].clone()
-        inputs.update(text_encoding)
+        if len(images) == 0:
+            inputs = text_encoding
+            inputs["pixel_values"] = None
+            # TODO:
+            return ""
+        else:
+            images = [process_images(images)]
+            inputs = self.processor(images=images, return_tensors="pt", truncation=True)
+            inputs.update(text_encoding)
 
         # autoregressively complete prompt
         output = self.model.generate(

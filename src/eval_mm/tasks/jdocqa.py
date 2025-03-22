@@ -1,59 +1,20 @@
 from datasets import Dataset, load_dataset
-from pdf2image import convert_from_path
 
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 
-import aiohttp
 from PIL import Image
 
-Image.MAX_IMAGE_PIXELS = None
 
-
-def pdf_to_images(pdf_path):
-    images = convert_from_path(pdf_path)
-    return images
-
-
-def get_elements_from_index(indices_str, array):
-    try:
-        indices = [int(x.strip()) - 1 for x in indices_str.split(",")]
-        elements = [array[i] for i in indices if 0 <= i < len(array)]
-        return elements
-    except ValueError:
-        print("The string doesn't seem to have numbers or commas in the right places.")
-        return None  # Or maybe an empty list, depending on how you wanna handle it
-    except IndexError:
-        print("Out of bounds error!")
-        return None  # Same, an empty list or special value could work
-
-
-@register_task("jdocqa")
 class JDocQA(Task):
+    default_metric = "jdocqa"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         ds = load_dataset(
-            "shunk031/JDocQA",
+            "speed/JDocQA",
             split="test",
-            rename_pdf_category=True,
-            trust_remote_code=True,
-            storage_options={
-                "client_kwargs": {"timeout": aiohttp.ClientTimeout(total=3600)}
-            },
         )
         ds = ds.rename_column("question", "input_text")
-        ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
-        keep_columns = [
-            "input_text",
-            "pdf_filepath",
-            "question_page_number",
-            "question_id",
-            "answer",
-            "answer_type",
-        ]
-        ds = ds.remove_columns(
-            [col for col in ds.column_names if col not in keep_columns]
-        )
         return ds
 
     @staticmethod
@@ -62,8 +23,10 @@ class JDocQA(Task):
 
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
-        images_all = pdf_to_images(doc["pdf_filepath"])
-        images = get_elements_from_index(doc["question_page_number"], images_all)
+        images = []
+        for column in ["image_0", "image_1", "image_2", "image_3", "image_4"]:
+            if column in doc:
+                images.append(doc[column])
         return images
 
     @staticmethod
@@ -76,7 +39,7 @@ class JDocQA(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = JDocQA(TaskConfig())
     ds = task.dataset

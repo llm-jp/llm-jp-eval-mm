@@ -1,6 +1,5 @@
 from collections import defaultdict
 import ast
-import random
 import re
 import numpy as np
 from datasets import Dataset
@@ -133,8 +132,9 @@ def parse_multi_choice_response(response, all_choices, index2ans):
                 candidates.append(index)
                 index_ans = False  # it's content ans.
 
-    if len(candidates) == 0:  # still not get answer, randomly choose one.
-        pred_index = random.choice(all_choices)
+    if len(candidates) == 0:
+        # pred_index = random.choice(all_choices) # still not get answer, randomly choose one.
+        pred_index = None
     elif len(candidates) > 1:
         start_indexes = []
         if index_ans:

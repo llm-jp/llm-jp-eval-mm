@@ -6,6 +6,7 @@ MODEL_ID_TO_CLASS_PATH = {
     "llava-hf/llava-v1.6-mistral-7b-hf": "llava_v1_6_mistral_7b_hf.VLM",
     "SakanaAI/EvoVLM-JP-v1-7B": "EvoVLM_JP_v1_7B.VLM",
     "gpt-4o-2024-05-13": "GPT_4o.VLM",
+    "gpt-4o-2024-11-20": "GPT_4o.VLM",
     "internlm/internlm-xcomposer2d5-7b": "internlm_xcomposer2d5_7b.VLM",
     "OpenGVLab/InternVL2-8B": "InternVL2.VLM",
     "OpenGVLab/InternVL2-26B": "InternVL2.VLM",
@@ -33,6 +34,7 @@ MODEL_ID_TO_CLASS_PATH = {
     "google/gemma-3-27b-it": "gemma3.VLM",
     "sbintuitions/sarashina2-vision-8b": "sarashina.VLM",
     "sbintuitions/sarashina2-vision-14b": "sarashina.VLM",
+    "microsoft/Phi-4-multimodal-instruct": "phi_4_mm.VLM",
 }
 
 

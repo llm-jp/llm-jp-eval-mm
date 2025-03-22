@@ -1,6 +1,5 @@
 from datasets import Dataset, load_dataset
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 from PIL import Image
 
 MULTI_CHOICE_PROMPT = (
@@ -104,24 +103,10 @@ def rotate_options_fn(batch):
     return new_batch
 
 
-@register_task("mecha-ja")
 class MECHAJa(Task):
-    def __init__(self, config):
-        super().__init__(config)
+    default_metric = "mecha-ja"
 
-        ds = self._prepare_dataset()
-
-        # rotate_choices が有効なら4パターン展開
-        if getattr(self.config, "rotate_choices", False):
-            ds = ds.map(
-                rotate_options_fn,
-                batched=True,
-                remove_columns=ds.column_names,
-            )
-        self.dataset = ds
-
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         ds = load_dataset("llm-jp/MECHA-ja", split="test")
 
         ds = ds.map(
@@ -138,6 +123,14 @@ class MECHAJa(Task):
             },
             with_indices=True,
         )
+        # rotate_choices が有効なら4パターン展開
+        if self.config.rotate_choices:
+            ds = ds.map(
+                rotate_options_fn,
+                num_proc=8,
+                batched=True,
+                remove_columns=ds.column_names,
+            )
 
         return ds
 
@@ -159,7 +152,7 @@ class MECHAJa(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = MECHAJa(TaskConfig())
     ds = task.dataset
@@ -169,3 +162,14 @@ def test_task():
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
     assert isinstance(task.doc_to_id(ds[0]), str)
     assert isinstance(task.doc_to_answer(ds[0]), str)
+
+    task = MECHAJa(TaskConfig(rotate_choices=True))
+    ds = task.dataset
+    print(ds[0])
+    assert isinstance(task.doc_to_text(ds[0]), str)
+    assert isinstance(task.doc_to_visual(ds[0]), list)
+    assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
+    assert isinstance(task.doc_to_id(ds[0]), str)
+    assert isinstance(task.doc_to_answer(ds[0]), str)
+    assert len(ds) == 4 * 1000
+    assert ds[0]["question_id"] == "0_rot0"

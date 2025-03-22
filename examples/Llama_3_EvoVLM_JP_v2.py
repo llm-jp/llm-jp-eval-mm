@@ -38,6 +38,8 @@ class VLM(BaseVLM):
     ) -> str:
         if "<image>" not in text:
             text = "<image> " * len(images) + "\n" + text
+        if len(images) == 0:
+            images = None
         response, history = chat_mllava(
             text, images, self.model, self.processor, **gen_kwargs.__dict__
         )

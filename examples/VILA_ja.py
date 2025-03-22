@@ -31,9 +31,14 @@ class VLM(BaseVLM):
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
         prompt = conv.get_prompt()
-        images_tensor = process_images(
-            images, self.image_processor, self.model.config
-        ).to(self.model.device, dtype=torch.float16)
+        if len(images) == 0:
+            images_tensor = None
+        else:
+            images_tensor = [
+                process_images(images, self.image_processor, self.model.config).to(
+                    self.model.device, dtype=torch.float16
+                )
+            ]
         input_ids = (
             tokenizer_image_token(
                 prompt, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"
@@ -45,9 +50,7 @@ class VLM(BaseVLM):
         with torch.inference_mode():
             output_ids = self.model.generate(
                 input_ids,
-                images=[
-                    images_tensor,
-                ],
+                images=images_tensor,
                 **gen_kwargs.__dict__,
             )
 

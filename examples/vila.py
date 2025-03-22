@@ -22,7 +22,6 @@ class VLM(BaseVLM):
         self.model_id = model_id
         model_name = get_model_name_from_path(self.model_id)
         self.model_name = model_name
-        print(model_name)
         self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(
             self.model_id, model_name
         )
@@ -38,8 +37,6 @@ class VLM(BaseVLM):
         if "<image>" not in text:
             qs = "<image>\n" * len(images) + text
 
-        print("input: ", qs)
-
         if "llama-2" in self.model_name.lower():
             conv_mode = "llava_llama_2"
         elif "v1" in self.model_name.lower():
@@ -53,10 +50,14 @@ class VLM(BaseVLM):
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
         prompt = conv.get_prompt()
-
-        images_tensor = process_images(
-            images, self.image_processor, self.model.config
-        ).to(self.model.device, dtype=torch.float16)
+        if len(images) == 0:
+            images_tensor = None
+        else:
+            images_tensor = [
+                process_images(images, self.image_processor, self.model.config).to(
+                    self.model.device, dtype=torch.float16
+                )
+            ]
         input_ids = (
             tokenizer_image_token(prompt, self.tokenizer, -200, return_tensors="pt")
             .unsqueeze(0)
@@ -69,9 +70,8 @@ class VLM(BaseVLM):
         with torch.inference_mode():
             output_ids = self.model.generate(
                 input_ids,
-                images=[
-                    images_tensor,
-                ],
+                images=images_tensor,
+                **gen_kwargs.__dict__,
             )
         outputs = self.tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
         outputs = outputs.strip()

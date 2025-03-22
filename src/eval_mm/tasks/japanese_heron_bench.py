@@ -1,12 +1,12 @@
 from datasets import load_dataset, Dataset
 
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 from PIL import Image
 
 
-@register_task("japanese-heron-bench")
 class JapaneseHeronBench(Task):
+    default_metric = "heron-bench"
+
     @staticmethod
     def _prepare_dataset() -> Dataset:
         ds = load_dataset("Silviase/Japanese-Heron-Bench", split="train")
@@ -31,7 +31,7 @@ class JapaneseHeronBench(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = JapaneseHeronBench(TaskConfig())
     ds = task.dataset

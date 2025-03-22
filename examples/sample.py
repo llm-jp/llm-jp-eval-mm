@@ -46,18 +46,9 @@ def parse_args():
     return parser.parse_args()
 
 
-def validate_metrics(metrics: list[str]):
-    for metric in metrics:
-        if metric not in list(eval_mm.metrics.ScorerRegistry._scorers.keys()):
-            raise ValueError(
-                f"Invalid metric: {metric}. You can use the following metrics: {list(eval_mm.metrics.ScorerRegistry._scorers.keys())}"
-            )
-
-
 if __name__ == "__main__":
     args = parse_args()
     metrics = args.metrics.split(",")
-    validate_metrics(metrics)
 
     gen_kwargs = GenerationConfig(
         max_new_tokens=args.max_new_tokens,
@@ -68,13 +59,13 @@ if __name__ == "__main__":
         use_cache=args.use_cache,
     )
 
-    task_config = eval_mm.api.task.TaskConfig(
+    task_config = eval_mm.tasks.TaskConfig(
         max_dataset_len=args.max_dataset_len,
         judge_model=args.judge_model,
         batch_size_for_evaluation=args.batch_size_for_evaluation,
         rotate_choices=args.rotate_choices,
     )
-    task = eval_mm.api.registry.get_task_cls(args.task_id)(task_config)
+    task = eval_mm.tasks.TaskRegistry.get_task_cls(args.task_id)(task_config)
 
     output_dir = os.path.join(args.result_dir, args.task_id, args.model_id)
     os.makedirs(output_dir, exist_ok=True)
@@ -92,18 +83,30 @@ if __name__ == "__main__":
         model = get_class_from_model_id(args.model_id)(args.model_id)
         preds = []
         logger.info(task.dataset)
+        error_count = 0
         for doc in tqdm(task.dataset):
             images = task.doc_to_visual(doc)
             text = task.doc_to_text(doc)
             if "<image>" in text:
                 text = text.replace("<image>", "")
             qid = task.doc_to_id(doc)
-            generated_text = model.generate(images, text, gen_kwargs)
+            try:
+                generated_text = model.generate(images, text, gen_kwargs)
+            except Exception as e:
+                logger.error(f"Error in generating text for {qid}: {e}")
+                error_count += 1
+                generated_text = ""
             pred = {
                 "question_id": qid,
                 "text": generated_text,
             }
             preds.append(pred)
+        logger.info(f"Error count: {error_count}")
+        if error_count > len(task.dataset) * 0.1:
+            logger.error(
+                f"Error count is too high. Error count: {error_count}, Dataset length: {len(task.dataset)}. You need to re-run the evaluation."
+            )
+            exit()
         with open(prediction_path, "w") as f:
             for pred in preds:
                 f.write(json.dumps(pred, ensure_ascii=False) + "\n")
