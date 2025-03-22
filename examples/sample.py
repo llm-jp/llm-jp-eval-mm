@@ -46,18 +46,9 @@ def parse_args():
     return parser.parse_args()
 
 
-def validate_metrics(metrics: list[str]):
-    for metric in metrics:
-        if metric not in list(eval_mm.metrics.ScorerRegistry._scorers.keys()):
-            raise ValueError(
-                f"Invalid metric: {metric}. You can use the following metrics: {list(eval_mm.metrics.ScorerRegistry._scorers.keys())}"
-            )
-
-
 if __name__ == "__main__":
     args = parse_args()
     metrics = args.metrics.split(",")
-    validate_metrics(metrics)
 
     gen_kwargs = GenerationConfig(
         max_new_tokens=args.max_new_tokens,
@@ -68,13 +59,13 @@ if __name__ == "__main__":
         use_cache=args.use_cache,
     )
 
-    task_config = eval_mm.api.task.TaskConfig(
+    task_config = eval_mm.tasks.TaskConfig(
         max_dataset_len=args.max_dataset_len,
         judge_model=args.judge_model,
         batch_size_for_evaluation=args.batch_size_for_evaluation,
         rotate_choices=args.rotate_choices,
     )
-    task = eval_mm.api.registry.get_task_cls(args.task_id)(task_config)
+    task = eval_mm.tasks.TaskRegistry.get_task_cls(args.task_id)(task_config)
 
     output_dir = os.path.join(args.result_dir, args.task_id, args.model_id)
     os.makedirs(output_dir, exist_ok=True)

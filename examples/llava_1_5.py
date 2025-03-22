@@ -27,8 +27,7 @@ class VLM(BaseVLM):
     ) -> str:
         if DEFAULT_IMAGE_TOKEN in text:
             text = text.replace(DEFAULT_IMAGE_TOKEN, "")
-        num_images = len(images)
-        content = [{"type": "image"} for _ in range(num_images)]
+        content = [{"type": "image"} for _ in range(len(images))]
         content.extend([{"type": "text", "text": text}])
         messages = [
             {
@@ -40,6 +39,9 @@ class VLM(BaseVLM):
         prompt = self.processor.apply_chat_template(
             messages, add_generation_prompt=True
         )
+
+        if len(images) == 0:
+            images = None
 
         inputs = self.processor(images=images, text=prompt, return_tensors="pt").to(
             "cuda"

@@ -23,7 +23,8 @@ class VLM(BaseVLM):
             num_images = len(images)
             prefix = "<image> " * num_images
             prompt = "USER: " + prefix + text + "\nASSISTANT: "
-
+        if len(images) == 0:
+            images = None
         inputs = (
             self.processor(text=prompt, images=images, return_tensors="pt")
             .to(self.model.device)

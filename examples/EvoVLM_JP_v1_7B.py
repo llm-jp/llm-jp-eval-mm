@@ -27,10 +27,16 @@ class VLM(BaseVLM):
             },
             {"role": "user", "content": text},
         ]
-        inputs = self.processor.image_processor(images=images, return_tensors="pt")
-        inputs["input_ids"] = self.processor.tokenizer.apply_chat_template(
-            messages, return_tensors="pt"
-        )
+        if len(images) == 0:
+            inputs = self.processor.text_processor(
+                messages=messages, return_tensors="pt"
+            )
+        else:
+            inputs = self.processor.image_processor(images=images, return_tensors="pt")
+            inputs["input_ids"] = self.processor.tokenizer.apply_chat_template(
+                messages, return_tensors="pt"
+            )
+
         output_ids = self.model.generate(
             **inputs.to(self.device), **gen_kwargs.__dict__
         )

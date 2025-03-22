@@ -35,6 +35,8 @@ class VLM(BaseVLM):
         input_text = self.processor.apply_chat_template(
             messages, add_generation_prompt=True
         )
+        if len(images) == 0:
+            images = None
         inputs = self.processor(
             images, input_text, add_special_tokens=False, return_tensors="pt"
         ).to(self.model.device)

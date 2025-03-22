@@ -30,6 +30,8 @@ class VLM(BaseVLM):
         text = text.replace(
             "<|prefix|><|file|><|suffix|>", "<|prefix|><|file|><|suffix|>" * len(images)
         )
+        if len(images) == 0:
+            images = None
         inputs = self.processor(
             text=[text],
             images=images,
