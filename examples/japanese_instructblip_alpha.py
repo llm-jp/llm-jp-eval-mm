@@ -171,7 +171,6 @@ class VLM(BaseVLM):
     ) -> str:
         prompt = build_prompt(prompt=text)
 
-
         text_encoding = self.tokenizer(
             prompt, add_special_tokens=False, return_tensors="pt"
         )

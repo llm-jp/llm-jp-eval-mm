@@ -34,6 +34,7 @@ MODEL_ID_TO_CLASS_PATH = {
     "google/gemma-3-27b-it": "gemma3.VLM",
     "sbintuitions/sarashina2-vision-8b": "sarashina.VLM",
     "sbintuitions/sarashina2-vision-14b": "sarashina.VLM",
+    "microsoft/Phi-4-multimodal-instruct": "phi_4_mm.VLM",
 }
 
 
