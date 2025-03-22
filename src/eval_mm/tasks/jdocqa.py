@@ -24,8 +24,8 @@ class JDocQA(Task):
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
         images = []
-        for column in ["image_0", "image_1", "image_2", "image_3", "image_4"]:
-            if column in doc:
+        for column in ["image_0", "image_1", "image_2", "image_3"]:
+            if doc[column] is not None:
                 images.append(doc[column])
         return images
 
