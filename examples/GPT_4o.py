@@ -1,4 +1,4 @@
-from openai import AzureOpenAI
+from openai import AzureOpenAI, APIError
 import os
 from io import BytesIO
 import base64
@@ -11,6 +11,20 @@ def encode_image_to_base64(image):
     image.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return img_str
+
+
+import backoff
+
+
+@backoff.on_exception(backoff.expo, (ValueError, APIError), max_tries=5)
+def make_api_call(vlm, message, gen_kwargs):
+    return vlm.client.chat.completions.create(
+        model=vlm.model_id,
+        messages=message,
+        max_tokens=gen_kwargs.max_new_tokens,
+        temperature=gen_kwargs.temperature,
+        top_p=gen_kwargs.top_p,
+    )
 
 
 class VLM(BaseVLM):
@@ -48,13 +62,7 @@ class VLM(BaseVLM):
             )
         message = [message_base]
 
-        response = self.client.chat.completions.create(
-            model=self.model_id,
-            messages=message,
-            max_tokens=gen_kwargs.max_new_tokens,
-            temperature=gen_kwargs.temperature,
-            top_p=gen_kwargs.top_p,
-        )
+        response = make_api_call(self, message, gen_kwargs)
         return response.choices[0].message.content
 
 

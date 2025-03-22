@@ -41,7 +41,6 @@ class VLM(BaseVLM):
             messages, tokenize=False, add_generation_prompt=True
         )
 
-        print(f">>> Prompt\n{prompt}")
         if len(images) == 0:
             images = None
 
