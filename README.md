@@ -116,38 +116,18 @@ English Task:
 
 ## Required Libraries for Each VLM Model Inference
 
-Different models require different libraries. In this repository, we use uv’s [Dependency groups](https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups) to manage the libraries needed for each model.
+Different models require different libraries.
+In this repository, we use uv’s [Dependency groups](https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups) to manage the libraries needed for each model.
 
-When using the following models, please specify the `normal` group:
-stabiliyai/japanese-instructblip-alpha, stabilityai/japanese-stable-vlm, cyberagent/llava-calm2-siglip, llava-hf/llava-1.5-7b-hf, llava-hf/llava-v1.6-mistral-7b-hf, neulab/Pangea-7B-hf, meta-llama/Llama-3.2-11B-Vision-Instruct, meta-llama/Llama-3.2-90B-Vision-Instruct, OpenGVLab/InternVL2-8B, Qwen/Qwen2-VL-7B-Instruct, OpenGVLab/InternVL2-26B, Qwen/Qwen2-VL-72B-Instruct, gpt-4o-2024-05-13
-```bash
-uv sync --group normal
-```
-
-When using the following model, please specify the `evovlm` group:
-SamanaAI/Llama-3-EvoVLM-JP-v2
-```bash
-uv sync --group evovlm
-```
-
-When using the following models, please specify the `vilaja` group:
-llm-jp/llm-jp-3-vila-14b, Efficient-Large-Model/VILA1.5-13b
+For example, when you use `llm-jp/llm-jp-3-vila-14b`, please specify the `vilaja` group:
 ```bash
 uv sync --group vilaja
+uv run --group vilaja python examples/VILA_ja.py
 ```
 
-mistralai/Pixtral-12B-2409
-```bash
-uv sync --group pixtral
-```
+For other models, please see the `eval_all.sh` script for the required group.
 
-When running the script, make sure to specify the group:
-
-```bash
-$ uv run --group normal python ...
-```
-
-If you add a new group, don’t forget to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
+When you add a new group, don’t forget to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
 
 ## Benchmark-Specific Required Libraries
 
