@@ -27,9 +27,10 @@ class VLM(BaseVLM):
             + "\n<image>" * len(images)
             + "\n{text}<|im_end|>\n<|im_start|>assistant\n"
         )
-        if "<image>" in text:
-            text = text.replace("<image>", "")
         input_text = prompt_template.format(text=text)
+        if len(images) == 0:
+            images = None
+            # TODO: text only need to reload model https://huggingface.co/neulab/Pangea-7B
         model_inputs = self.processor(
             images=images, text=input_text, return_tensors="pt"
         ).to("cuda", torch.float16)

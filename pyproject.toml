@@ -78,6 +78,7 @@ vilaja = [
     "transformers==4.37.2",
 ]
 sarashina = [
+    "flash-attn>=2.7.3",
     "accelerate>=0.27.2",
     "pillow>=10.4.0",
     "protobuf>=5.29.3",
@@ -97,10 +98,11 @@ normal = [
 ]
 pixtral = [
     "flash-attn>=2.7.3",
-    "mistral-common==1.5.0",
-    "vllm==0.6.5",
+    "mistral-common>=1.5.4",
+    "vllm>=0.8.1",
 ]
 calm = [
+    "flash-attn>=2.7.3",
     "transformers==4.44.0",
 ]
 

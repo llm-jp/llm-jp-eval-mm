@@ -4,8 +4,6 @@ from transformers import LlavaNextForConditionalGeneration, LlavaNextProcessor
 from base_vlm import BaseVLM
 from utils import GenerationConfig
 
-DEFAULT_IMAGE_TOKEN = "<image>"
-
 
 class VLM(BaseVLM):
     def __init__(self, model_id: str = "llava-hf/llava-v1.6-mistral-7b-hf") -> None:
@@ -23,11 +21,7 @@ class VLM(BaseVLM):
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
-        if DEFAULT_IMAGE_TOKEN in text:
-            text = text.replace(DEFAULT_IMAGE_TOKEN, "")
-
-        num_images = len(images)
-        content = [{"type": "image"} for _ in range(num_images)]
+        content = [{"type": "image"} for _ in range(len(images))]
         content.extend([{"type": "text", "text": text}])
         messages = [
             {
@@ -38,7 +32,8 @@ class VLM(BaseVLM):
         input_text = self.processor.apply_chat_template(
             messages, add_generation_prompt=True
         )
-
+        if len(images) == 0:
+            images = None
         inputs = self.processor(images=images, text=input_text, return_tensors="pt").to(
             "cuda"
         )
