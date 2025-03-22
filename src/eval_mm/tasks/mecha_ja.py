@@ -1,6 +1,5 @@
 from datasets import Dataset, load_dataset
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 from PIL import Image
 
 MULTI_CHOICE_PROMPT = (
@@ -104,7 +103,6 @@ def rotate_options_fn(batch):
     return new_batch
 
 
-@register_task("mecha-ja")
 class MECHAJa(Task):
     default_metric = "mecha-ja"
 
@@ -154,7 +152,7 @@ class MECHAJa(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = MECHAJa(TaskConfig())
     ds = task.dataset

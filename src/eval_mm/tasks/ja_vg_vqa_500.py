@@ -1,11 +1,9 @@
 from datasets import Dataset, concatenate_datasets, load_dataset
 
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 from PIL import Image
 
 
-@register_task("ja-vg-vqa-500")
 class JaVGVQA500(Task):
     default_metric = "rougel"
 
@@ -52,7 +50,7 @@ class JaVGVQA500(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = JaVGVQA500(TaskConfig())
     ds = task.dataset

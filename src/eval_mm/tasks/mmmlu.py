@@ -1,11 +1,9 @@
 from datasets import load_dataset, Dataset
 
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 from PIL import Image
 
 
-@register_task("mmmlu")
 class MMMLU(Task):
     default_metric = "exact-match"
 
@@ -44,7 +42,7 @@ class MMMLU(Task):
 
 
 def test_task():
-    from ..api.task import TaskConfig
+    from .task import TaskConfig
 
     task = MMMLU(TaskConfig())
     ds = task.dataset

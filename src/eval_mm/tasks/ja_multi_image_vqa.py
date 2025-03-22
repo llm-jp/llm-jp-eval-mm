@@ -1,14 +1,13 @@
 from datasets import Dataset, load_dataset
 import re
 
-from ..api.registry import register_task
-from ..api.task import Task
+
+from .task import Task
 from PIL import Image
 
 # import neologdn FIXME: fix c++12 error when installing neologdn
 
 
-@register_task("ja-multi-image-vqa")
 class JAMultiImageVQA(Task):
     default_metric = "rougel"
 
@@ -39,7 +38,7 @@ class JAMultiImageVQA(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = JAMultiImageVQA(TaskConfig())
     ds = task.dataset

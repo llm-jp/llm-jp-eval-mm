@@ -7,8 +7,7 @@ from datasets import (
     get_dataset_config_names,
 )
 
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 
 import ast
 import re
@@ -79,7 +78,6 @@ def jmmmu_doc_to_visual(doc):
     return visual
 
 
-@register_task("jmmmu")
 class JMMMU(Task):
     default_metric = "jmmmu"
 
@@ -121,7 +119,7 @@ class JMMMU(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = JMMMU(TaskConfig())
     ds = task.dataset

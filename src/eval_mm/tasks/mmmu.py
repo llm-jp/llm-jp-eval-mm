@@ -7,8 +7,7 @@ from datasets import (
     get_dataset_config_names,
 )
 
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 from PIL import Image
 
 import ast
@@ -76,7 +75,6 @@ def mmmu_doc_to_visual(doc):
     return visual
 
 
-@register_task("mmmu")
 class MMMU(Task):
     default_metric = "mmmu"
 
@@ -121,7 +119,7 @@ class MMMU(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = MMMU(TaskConfig())
     ds = task.dataset

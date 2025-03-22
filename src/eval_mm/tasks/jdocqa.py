@@ -1,12 +1,10 @@
 from datasets import Dataset, load_dataset
 
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 
 from PIL import Image
 
 
-@register_task("jdocqa")
 class JDocQA(Task):
     default_metric = "jdocqa"
 
@@ -41,7 +39,7 @@ class JDocQA(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = JDocQA(TaskConfig())
     ds = task.dataset

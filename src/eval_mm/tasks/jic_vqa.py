@@ -1,12 +1,10 @@
 from PIL import Image
 from datasets import Dataset, load_dataset
 
-from ..api.registry import register_task
-from ..api.task import Task
+from .task import Task
 import os
 
 
-@register_task("jic-vqa")
 class JICVQA(Task):
     default_metric = "jic-vqa"
 
@@ -40,7 +38,7 @@ class JICVQA(Task):
 
 
 def test_task():
-    from eval_mm.api.task import TaskConfig
+    from eval_mm.tasks.task import TaskConfig
 
     task = JICVQA(TaskConfig())
     ds = task.dataset
