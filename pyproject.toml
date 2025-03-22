@@ -59,6 +59,7 @@ dev = [
     "mypy>=1.15.0",
     "pytest>=8.3.4",
     "seaborn>=0.13.2",
+    "streamlit>=1.43.2",
 ]
 
 evovlm = [

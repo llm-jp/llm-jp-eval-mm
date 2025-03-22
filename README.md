@@ -21,6 +21,7 @@ This tool automatically evaluates Japanese multi-modal large language models acr
   - [Supported Tasks](#supported-tasks)
   - [Required Libraries for Each VLM Model Inference](#required-libraries-for-each-vlm-model-inference)
   - [Benchmark-Specific Required Libraries](#benchmark-specific-required-libraries)
+  - [Analyze VLMs Prediction](#analyze-vlms-prediction)
   - [License](#license)
   - [Contribution](#contribution)
     - [How to Add a Benchmark Task](#how-to-add-a-benchmark-task)
@@ -138,6 +139,16 @@ JIC-VQA only provide the image URL, so you need to download the images from the 
 ```python
 python scripts/prepare_jic_vqa.py
 ```
+
+## Analyze VLMs Prediction
+
+Let's analyze VLMs prediction!
+```bash
+uv run streamlit run scripts/browse_prediction.py --task_id "japanese-heron-bench" --result_dir "result"
+```
+You can see the visualization like below.
+![Streamlit](./assets/streamlit_visualization.png)
+
 
 ## License
 
