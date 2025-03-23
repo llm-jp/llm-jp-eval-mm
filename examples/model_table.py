@@ -35,6 +35,7 @@ MODEL_ID_TO_CLASS_PATH = {
     "sbintuitions/sarashina2-vision-8b": "sarashina.VLM",
     "sbintuitions/sarashina2-vision-14b": "sarashina.VLM",
     "microsoft/Phi-4-multimodal-instruct": "phi_4_mm.VLM",
+    "MIL-UT/Asagi-14B": "Asagi.VLM",
 }
 
 
