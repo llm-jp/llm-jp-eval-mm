@@ -82,6 +82,15 @@ def main(
     )
     # sort columns
     df = df.reindex(sorted(df.columns), axis=1)
+
+    # textbf top1 score for each column
+    for col in df.columns:
+        top1_model = df[col].idxmax()
+        if output_format == "latex":
+            df.loc[top1_model, col] = f"\\textbf{{{df.loc[top1_model, col]}}}"
+        else:
+            df.loc[top1_model, col] = f"**{df.loc[top1_model, col]}**"
+
     if output_format == "markdown":
         table = df.to_markdown(mode="github", floatfmt=".2f")
     elif output_format == "latex":
