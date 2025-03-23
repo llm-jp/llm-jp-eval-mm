@@ -1,5 +1,4 @@
 import streamlit as st
-from datasets import load_dataset
 import random
 import eval_mm
 from argparse import ArgumentParser

@@ -15,7 +15,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_id", type=str, default="llava-hf/llava-1.5-7b-hf")
     parser.add_argument("--task_id", type=str, default="japanese-heron-bench")
-    parser.add_argument("--judge_model", type=str, default="gpt-4o-mini-2024-07-18")
+    parser.add_argument("--judge_model", type=str, default="gpt-4o-2024-11-20")
     parser.add_argument("--batch_size_for_evaluation", type=int, default=10)
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--result_dir", type=str, default="result")
@@ -85,6 +85,11 @@ if __name__ == "__main__":
         logger.info(task.dataset)
         error_count = 0
         for doc in tqdm(task.dataset):
+            if error_count > len(task.dataset) * 0.1:
+                logger.error(
+                    f"Error count is too high. Error count: {error_count}, Dataset length: {len(task.dataset)}. You need to re-run the evaluation."
+                )
+                exit()
             images = task.doc_to_visual(doc)
             text = task.doc_to_text(doc)
             if "<image>" in text:
