@@ -35,9 +35,6 @@ class VLM(BaseVLM):
         inputs_text = self.processor.tokenizer(prompt, return_tensors="pt")
         inputs["input_ids"] = inputs_text["input_ids"]
         inputs["attention_mask"] = inputs_text["attention_mask"]
-        for k, v in inputs.items():
-            if v.dtype == torch.float32:
-                inputs[k] = v.to(self.model.dtype)
         inputs = {
             k: inputs[k].to(self.model.device) for k in inputs if k != "token_type_ids"
         }
