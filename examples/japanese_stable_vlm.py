@@ -181,8 +181,8 @@ class VLM(BaseVLM):
         # instruct blip does not expect the <image> tag
         prompt = build_prompt(task="vqa", input=text)
         if len(images) == 0:
-            images = None
-            inputs = self.processor(text=prompt, return_tensors="pt")
+            raise ValueError("Please provide at least one image.")
+
         else:
             images = [process_images(images)]
             inputs = self.processor(images=images, return_tensors="pt", truncation=True)
@@ -190,7 +190,6 @@ class VLM(BaseVLM):
                 prompt, add_special_tokens=False, return_tensors="pt"
             )
             inputs.update(text_encoding)
-
         # autoregressively complete prompt
         output = self.model.generate(
             **inputs.to(self.device, dtype=self.model.dtype), **gen_kwargs.__dict__

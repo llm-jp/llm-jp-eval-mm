@@ -123,6 +123,7 @@ if __name__ == "__main__":
         "llm-jp/llm-jp-3-vila-14b",
         "sbintuitions/sarashina2-vision-8b",
         "sbintuitions/sarashina2-vision-14b",
+        "MIL-UT/Asagi-14B",
         "llava-hf/llava-1.5-7b-hf",
         "llava-hf/llava-v1.6-mistral-7b-hf",
         "neulab/Pangea-7B-hf",
