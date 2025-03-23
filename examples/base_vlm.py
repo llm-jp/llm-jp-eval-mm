@@ -19,12 +19,6 @@ class BaseVLM:
 
     def test_vlm(self):
         """Test the model with one or two images."""
-        output = self.generate([], "画像には何が映っていますか?")
-        logger.info(f"Output: {output}")
-        assert isinstance(
-            output, str
-        ), f"Expected output to be a string, but got {type(output)}"
-
         image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
         image = Image.open(requests.get(image_file, stream=True).raw)
         image_file2 = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/car.jpg"
@@ -36,6 +30,12 @@ class BaseVLM:
         ), f"Expected output to be a string, but got {type(output)}"
 
         output = self.generate([image, image2], "これらの画像の違いはなんですか?")
+        logger.info(f"Output: {output}")
+        assert isinstance(
+            output, str
+        ), f"Expected output to be a string, but got {type(output)}"
+
+        output = self.generate([], "画像には何が映っていますか?")
         logger.info(f"Output: {output}")
         assert isinstance(
             output, str

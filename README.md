@@ -76,8 +76,14 @@ uv run --group normal python examples/sample.py \
   --overwrite
 ```
 
-The evaluation score and output results will be saved in
-`test/{task_id}/{model_id}/evaluation.jsonl` and `test/{task_id}/{model_id}/prediction.jsonl`.
+The evaluation score and model outputs will be saved in the `result` directory like below:
+```
+├── japanese-heron-bench
+│   ├── llava-hf
+│   │   ├── llava-1.5-7b-hf
+│   │   │   ├── evaluation.jsonl
+│   │   │   └── prediction.jsonl
+```
 
 If you want to evaluate multiple models on multiple tasks, please check `eval_all.sh`.
 

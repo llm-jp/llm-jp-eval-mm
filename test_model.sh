@@ -7,7 +7,7 @@ export CUDA_VISIBLE_DEVICES=0
 # Model name to group name mapping
 declare -A MODEL_GROUP_MAP=(
     ["stabilityai/japanese-instructblip-alpha"]="normal"
-    ["stabilityai/japanese-stable-vlm"]="normal"
+    ["stabilityai/japanese-stable-vlm"]="calm"
     ["cyberagent/llava-calm2-siglip"]="calm"
     ["llava-hf/llava-1.5-7b-hf"]="normal"
     ["llava-hf/llava-v1.6-mistral-7b-hf"]="normal"
@@ -24,6 +24,7 @@ declare -A MODEL_GROUP_MAP=(
     ["google/gemma-3-4b-it"]="normal"
     ["sbintuitions/sarashina2-vision-8b"]="sarashina"
     ["microsoft/Phi-4-multimodal-instruct"]="phi"
+    ["MIL-UT/Asagi-14B"]="normal"
 )
 
 for model_name in "${!MODEL_GROUP_MAP[@]}"; do

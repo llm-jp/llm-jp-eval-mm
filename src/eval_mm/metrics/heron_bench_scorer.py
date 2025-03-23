@@ -2,61 +2,73 @@ from eval_mm.utils.azure_client import OpenAIChatAPI
 from collections import defaultdict
 import numpy as np
 from eval_mm.metrics.scorer import Scorer, AggregateOutput
-from loguru import logger
-
-RULES: dict = {
-    "coding": {
-        "role": "Assistant",
-        "prompt": "Your task is to evaluate the coding abilities of the above two assistants. They have been asked to implement a program to solve a given problem. Please review their code submissions, paying close attention to their problem-solving approach, code structure, readability, and the inclusion of helpful comments.\n\nPlease ensure that the assistants' submissions:\n\n1. Correctly implement the given problem statement.\n2. Contain accurate and efficient code.\n3. Include clear and concise comments that explain the code's logic and functionality.\n4. Adhere to proper coding standards and best practices.\n\nOnce you have carefully reviewed both submissions, provide detailed feedback on their strengths and weaknesses, along with any suggestions for improvement. You should first output a single line containing two scores on the scale of 1-10 (1: no code/no sense; 10: perfect) for Assistant 1 and 2, respectively. Then give extra comments starting from the next line.",
-    },
-    "math": {
-        "role": "Assistant",
-        "prompt": "We would like to request your feedback on the mathematical proficiency of two AI assistants regarding the given user question.\nFirstly, please solve the problem independently, without referring to the answers provided by Assistant 1 and Assistant 2.\nAfterward, please examine the problem-solving process of Assistant 1 and Assistant 2 step-by-step to ensure their correctness, identifying any incorrect steps if present. Your evaluation should take into account not only the answer but also the problem-solving steps.\nFinally, please output a Python tuple containing two numerical scores for Assistant 1 and Assistant 2, ranging from 1 to 10, respectively. If applicable, explain the reasons for any variations in their scores and determine which assistant performed better.",
-    },
-    "default": {
-        "role": "Assistant",
-        "prompt": "We would like to request your feedback on the performance of two AI assistants in response to the user question displayed above.\nPlease rate the helpfulness, relevance, accuracy, level of details of their responses. Each assistant receives an overall score on a scale of 1 to 10, where a higher score indicates better overall performance.\nPlease first output a single line containing only two values indicating the scores for Assistant 1 and 2, respectively. The two scores are separated by a space.\nIn the subsequent line, please provide a comprehensive explanation of your evaluation, avoiding any potential bias and ensuring that the order in which the responses were presented does not affect your judgment. Sentences are given in Japanese, and language is not relevant to score.",
-    },
-    "conv": {
-        "role": "Assistant",
-        "prompt": "We would like to request your feedback on the performance of two AI assistants in response to the user question displayed above. The user asks the question on observing an image. For your reference, the visual content in the image is represented with five descriptive sentences describing the same image and the bounding box coordinates of each object in the scene. These coordinates are in the form of bounding boxes, represented as (x1, y1, x2, y2) with floating numbers ranging from 0 to 1. These values correspond to the top left x, top left y, bottom right x, and bottom right y. \nPlease rate the helpfulness, relevance, accuracy, level of details of their responses. Each assistant receives an overall score on a scale of 1 to 10, where a higher score indicates better overall performance.\nPlease first output a single line containing only two values indicating the scores for Assistant 1 and 2, respectively. The two scores are separated by a space.\nIn the subsequent line, please provide a comprehensive explanation of your evaluation, avoiding any potential bias and ensuring that the order in which the responses were presented does not affect your judgment. Sentences are given in Japanese, and language is not relevant to score.",
-    },
-    "detail": {
-        "role": "Assistant",
-        "prompt": "We would like to request your feedback on the performance of two AI assistants in response to the user question displayed above. The user asks the question on observing an image. For your reference, the visual content in the image is represented with five descriptive sentences describing the same image and the bounding box coordinates of each object in the scene. These coordinates are in the form of bounding boxes, represented as (x1, y1, x2, y2) with floating numbers ranging from 0 to 1. These values correspond to the top left x, top left y, bottom right x, and bottom right y. \nPlease rate the helpfulness, relevance, accuracy, level of details of their responses. Each assistant receives an overall score on a scale of 1 to 10, where a higher score indicates better overall performance.\nPlease first output a single line containing only two values indicating the scores for Assistant 1 and 2, respectively. The two scores are separated by a space.\nIn the subsequent line, please provide a comprehensive explanation of your evaluation, avoiding any potential bias and ensuring that the order in which the responses were presented does not affect your judgment. Sentences are given in Japanese, and language is not relevant to score.",
-    },
-    "complex": {
-        "role": "Assistant",
-        "prompt": "We would like to request your feedback on the performance of two AI assistants in response to the user question displayed above. The user asks the question on observing an image. For your reference, the visual content in the image is represented with five descriptive sentences describing the same image and the bounding box coordinates of each object in the scene. These coordinates are in the form of bounding boxes, represented as (x1, y1, x2, y2) with floating numbers ranging from 0 to 1. These values correspond to the top left x, top left y, bottom right x, and bottom right y. \nPlease rate the helpfulness, relevance, accuracy, level of details of their responses. Each assistant receives an overall score on a scale of 1 to 10, where a higher score indicates better overall performance.\nPlease first output a single line containing only two values indicating the scores for Assistant 1 and 2, respectively. The two scores are separated by a space.\nIn the subsequent line, please provide a comprehensive explanation of your evaluation, avoiding any potential bias and ensuring that the order in which the responses were presented does not affect your judgment. Sentences are given in Japanese, and language is not relevant to score.",
-    },
-    "llava_bench_conv": {
-        "role": "Assistant",
-        "prompt": "We would like to request your feedback on the performance of two AI assistants in response to the user question displayed above. The user asks the question on observing an image. For your reference, the visual content in the image is represented with a few sentences describing the image. \nPlease rate the helpfulness, relevance, accuracy, level of details of their responses. Each assistant receives an overall score on a scale of 1 to 10, where a higher score indicates better overall performance.\nPlease first output a single line containing only two values indicating the scores for Assistant 1 and 2, respectively. The two scores are separated by a space.\nIn the subsequent line, please provide a comprehensive explanation of your evaluation, avoiding any potential bias and ensuring that the order in which the responses were presented does not affect your judgment.",
-    },
-    "llava_bench_detail": {
-        "role": "Assistant",
-        "prompt": "We would like to request your feedback on the performance of two AI assistants in response to the user question displayed above. The user asks the question on observing an image. For your reference, the visual content in the image is represented with a few sentences describing the image. \nPlease rate the helpfulness, relevance, accuracy, level of details of their responses. Each assistant receives an overall score on a scale of 1 to 10, where a higher score indicates better overall performance.\nPlease first output a single line containing only two values indicating the scores for Assistant 1 and 2, respectively. The two scores are separated by a space.\nIn the subsequent line, please provide a comprehensive explanation of your evaluation, avoiding any potential bias and ensuring that the order in which the responses were presented does not affect your judgment.",
-    },
-    "llava_bench_complex": {
-        "role": "Assistant",
-        "prompt": "We would like to request your feedback on the performance of two AI assistants in response to the user question displayed above. The user asks the question on observing an image. For your reference, the visual content in the image is represented with a few sentences describing the image. \nPlease rate the helpfulness, relevance, accuracy, level of details of their responses. Each assistant receives an overall score on a scale of 1 to 10, where a higher score indicates better overall performance.\nPlease first output a single line containing only two values indicating the scores for Assistant 1 and 2, respectively. The two scores are separated by a space.\nIn the subsequent line, please provide a comprehensive explanation of your evaluation, avoiding any potential bias and ensuring that the order in which the responses were presented does not affect your judgment.",
-    },
-}
+import re
+import json
 
 
-def parse_score(review: str) -> dict[str, int]:
-    try:
-        score_pair = review.split("\n")[0]
-        score_pair = score_pair.replace(",", " ")
-        sp = score_pair.split(" ")
-        if len(sp) == 2:
-            return {"score": int(sp[1]), "score_gpt": int(sp[0])}
-        else:
-            logger.error(f"error: {review}")
-            return {"score": -1, "score_gpt": -1}
-    except Exception as e:
-        logger.error(f"error: {e}")
-        return {"score": -1, "score_gpt": -1}
+def parse_score(llm_output: str) -> dict | None:
+    json_pattern = r"```json(.*?)```"
+    matches = re.findall(json_pattern, llm_output, re.DOTALL)
+
+    if not matches:
+        # Fallback: Try to find any JSON-like content in the output
+        json_pattern = r"\{.*?\}"
+        matches = re.findall(json_pattern, llm_output, re.DOTALL)
+
+    for json_string in matches:
+        json_string = json_string.strip()
+        try:
+            parsed_json = json.loads(json_string)
+            return parsed_json
+        except json.JSONDecodeError:
+            # Attempt to fix common JSON issues
+            try:
+                # Remove invalid control characters
+                json_string_clean = re.sub(r"[\x00-\x1F\x7F]", "", json_string)
+                parsed_json = json.loads(json_string_clean)
+                return parsed_json
+            except json.JSONDecodeError:
+                continue  # Try next match
+
+    return {"score": -1, "score_gpt": -1}
+
+
+INSTRUCTION = """
+You are an expert evaluator. You are given the following information:
+- Context: A description of the image.
+- Question: A question about the image.
+- GPT-4o Answer: GPT-4o's answer to the question.
+- Model Answer: The target model's answer to the question.
+
+Your task is to evaluate each answer independently based on how well it answers the question given the context.
+
+Please assign a score from 1 to 10 for each answer according to the following guideline:
+- 10: Perfect — Completely correct, relevant, and fully addresses the question based on the context.
+- 8-9: Very Good — Mostly correct with only minor inaccuracies or slight omissions.
+- 6-7: Good — Generally correct but contains noticeable errors or lacks important details.
+- 4-5: Poor — Significant errors or missing key points, but some relevance remains.
+- 1-3: Very Poor — Mostly or completely incorrect, irrelevant, or nonsensical.
+
+Output Format (JSON):
+Return the result in the following JSON format:
+```json
+{{
+    "score_gpt": int,
+    "score": int
+}}
+```
+Do not output anything other than the JSON.
+
+Input:
+{{
+    "context": {context},
+    "question": {question},
+    "gpt4o_answer": {gpt4o_answer},
+    "model_answer": {model_answer}
+}}
+
+Output:
+"""
 
 
 def ask_gpt4_batch(
@@ -82,17 +94,6 @@ def ask_gpt4_batch(
     return completions
 
 
-def build_content(context, input_text, ref_answer, pred_answer, role, prompt):
-    return (
-        f"[Context]\n{context}\n\n"
-        f"[Question]\n{input_text}\n\n"
-        f"[{role} 1]\n{ref_answer}\n\n[End of {role} 1]\n\n"
-        f"[{role} 2]\n{pred_answer}\n\n[End of {role} 2]\n\n"
-        f"[System]\n{prompt}\n\n"
-        f"If it is not relevant to the context, does not answer directly, or says the wrong thing, give it a low score.\n\n"
-    )
-
-
 class HeronBenchScorer(Scorer):
     @staticmethod
     def score(refs, preds: list[str], **kwargs) -> list[dict[str, int]]:
@@ -101,13 +102,11 @@ class HeronBenchScorer(Scorer):
         judge_model = kwargs["judge_model"]
         contents = []
         for doc, ref, pred in zip(docs, refs, preds):
-            content = build_content(
-                doc["context"],
-                doc["input_text"],
-                ref,
-                pred,
-                "Assistant",
-                RULES[doc["category"]]["prompt"],
+            content = INSTRUCTION.format(
+                context=doc["context"],
+                question=doc["input_text"],
+                gpt4o_answer=ref,
+                model_answer=pred,
             )
             contents.append(content)
         completions = ask_gpt4_batch(contents, 1024, client, judge_model)
