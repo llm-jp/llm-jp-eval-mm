@@ -82,6 +82,7 @@ if __name__ == "__main__":
         preds = []
         logger.info(task.dataset)
         error_count = 0
+        error_messages = []
         for doc in tqdm(task.dataset):
             if error_count > len(task.dataset) * 0.1:
                 logger.error(
@@ -99,6 +100,7 @@ if __name__ == "__main__":
                 logger.error(f"Error in generating text for {qid}: {e}")
                 error_count += 1
                 generated_text = ""
+                error_messages.append({"question_id": qid, "error": str(e)})
             pred = {
                 "question_id": qid,
                 "text": generated_text,
@@ -113,6 +115,10 @@ if __name__ == "__main__":
         with open(prediction_path, "w") as f:
             for pred in preds:
                 f.write(json.dumps(pred, ensure_ascii=False) + "\n")
+        # save error messages
+        with open(os.path.join(output_dir, "error_message.jsonl"), "w") as f:
+            for error_message in error_messages:
+                f.write(json.dumps(error_message, ensure_ascii=False) + "\n")
 
     if args.inference_only:
         logger.info("Inference only mode. Skip evaluation.")
