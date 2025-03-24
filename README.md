@@ -125,9 +125,14 @@ python scripts/make_leaderboard.py --result_dir result
 ```
 
 This will create a `leaderboard.md` file with your model performance:
-| Model                    | Heron/LLM | JVB-ItW/LLM | JVB-ItW/Rouge |
-| :----------------------- | --------: | ----------: | ------------: |
-| llava-hf/llava-1.5-7b-hf |   36.9038 |         2.7 |       40.7525 |
+
+| Model                                    | Heron/LLM | JVB-ItW/LLM | JVB-ItW/Rouge |
+| :--------------------------------------- | :-------- | :---------- | :------------ |
+| llm-jp/llm-jp-3-vila-14b                 | 68.03     | 4.08        | **52.4**      |
+| Qwen/Qwen2.5-VL-7B-Instruct              | 70.29     | 4.28        | 29.63         |
+| google/gemma-3-27b-it                    | 69.15     | 4.36        | 30.89         |
+| microsoft/Phi-4-multimodal-instruct      | 45.52     | 3.2         | 26.8          |
+| gpt-4o-2024-11-20                        | **93.7**  | **4.44**    | 32.2          |
 
 
 
