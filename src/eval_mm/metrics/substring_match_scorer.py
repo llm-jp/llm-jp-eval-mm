@@ -34,6 +34,6 @@ def test_substring_match_scorer():
     scores = scorer.score(refs, preds)
     assert scores == [0]
 
-    output = scorer.aggregate(scores)
+    output = scorer.aggregate([1, 1, 1, 0])
     assert output.overall_score == 0.75
     assert output.details == {"substring_match": 0.75}
