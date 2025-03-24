@@ -24,7 +24,7 @@ class MECHAJaScorer(Scorer):
             return "no_rot"
 
     @staticmethod
-    def score(refs: list[str], preds: list[str], **kwargs) -> list[int]:
+    def score(refs: list[str], preds: list[str]) -> list[int]:
         """
         Checks whether each reference string is contained in the corresponding
         prediction string and returns a list of integer scores (1 for True, 0 for False).
@@ -35,8 +35,7 @@ class MECHAJaScorer(Scorer):
             scores.append(score)
         return scores
 
-    @staticmethod
-    def aggregate(scores: list[int], docs: list[dict], **kwargs) -> AggregateOutput:
+    def aggregate(self, scores: list[int]) -> AggregateOutput:
         """
         回転IDごとにスコアを集計して、以下のような構造を返す:
         {
@@ -51,7 +50,6 @@ class MECHAJaScorer(Scorer):
           ...
         }
         """
-
         # data_by_rot[rot_id] = {
         #   "overall": [],
         #   "factoid": [],
@@ -70,7 +68,7 @@ class MECHAJaScorer(Scorer):
                 "without_bg": [],
             }
         )
-
+        docs = self.config.docs
         for doc, score in zip(docs, scores):
             rot_id = MECHAJaScorer._parse_rotation_id(doc["question_id"])
             is_factoid = doc["answer_type"] == ANSWER_TYPE_MAP["Factoid"]
@@ -123,19 +121,17 @@ class MECHAJaScorer(Scorer):
 def test_mechaja_scorer():
     refs = ["私は猫です。"]
     preds = ["私は猫です。"]
+    from .scorer import ScorerConfig
+
+    scorer = MECHAJaScorer(
+        ScorerConfig(
+            docs=[{"question_id": "q1", "answer_type": 0, "background_text": ""}]
+        )
+    )
     scores = MECHAJaScorer.score(refs, preds)
 
     assert scores == [1]
-    output = MECHAJaScorer.aggregate(
-        scores,
-        docs=[
-            {
-                "question_id": "q1",
-                "answer_type": 0,
-                "background_text": "",
-            }
-        ],
-    )
+    output = scorer.aggregate(scores)
     assert output.overall_score == 1.0
     assert output.details == {
         "overall": 1.0,

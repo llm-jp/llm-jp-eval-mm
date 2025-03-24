@@ -9,6 +9,7 @@ from .llava_bench_in_the_wild import LlavaBenchIntheWild
 from .jic_vqa import JICVQA
 from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
+from .task import TaskConfig, Task
 
 
 class TaskRegistry:
@@ -34,9 +35,14 @@ class TaskRegistry:
         cls._tasks[metric] = task_class
 
     @classmethod
-    def get_task_cls(cls, task_name: str) -> type:
-        """Get the task class for the given metric."""
+    def get_task_list(cls):
+        """Get the list of supported tasks."""
+        return list(cls._tasks.keys())
+
+    @classmethod
+    def load_task(cls, task_name: str, task_config: TaskConfig = TaskConfig()) -> Task:
+        """Load a task instance from the task registry."""
         try:
-            return cls._tasks[task_name]
+            return cls._tasks[task_name](task_config)
         except KeyError:
             raise ValueError(f"Task '{task_name}' is not supported.")

@@ -408,18 +408,16 @@ def get_score(doc: Dataset, pred: str) -> int:
 
 
 class JMMMUScorer(Scorer):
-    @staticmethod
-    def score(refs: list[str], preds: list[str], **kwargs) -> list[int]:
-        docs = kwargs["docs"]
+    def score(self, refs: list[str], preds: list[str]) -> list[int]:
+        docs = self.config.docs
         scores = []
         for doc, pred in zip(docs, preds):
             score = get_score(doc, pred)
             scores.append(score)
         return scores
 
-    @staticmethod
-    def aggregate(scores: list[int], **kwargs) -> AggregateOutput:
-        docs = kwargs["docs"]
+    def aggregate(self, scores: list[int]) -> AggregateOutput:
+        docs = self.config.docs
         evaluation_result = {}
         subset_to_eval_samples = defaultdict(list)
         for doc, score in zip(docs, scores):
@@ -465,9 +463,12 @@ def test_jmmmu_scorer():
             "id": "validation_Accounting_1",
         }
     ]
-    scores = JMMMUScorer.score(refs, preds, docs=docs)
+    from .scorer import ScorerConfig
+
+    scorer = JMMMUScorer(ScorerConfig(docs=docs))
+    scores = scorer.score(refs, preds)
     assert scores == [1]
-    output = JMMMUScorer.aggregate(scores, docs=docs)
+    output = scorer.aggregate(scores)
     assert output.overall_score == 1.0
     print(output)
     assert output.details == {

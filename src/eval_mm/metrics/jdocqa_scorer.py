@@ -39,9 +39,8 @@ def bleu_ja(refs, pred):
 
 
 class JDocQAScorer(Scorer):
-    @staticmethod
-    def score(refs: list[str], preds: list[str], **kwargs) -> list[int]:
-        docs = kwargs["docs"]
+    def score(self, refs: list[str], preds: list[str]) -> list[int]:
+        docs = self.config.docs
         scores = []
 
         for doc, ref, pred in zip(docs, refs, preds):
@@ -63,9 +62,8 @@ class JDocQAScorer(Scorer):
 
         return scores
 
-    @staticmethod
-    def aggregate(scores: list[int], **kwargs) -> AggregateOutput:
-        docs = kwargs["docs"]
+    def aggregate(self, scores: list[int]) -> AggregateOutput:
+        docs = self.config.docs
         metrics = {
             "yesno_exact": [],
             "factoid_exact": [],
@@ -93,9 +91,12 @@ class JDocQAScorer(Scorer):
 def test_jdocqa_scorer():
     refs = ["私は猫です。"]
     preds = ["私は猫です。"]
-    scores = JDocQAScorer.score(refs, preds, docs=[{"answer_type": 1}])
+    from .scorer import ScorerConfig
+
+    scorer = JDocQAScorer(ScorerConfig(docs=[{"answer_type": 1}]))
+    scores = scorer.score(refs, preds)
     assert scores == [1.0]
-    output = JDocQAScorer.aggregate(scores, docs=[{"answer_type": 1}])
+    output = scorer.aggregate(scores)
     assert output.overall_score == 1.0
     assert output.details == {
         "factoid_exact": 1.0,
@@ -104,31 +105,3 @@ def test_jdocqa_scorer():
         "open-ended_bleu": 0,
         "overall": 1.0,
     }
-
-
-if __name__ == "__main__":
-    from datasets import load_dataset
-
-    ds = load_dataset("shunk031/JDocQA", split="test")
-    ds = ds.select(range(10))
-
-    ref = ds["answer"][0]
-    pred = ds["answer"][0]
-    print(ref)
-    print(pred)
-    print(bleu_ja([ref], pred))
-    answer_types = ds["answer_type"]
-    answers = ds["answer"]
-    print("Original answers")
-    for answer_type, answer in zip(answer_types, answers):
-        print(NUM_TO_ANSWER_TYPE[answer_type], answer)
-
-    print("JDocQA normalized answers")
-    jdocqa_normalize_answers = [jdocqa_normalize(x) for x in ds["answer"]]
-    for answer_type, answer in zip(answer_types, jdocqa_normalize_answers):
-        print(NUM_TO_ANSWER_TYPE[answer_type], answer)
-
-    scores = JDocQAScorer.score(refs=ds["answer"], preds=ds["answer"], docs=ds)
-    print(scores)
-    metrics = JDocQAScorer.aggregate(scores, docs=ds)
-    print(metrics)
