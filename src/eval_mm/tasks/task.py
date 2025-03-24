@@ -12,12 +12,6 @@ class TaskConfig:
 
 
 class Task(abc.ABC):
-    """A task represents an entire task including its dataset, problems, answers, and evaluation methods.
-    A `doc` can be any python object which represents one instance of evaluation.
-    This is usually a dictionary e.g.
-    {"question": ..., "answer": ...} or {"question": ..., question, answer)
-    """
-
     def __init__(self, config: TaskConfig):
         self._dataset = None
         self.config = config
