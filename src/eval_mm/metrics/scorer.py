@@ -13,7 +13,7 @@ class AggregateOutput:
 class ScorerConfig:
     docs: dict = None
     judge_model: str = None
-    client: OpenAIChatAPI = OpenAIChatAPI()
+    client: OpenAIChatAPI = None
     batch_size: int = 10
 
 

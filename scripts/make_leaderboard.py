@@ -18,7 +18,7 @@ TASK_ALIAS = {
     "ja-multi-image-vqa": "MulIm-VQA",
     "jmmmu": "JMMMU",
     "jic-vqa": "JIC",
-    "mecha-ja": "Mecha",
+    "mecha-ja": "MECHA",
     "llava-bench-in-the-wild": "LLAVA",
     "mmmu": "MMMU",
 }
@@ -85,16 +85,27 @@ def main(
 
     # textbf top1 score for each column
     for col in df.columns:
-        top1_model = df[col].idxmax()
-        if output_format == "latex":
-            df.loc[top1_model, col] = f"\\textbf{{{df.loc[top1_model, col]}}}"
-        else:
-            df.loc[top1_model, col] = f"**{df.loc[top1_model, col]}**"
+        top1_model = df[col].astype(float).idxmax()
+        top2_model = df[col].drop(top1_model).astype(float).idxmax()
 
+        # format with .3g
+        top1_score = f"{float(df.loc[top1_model, col]):.3g}"
+        top2_score = f"{float(df.loc[top2_model, col]):.3g}"
+
+        # apply formatting
+        if output_format == "latex":
+            df.loc[top1_model, col] = f"\\textbf{{{top1_score}}}"
+            df.loc[top2_model, col] = f"\\textit{{{top2_score}}}"
+        else:
+            df.loc[top1_model, col] = f"**{top1_score}**"
+            df.loc[top2_model, col] = f"*{top2_score}*"
+
+    # Nan to 空白
+    df = df.fillna("")
     if output_format == "markdown":
-        table = df.to_markdown(mode="github", floatfmt=".2f")
+        table = df.to_markdown(mode="github", floatfmt=".3g")
     elif output_format == "latex":
-        table = df.to_latex(float_format="%.2f")
+        table = df.to_latex(float_format="%.3g")
     print(table)
 
     with open(output_path, "w") as f:

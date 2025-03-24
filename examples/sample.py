@@ -59,13 +59,11 @@ if __name__ == "__main__":
         use_cache=args.use_cache,
     )
 
-    task_config = eval_mm.tasks.TaskConfig(
+    task_config = eval_mm.TaskConfig(
         max_dataset_len=args.max_dataset_len,
-        judge_model=args.judge_model,
-        batch_size_for_evaluation=args.batch_size_for_evaluation,
         rotate_choices=args.rotate_choices,
     )
-    task = eval_mm.tasks.TaskRegistry.get_task_cls(args.task_id)(task_config)
+    task = eval_mm.TaskRegistry.load_task(args.task_id, task_config)
 
     output_dir = os.path.join(args.result_dir, args.task_id, args.model_id)
     os.makedirs(output_dir, exist_ok=True)
@@ -126,14 +124,16 @@ if __name__ == "__main__":
     calculated_metrics = {}
 
     for metric in metrics:
-        scorer = eval_mm.metrics.ScorerRegistry.get_scorer(metric)
+        scorer_config = eval_mm.ScorerConfig(
+            docs=task.dataset,
+            judge_model=args.judge_model,
+            batch_size=args.batch_size_for_evaluation,
+            client=eval_mm.OpenAIChatAPI(),
+        )
+        scorer = eval_mm.ScorerRegistry.get_scorer(metric, scorer_config)
         scores = scorer.score(
             [task.doc_to_answer(doc) for doc in task.dataset],
             [pred["text"] for pred in preds],
-            docs=task.dataset,
-            client=task.client,
-            judge_model=task.config.judge_model,
-            batch_size=task.config.batch_size_for_evaluation,
         )
         logger.info(scores)
         scores_for_each_metric[metric] = scores
