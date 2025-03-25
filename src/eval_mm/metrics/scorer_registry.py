@@ -34,11 +34,6 @@ class ScorerRegistry:
         return list(cls._scorers.keys())
 
     @classmethod
-    def register(cls, metric: str, scorer_class: type):
-        """Register a new scorer for a metric."""
-        cls._scorers[metric] = scorer_class
-
-    @classmethod
     def load_scorer(
         cls, metric: str, scorer_config: ScorerConfig = ScorerConfig()
     ) -> Scorer:

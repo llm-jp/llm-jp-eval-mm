@@ -13,7 +13,6 @@ class TaskConfig:
 
 class Task(abc.ABC):
     def __init__(self, config: TaskConfig):
-        self._dataset = None
         self.config = config
 
         if self.config.max_dataset_len is not None:

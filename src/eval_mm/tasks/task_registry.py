@@ -30,11 +30,6 @@ class TaskRegistry:
     }
 
     @classmethod
-    def register(cls, metric: str, task_class: type):
-        """Register a new task for a metric."""
-        cls._tasks[metric] = task_class
-
-    @classmethod
     def get_task_list(cls):
         """Get the list of supported tasks."""
         return list(cls._tasks.keys())
