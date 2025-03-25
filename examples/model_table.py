@@ -22,6 +22,7 @@ MODEL_ID_TO_CLASS_PATH = {
     "Qwen/Qwen2-VL-72B-Instruct": "Qwen2_VL.VLM",
     "Qwen/Qwen2.5-VL-3B-Instruct": "Qwen2_VL.VLM",
     "Qwen/Qwen2.5-VL-7B-Instruct": "Qwen2_VL.VLM",
+    "Qwen/Qwen2.5-VL-32B-Instruct": "Qwen2_VL.VLM",
     "Qwen/Qwen2.5-VL-72B-Instruct": "Qwen2_VL.VLM",
     "llm-jp/llm-jp-3-vila-14b": "VILA_ja.VLM",
     "stabilityai/japanese-instructblip-alpha": "japanese_instructblip_alpha.VLM",
