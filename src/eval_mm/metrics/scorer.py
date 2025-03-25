@@ -15,6 +15,7 @@ class ScorerConfig:
     judge_model: str = None
     client: OpenAIChatAPI | None = None
     batch_size: int = 10
+    random_choice: bool = False
 
 
 class Scorer(ABC):

@@ -28,7 +28,14 @@ def parse_args():
     parser.add_argument("--use_cache", action="store_true", default=True)
     parser.add_argument("--max_dataset_len", type=int)
     parser.add_argument("--metrics", default="llm_as_a_judge_heron_bench")
-    parser.add_argument("--rotate_choices", action="store_true")
+    parser.add_argument(
+        "--rotate_choices", action="store_true", help="This option is used in MECHA-ja"
+    )
+    parser.add_argument(
+        "--random_choice",
+        action="store_true",
+        help="If set, randomly choose the answer from the candidates when parse error occurs in JMMMU and MMMU tasks",
+    )
     return parser.parse_args()
 
 
@@ -93,6 +100,7 @@ def evaluate(args, task, preds, metrics):
                 judge_model=args.judge_model,
                 batch_size=args.batch_size_for_evaluation,
                 client=eval_mm.OpenAIChatAPI(),
+                random_choice=args.random_choice,
             ),
         )
         scores = scorer.score(
