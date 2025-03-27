@@ -95,10 +95,10 @@ def main(
         # apply formatting
         if output_format == "latex":
             df.loc[top1_model, col] = f"\\textbf{{{top1_score}}}"
-            df.loc[top2_model, col] = f"\\textit{{{top2_score}}}"
+            df.loc[top2_model, col] = f"\\underline{{{top2_score}}}"
         else:
             df.loc[top1_model, col] = f"**{top1_score}**"
-            df.loc[top2_model, col] = f"*{top2_score}*"
+            df.loc[top2_model, col] = f"<u>{top2_score}</u>"
 
     # Nan to 空白
     df = df.fillna("")
