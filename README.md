@@ -54,6 +54,7 @@ You need to configure the API keys in a .env file:
 - For Azure:`AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_KEY`
 - For OpenAI: `OPENAI_API_KEY`
 
+If you're not using the LLM-as-a-judge method, you can set any value in the .env file to bypass the error.
 
 
 ## How to Evaluate
@@ -236,6 +237,7 @@ git push origin --tags
 
 ### Updating the Website
 For website updates, refer to the [github_pages/README.md](./github_pages/README.md).
+
 
 ## Acknowledgements
 - [Heron](https://github.com/turingmotors/heron): We refer to the Heron code for the evaluation of the Japanese Heron Bench task.
