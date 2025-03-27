@@ -76,6 +76,32 @@ def process_results(result_dir: str, model_list: List[str]) -> pd.DataFrame:
     return df
 
 
+def generate_json_path(df: pd.DataFrame, output_path: str):
+    """Generate JSON output from DataFrame and save it to a file."""
+    json_data = []
+
+    for model, row in df.iterrows():
+        model_entry = {
+            "model": model,
+            "url": f"https://huggingface.co/{model}",
+            "scores": {},
+        }
+
+        for col, score in row.items():
+            if isinstance(score, (int, float)) and not pd.isna(score):
+                task, metric = col.split("/")
+                if task not in model_entry["scores"]:
+                    model_entry["scores"][task] = {}
+                model_entry["scores"][task][metric] = score
+
+        json_data.append(model_entry)
+
+    with open(output_path, "w") as f:
+        json.dump(json_data, f, indent=2, ensure_ascii=False)
+
+    print(f"JSON output saved to {output_path}")
+
+
 def plot_correlation(df: pd.DataFrame, filename: str):
     """Plot and save the correlation matrix."""
     corr = df.corr(method="spearman")
@@ -130,6 +156,7 @@ def main(
     output_format: str = "markdown",
     plot_bar: bool = False,
     plot_corr: bool = False,
+    json_path: str = "leaderboard.json",
 ):
     df = process_results(result_dir, model_list)
     if plot_corr:
@@ -145,6 +172,9 @@ def main(
         with open(output_path, "w") as f:
             f.write(table)
 
+    if json_path:
+        generate_json_path(df, json_path)
+
 
 def parse_args():
     parser = ArgumentParser()
@@ -155,6 +185,12 @@ def parse_args():
     )
     parser.add_argument("--plot_bar", action="store_true")
     parser.add_argument("--plot_corr", action="store_true")
+    parser.add_argument(
+        "--json_path",
+        type=str,
+        default=None,
+        help="Path to save JSON file that is used for leaderboard website",
+    )
     return parser.parse_args()
 
 
@@ -193,4 +229,5 @@ if __name__ == "__main__":
         args.output_format,
         args.plot_bar,
         args.plot_corr,
+        args.json_path,
     )
