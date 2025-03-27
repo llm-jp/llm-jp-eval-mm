@@ -144,7 +144,7 @@ uv run streamlit run scripts/browse_prediction.py --task_id "japanese-heron-benc
 ![Streamlit](./assets/streamlit_visualization.png)
 
 
-## Contribution
+## Development
 
 ### Adding a new task
 
