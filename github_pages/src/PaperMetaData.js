@@ -1,11 +1,9 @@
-import { FaGithub, FaRegFilePdf, FaTwitter } from 'react-icons/fa';
+import { FaGithub, FaRegFilePdf} from 'react-icons/fa';
 
 // import { AFFILIATION_COLORS, Author, AuthorProps, LinkButton, LinkButtonProps } from "./molecules";
 import { AFFILIATION_COLORS } from './Author';
 import Author from './Author';
-import { AuthorProps } from './Author';
 import LinkButton from './LinkButton';
-import { LinkButtonProps } from './LinkButton';
 
 import './PaperMetaData.css';
 

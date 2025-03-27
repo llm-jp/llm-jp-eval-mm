@@ -3,18 +3,20 @@ from .scorer import Scorer, AggregateOutput
 
 class ExactMatchScorer(Scorer):
     @staticmethod
-    def score(refs: list[str], preds: list[str], **kwargs) -> list[int]:
+    def score(refs: list[str], preds: list[str]) -> list[int]:
         scores = [int(ref == pred) for ref, pred in zip(refs, preds)]
         return scores
 
     @staticmethod
-    def aggregate(scores: list[int], **kwargs) -> AggregateOutput:
+    def aggregate(scores: list[int]) -> AggregateOutput:
         mean = sum(scores) / len(scores)
         return AggregateOutput(mean, {"exact_match": mean})
 
 
 def test_exact_match_scorer():
-    scorer = ExactMatchScorer()
+    from .scorer import ScorerConfig
+
+    scorer = ExactMatchScorer(ScorerConfig())
     refs = ["私は猫です。", "私は犬です。"]
     preds = ["私は犬です。", "私は犬です。"]
     scores = scorer.score(refs, preds)

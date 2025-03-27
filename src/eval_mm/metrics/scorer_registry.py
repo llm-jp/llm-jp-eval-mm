@@ -9,6 +9,7 @@ from .mmmu_scorer import MMMUScorer
 from .jdocqa_scorer import JDocQAScorer
 from .jic_vqa_scorer import JICVQAScorer
 from .mecha_ja_scorer import MECHAJaScorer
+from .scorer import ScorerConfig
 
 
 class ScorerRegistry:
@@ -28,14 +29,16 @@ class ScorerRegistry:
     }
 
     @classmethod
-    def register(cls, metric: str, scorer_class: type):
-        """Register a new scorer for a metric."""
-        cls._scorers[metric] = scorer_class
+    def get_metric_list(cls) -> list[str]:
+        """Get a list of supported metrics."""
+        return list(cls._scorers.keys())
 
     @classmethod
-    def get_scorer(cls, metric: str) -> Scorer:
-        """Get the scorer class for the given metric."""
+    def load_scorer(
+        cls, metric: str, scorer_config: ScorerConfig = ScorerConfig()
+    ) -> Scorer:
+        """Load a scorer instance from the scorer registry."""
         try:
-            return cls._scorers[metric]
+            return cls._scorers[metric](scorer_config)
         except KeyError:
             raise ValueError(f"Metric '{metric}' is not supported.")

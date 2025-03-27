@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from eval_mm.utils.azure_client import OpenAIChatAPI
 
 
 @dataclass
@@ -8,16 +9,23 @@ class AggregateOutput:
     details: dict[str, float]
 
 
-class Scorer(ABC):
-    def __init__(self) -> None:
-        pass
+@dataclass
+class ScorerConfig:
+    docs: dict = None
+    judge_model: str = None
+    client: OpenAIChatAPI | None = None
+    batch_size: int = 10
+    random_choice: bool = False
 
-    @staticmethod
+
+class Scorer(ABC):
+    def __init__(self, config: ScorerConfig):
+        self.config = config
+
     @abstractmethod
-    def score(refs: list[str], preds: list[str], **kwargs) -> list[int | float]:
+    def score(self, refs: list[str], preds: list[str]) -> list:
         raise NotImplementedError
 
-    @staticmethod
     @abstractmethod
-    def aggregate(scores: list, **kwargs) -> AggregateOutput:
+    def aggregate(self, scores: list) -> AggregateOutput:
         raise NotImplementedError

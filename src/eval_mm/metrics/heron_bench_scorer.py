@@ -95,11 +95,8 @@ def ask_gpt4_batch(
 
 
 class HeronBenchScorer(Scorer):
-    @staticmethod
-    def score(refs, preds: list[str], **kwargs) -> list[dict[str, int]]:
-        docs = kwargs["docs"]
-        client = kwargs["client"]
-        judge_model = kwargs["judge_model"]
+    def score(self, refs, preds: list[str]) -> list[dict[str, int]]:
+        docs = self.config.docs
         contents = []
         for doc, ref, pred in zip(docs, refs, preds):
             content = INSTRUCTION.format(
@@ -109,14 +106,14 @@ class HeronBenchScorer(Scorer):
                 model_answer=pred,
             )
             contents.append(content)
-        completions = ask_gpt4_batch(contents, 1024, client, judge_model)
+        completions = ask_gpt4_batch(
+            contents, 1024, self.config.client, self.config.judge_model
+        )
         scores = [parse_score(completion) for completion in completions]
-        assert len(scores) == len(docs)
         return scores
 
-    @staticmethod
-    def aggregate(scores: list[dict[str, int]], **kwargs) -> AggregateOutput:
-        docs = kwargs["docs"]
+    def aggregate(self, scores: list[dict[str, int]]) -> AggregateOutput:
+        docs = self.config.docs
         category_list = ["conv", "detail", "complex"]
         heron_metrics = defaultdict(float)
         for category in category_list:
@@ -164,11 +161,14 @@ def test_heron_bench_scorer():
     refs = ["私は猫です。"]
     preds = ["私は犬です。"]
     docs = [{"context": "hoge", "input_text": "fuga", "category": "conv"}]
-    scores = HeronBenchScorer.score(
-        refs, preds, docs=docs, client=MockChatAPI(), judge_model="gpt-4o-2024-05-13"
+    from .scorer import ScorerConfig
+
+    scorer = HeronBenchScorer(
+        ScorerConfig(docs=docs, judge_model="gpt-4o-2024-05-13", client=MockChatAPI())
     )
+    scores = scorer.score(refs, preds)
     assert scores == [{"score": -1, "score_gpt": -1}]
-    output = HeronBenchScorer.aggregate(scores, docs=docs)
+    output = scorer.aggregate(scores)
     assert output.overall_score == 0.0
     assert output.details == {
         "parse_error_count": 1,
@@ -178,26 +178,3 @@ def test_heron_bench_scorer():
         "complex_rel": 0.0,
         "overall_rel": 0.0,
     }
-
-
-if __name__ == "__main__":
-    from datasets import load_dataset
-
-    ds = load_dataset("Silviase/Japanese-Heron-Bench", split="train")
-    ds = ds.rename_column("text", "input_text")
-    # the 102th problem
-    ds = ds.select(range(100, 102))
-    pred_texts = [
-        "画像から判断すると、制限速度は50 km/hのようです。道路標識に「50」と表示されています。",
-        "画像に写っている標識によると、現在地からニセコまでは12kmです。",
-    ]
-    refs = [doc["answer"]["gpt-4-0125-preview"] for doc in ds]
-    client = OpenAIChatAPI()
-    judge_model = "gpt-4o-2024-05-13"
-    scores = HeronBenchScorer.score(
-        refs, pred_texts, docs=ds, client=client, judge_model=judge_model
-    )
-    print(scores)
-
-    output = HeronBenchScorer.aggregate(scores, docs=ds)
-    print(output)

@@ -1,24 +1,24 @@
-import json
 import os
+import json
+import argparse
+from dataclasses import asdict
+from tqdm import tqdm
+from loguru import logger
 
 import eval_mm
-from tqdm import tqdm
-import argparse
 import eval_mm.metrics
 from utils import GenerationConfig
 from model_table import get_class_from_model_id
-from dataclasses import asdict
-from loguru import logger
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_id", type=str, default="llava-hf/llava-1.5-7b-hf")
-    parser.add_argument("--task_id", type=str, default="japanese-heron-bench")
-    parser.add_argument("--judge_model", type=str, default="gpt-4o-2024-11-20")
+    parser.add_argument("--model_id", default="llava-hf/llava-1.5-7b-hf")
+    parser.add_argument("--task_id", default="japanese-heron-bench")
+    parser.add_argument("--judge_model", default="gpt-4o-2024-11-20")
     parser.add_argument("--batch_size_for_evaluation", type=int, default=10)
     parser.add_argument("--overwrite", action="store_true")
-    parser.add_argument("--result_dir", type=str, default="result")
+    parser.add_argument("--result_dir", default="result")
     parser.add_argument("--inference_only", action="store_true")
     parser.add_argument("--max_new_tokens", type=int, default=256)
     parser.add_argument("--num_beams", type=int, default=1)
@@ -26,27 +26,116 @@ def parse_args():
     parser.add_argument("--top_p", type=float, default=1.0)
     parser.add_argument("--do_sample", action="store_true", default=False)
     parser.add_argument("--use_cache", action="store_true", default=True)
+    parser.add_argument("--max_dataset_len", type=int)
+    parser.add_argument("--metrics", default="llm_as_a_judge_heron_bench")
     parser.add_argument(
-        "--max_dataset_len",
-        type=int,
-        default=None,
-        help="max data size for evaluation. If None, use all data. Else, use the first n data.",
+        "--rotate_choices", action="store_true", help="This option is used in MECHA-ja"
     )
     parser.add_argument(
-        "--metrics",
-        type=str,
-        default="llm_as_a_judge_heron_bench",
-        help=f"metrics to evaluate. You can specify multiple metrics separated by comma (e.g. --metrics exact_match,llm_as_a_judge) You can use the following metrics: {list(eval_mm.metrics.ScorerRegistry._scorers.keys())}",
-    )
-    parser.add_argument(
-        "--rotate_choices",
+        "--random_choice",
         action="store_true",
-        help="If set, rotate the choices of MCQ options for evaluation.",
+        help="If set, randomly choose the answer from the candidates when parse error occurs in JMMMU and MMMU tasks",
     )
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
+    prediction_path = os.path.join(output_dir, "prediction.jsonl")
+    if os.path.exists(prediction_path) and not args.overwrite:
+        logger.info(f"Loading predictions from {prediction_path}")
+        with open(prediction_path) as f:
+            preds = [json.loads(line) for line in f]
+        assert len(preds) == len(
+            task.dataset
+        ), "Prediction length mismatch with dataset"
+        return preds, []
+
+    logger.info("Generating predictions...")
+    model = get_class_from_model_id(args.model_id)(args.model_id)
+    preds, errors = [], []
+    error_count = 0
+
+    for doc in tqdm(task.dataset):
+        qid = task.doc_to_id(doc)
+        images = task.doc_to_visual(doc)
+        text = task.doc_to_text(doc).replace("<image>", "")
+
+        try:
+            generated_text = model.generate(images, text, gen_kwargs)
+        except Exception as e:
+            logger.error(f"Error on {qid}: {e}")
+            generated_text, error_count = "", error_count + 1
+            errors.append({"question_id": qid, "error": str(e)})
+
+        preds.append({"question_id": qid, "text": generated_text})
+
+        if error_count > len(task.dataset) * 0.1:
+            logger.error("Error count exceeded 10%. Terminating.")
+            save_jsonl(os.path.join(output_dir, "error_message.jsonl"), errors)
+            exit()
+
+    save_jsonl(prediction_path, preds)
+    if errors:
+        save_jsonl(os.path.join(output_dir, "error_message.jsonl"), errors)
+    logger.info(f"Predictions saved to {prediction_path}")
+    return preds, errors
+
+
+def save_jsonl(path, data):
+    with open(path, "w") as f:
+        for item in data:
+            f.write(json.dumps(item, ensure_ascii=False) + "\n")
+
+
+def evaluate(args, task, preds, metrics):
+    logger.info("Starting evaluation...")
+    scores_by_metric = {}
+    aggregated_metrics = {}
+
+    for metric in metrics:
+        scorer = eval_mm.ScorerRegistry.load_scorer(
+            metric,
+            eval_mm.ScorerConfig(
+                docs=task.dataset,
+                judge_model=args.judge_model,
+                batch_size=args.batch_size_for_evaluation,
+                client=eval_mm.OpenAIChatAPI(),
+                random_choice=args.random_choice,
+            ),
+        )
+        scores = scorer.score(
+            [task.doc_to_answer(doc) for doc in task.dataset],
+            [pred["text"] for pred in preds],
+        )
+        scores_by_metric[metric] = scores
+        aggregate = scorer.aggregate(scores)
+        aggregated_metrics[metric] = asdict(aggregate)
+
+        logger.info(f"Scores for {metric}: {scores}")
+        logger.info(f"Aggregate for {metric}: {aggregate}")
+
+    return scores_by_metric, aggregated_metrics
+
+
+def save_final_results(preds, task, metrics, scores_by_metric, output_path):
+    final_results = []
+    for i, pred in enumerate(preds):
+        doc = task.dataset[i]
+        result = {
+            "question_id": pred["question_id"],
+            "text": pred["text"],
+            "answer": task.doc_to_answer(doc),
+            "input_text": task.doc_to_text(doc),
+        }
+        for metric in metrics:
+            result[metric] = scores_by_metric[metric][i]
+        final_results.append(result)
+
+    save_jsonl(output_path, final_results)
+    logger.info(f"Final prediction with scores saved to {output_path}")
+
+
+def main():
     args = parse_args()
     metrics = args.metrics.split(",")
 
@@ -59,108 +148,31 @@ if __name__ == "__main__":
         use_cache=args.use_cache,
     )
 
-    task_config = eval_mm.tasks.TaskConfig(
+    task_config = eval_mm.TaskConfig(
         max_dataset_len=args.max_dataset_len,
-        judge_model=args.judge_model,
-        batch_size_for_evaluation=args.batch_size_for_evaluation,
         rotate_choices=args.rotate_choices,
     )
-    task = eval_mm.tasks.TaskRegistry.get_task_cls(args.task_id)(task_config)
+    task = eval_mm.TaskRegistry.load_task(args.task_id, task_config)
 
     output_dir = os.path.join(args.result_dir, args.task_id, args.model_id)
     os.makedirs(output_dir, exist_ok=True)
 
-    # if prediciton is already done, load the prediction
-    prediction_path = os.path.join(output_dir, "prediction.jsonl")
-    if os.path.exists(prediction_path) and not args.overwrite:
-        with open(prediction_path, "r") as f:
-            preds = [json.loads(line) for line in f]
-        assert (
-            len(preds) == len(task.dataset)
-        ), f"Prediction result length is not equal to the dataset length. Prediction result length: {len(preds)}, Dataset length: {len(task.dataset)}"
-        logger.info(f"Prediction result loaded from {prediction_path}")
-    else:
-        model = get_class_from_model_id(args.model_id)(args.model_id)
-        preds = []
-        logger.info(task.dataset)
-        error_count = 0
-        for doc in tqdm(task.dataset):
-            if error_count > len(task.dataset) * 0.1:
-                logger.error(
-                    f"Error count is too high. Error count: {error_count}, Dataset length: {len(task.dataset)}. You need to re-run the evaluation."
-                )
-                exit()
-            images = task.doc_to_visual(doc)
-            text = task.doc_to_text(doc)
-            if "<image>" in text:
-                text = text.replace("<image>", "")
-            qid = task.doc_to_id(doc)
-            try:
-                generated_text = model.generate(images, text, gen_kwargs)
-            except Exception as e:
-                logger.error(f"Error in generating text for {qid}: {e}")
-                error_count += 1
-                generated_text = ""
-            pred = {
-                "question_id": qid,
-                "text": generated_text,
-            }
-            preds.append(pred)
-        logger.info(f"Error count: {error_count}")
-        if error_count > len(task.dataset) * 0.1:
-            logger.error(
-                f"Error count is too high. Error count: {error_count}, Dataset length: {len(task.dataset)}. You need to re-run the evaluation."
-            )
-            exit()
-        with open(prediction_path, "w") as f:
-            for pred in preds:
-                f.write(json.dumps(pred, ensure_ascii=False) + "\n")
+    preds, errors = load_or_generate_predictions(args, task, gen_kwargs, output_dir)
 
     if args.inference_only:
-        logger.info("Inference only mode. Skip evaluation.")
-        exit()
-    logger.info("Evaluation start")
-    # evaluate the predictions
+        logger.info("Inference only mode. Skipping evaluation.")
+        return
 
-    scores_for_each_metric = {}
-    calculated_metrics = {}
+    scores_by_metric, aggregated_metrics = evaluate(args, task, preds, metrics)
 
-    for metric in metrics:
-        scorer = eval_mm.metrics.ScorerRegistry.get_scorer(metric)
-        scores = scorer.score(
-            [task.doc_to_answer(doc) for doc in task.dataset],
-            [pred["text"] for pred in preds],
-            docs=task.dataset,
-            client=task.client,
-            judge_model=task.config.judge_model,
-            batch_size=task.config.batch_size_for_evaluation,
-        )
-        logger.info(scores)
-        scores_for_each_metric[metric] = scores
-        logger.info(f"Scores for {metric}: {scores_for_each_metric[metric]}")
-        aggregate_output = scorer.aggregate(scores, docs=task.dataset)
-
-        calculated_metrics[metric] = asdict(aggregate_output)
-        logger.info(f"Aggregate score for {metric}: {aggregate_output}")
-
-    with open(prediction_path, "w") as f:
-        for i, pred in enumerate(preds):
-            question_id = pred["question_id"]
-            text = pred["text"]
-            answer = task.doc_to_answer(task.dataset[i])
-            input_text = task.doc_to_text(task.dataset[i])
-            content = {
-                "question_id": question_id,
-                "text": text,
-                "answer": answer,
-                "input_text": input_text,
-            }
-            for metric in metrics:
-                content[metric] = scores_for_each_metric[metric][i]
-            f.write(json.dumps(content, ensure_ascii=False) + "\n")
-    logger.info(f"Prediction result saved to {prediction_path}")
+    prediction_path = os.path.join(output_dir, "prediction.jsonl")
+    save_final_results(preds, task, metrics, scores_by_metric, prediction_path)
 
     evaluation_path = os.path.join(output_dir, "evaluation.jsonl")
     with open(evaluation_path, "w") as f:
-        f.write(json.dumps(calculated_metrics, ensure_ascii=False) + "\n")
+        f.write(json.dumps(aggregated_metrics, ensure_ascii=False) + "\n")
     logger.info(f"Evaluation result saved to {evaluation_path}")
+
+
+if __name__ == "__main__":
+    main()

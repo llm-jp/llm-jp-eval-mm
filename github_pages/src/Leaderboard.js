@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaGithub, FaRegFilePdf } from 'react-icons/fa';
 import './Leaderboard.css';
-import LinkButton from './LinkButton';
 
 function Leaderboard() {
   const [data, setData] = useState([]);

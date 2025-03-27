@@ -90,7 +90,7 @@ def extract_subset_name(input_string):
         raise ValueError(f'No match found in "{input_string}"')
 
 
-def parse_multi_choice_response(response, all_choices, index2ans):
+def parse_multi_choice_response(response, all_choices, index2ans, random_choice: bool):
     """
     Parse the prediction from the generated response.
     Return the predicted index e.g., A, B, C, D.
@@ -133,8 +133,10 @@ def parse_multi_choice_response(response, all_choices, index2ans):
                 index_ans = False  # it's content ans.
 
     if len(candidates) == 0:
-        # pred_index = random.choice(all_choices) # still not get answer, randomly choose one.
-        pred_index = None
+        if random_choice:
+            pred_index = np.random.choice(all_choices)
+        else:
+            pred_index = None
     elif len(candidates) > 1:
         start_indexes = []
         if index_ans:
@@ -390,10 +392,12 @@ def eval_open(gold_i, pred_i):
     return correct
 
 
-def get_score(doc: Dataset, pred: str) -> int:
+def get_score(doc: Dataset, pred: str, random_choice: bool = False) -> int:
     if doc["question_type"] == "multiple-choice":
         index2ans, all_choices = get_multi_choice_info(ast.literal_eval(doc["options"]))
-        parsed_pred = parse_multi_choice_response(pred, all_choices, index2ans)
+        parsed_pred = parse_multi_choice_response(
+            pred, all_choices, index2ans, random_choice
+        )
     else:
         parsed_pred = parse_open_response(pred)
     answer = doc["answer"]
@@ -408,18 +412,16 @@ def get_score(doc: Dataset, pred: str) -> int:
 
 
 class JMMMUScorer(Scorer):
-    @staticmethod
-    def score(refs: list[str], preds: list[str], **kwargs) -> list[int]:
-        docs = kwargs["docs"]
+    def score(self, refs: list[str], preds: list[str]) -> list[int]:
+        docs = self.config.docs
         scores = []
         for doc, pred in zip(docs, preds):
-            score = get_score(doc, pred)
+            score = get_score(doc, pred, self.config.random_choice)
             scores.append(score)
         return scores
 
-    @staticmethod
-    def aggregate(scores: list[int], **kwargs) -> AggregateOutput:
-        docs = kwargs["docs"]
+    def aggregate(self, scores: list[int]) -> AggregateOutput:
+        docs = self.config.docs
         evaluation_result = {}
         subset_to_eval_samples = defaultdict(list)
         for doc, score in zip(docs, scores):
@@ -465,9 +467,12 @@ def test_jmmmu_scorer():
             "id": "validation_Accounting_1",
         }
     ]
-    scores = JMMMUScorer.score(refs, preds, docs=docs)
+    from .scorer import ScorerConfig
+
+    scorer = JMMMUScorer(ScorerConfig(docs=docs))
+    scores = scorer.score(refs, preds)
     assert scores == [1]
-    output = JMMMUScorer.aggregate(scores, docs=docs)
+    output = scorer.aggregate(scores)
     assert output.overall_score == 1.0
     print(output)
     assert output.details == {

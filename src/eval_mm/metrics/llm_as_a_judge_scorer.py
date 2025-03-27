@@ -25,16 +25,15 @@ Your Score:
 
 
 class LlmAsaJudgeScorer(Scorer):
-    @staticmethod
     def score(
+        self,
         refs,
         preds,
-        **kwargs,
     ):
-        client = kwargs["client"]
-        model_name = kwargs["judge_model"]
-        batch_size = kwargs["batch_size"]
-        docs = kwargs["docs"]
+        client = self.config.client
+        model_name = self.config.judge_model
+        batch_size = self.config.batch_size
+        docs = self.config.docs
         questions = docs["input_text"]
 
         def build_message(question: str, answer: str, pred: str):
@@ -76,7 +75,8 @@ class LlmAsaJudgeScorer(Scorer):
         #         scores[i] = 0
         return scores
 
-    def aggregate(scores: list, **kwargs) -> AggregateOutput:
+    @staticmethod
+    def aggregate(scores: list) -> AggregateOutput:
         mean = sum(scores) / len(scores)
         return AggregateOutput(mean, {"llm_as_a_judge": mean})
 
@@ -84,20 +84,17 @@ class LlmAsaJudgeScorer(Scorer):
 def test_llm_as_a_judge_scorer():
     from eval_mm.utils.azure_client import MockChatAPI, OpenAIChatAPI
 
-    batch_size = 1
     questions = ["What is the capital of Japan?", "What is the capital of France?"]
     answers = ["Tokyo", "Paris"]
     preds = ["", ""]
-    scores = LlmAsaJudgeScorer.score(
-        answers,
-        preds,
-        docs={"input_text": questions},
-        client=MockChatAPI(),
-        judge_model="moch",
-        batch_size=batch_size,
+    from .scorer import ScorerConfig
+
+    scorer = LlmAsaJudgeScorer(
+        ScorerConfig(docs={"input_text": questions}, client=MockChatAPI())
     )
+    scores = scorer.score(answers, preds)
     assert scores == [0, 0]
-    output = LlmAsaJudgeScorer.aggregate(scores)
+    output = scorer.aggregate(scores)
     assert output.overall_score == 0.0
     assert output.details == {"llm_as_a_judge": 0.0}
 
@@ -107,16 +104,15 @@ def test_llm_as_a_judge_scorer():
         questions = ["What is the capital of Japan?", "What is the capital of France?"]
         answers = ["Tokyo", "Paris"]
         preds = ["Tokyo", "Paris"]
-        batch_size = 1
         model_name = "gpt-4o-mini-2024-07-18"
-        scores = LlmAsaJudgeScorer.score(
-            answers,
-            preds,
-            docs={"input_text": questions},
-            client=OpenAIChatAPI(),
-            judge_model=model_name,
-            batch_size=batch_size,
+        scorer = LlmAsaJudgeScorer(
+            ScorerConfig(
+                docs={"input_text": questions},
+                client=OpenAIChatAPI(),
+                judge_model=model_name,
+            )
         )
+        scores = scorer.score(answers, preds)
         assert scores == [5, 5]
 
         questions = [
@@ -136,12 +132,12 @@ def test_llm_as_a_judge_scorer():
             "日本語教師数の数は34392人、学習者の数は139613人となっています。",
         ]
         model_name = "gpt-4o-2024-05-13"
-        scores = LlmAsaJudgeScorer.score(
-            answers,
-            preds,
-            docs={"input_text": questions},
-            client=OpenAIChatAPI(),
-            judge_model=model_name,
-            batch_size=batch_size,
+        scorer = LlmAsaJudgeScorer(
+            ScorerConfig(
+                docs={"input_text": questions},
+                client=OpenAIChatAPI(),
+                judge_model=model_name,
+            )
         )
+        scores = scorer.score(answers, preds)
         assert scores == [5, 1, 5]

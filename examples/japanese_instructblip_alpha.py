@@ -196,6 +196,7 @@ class VLM(BaseVLM):
         # TODO: white space return problem some times
         response = self.tokenizer.batch_decode(output, skip_special_tokens=True)
         generated_text = response[0].strip()
+        generated_text = generated_text.split("### 応答:")[-1].strip()
         return generated_text
 
 
