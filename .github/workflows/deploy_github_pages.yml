@@ -4,8 +4,6 @@ on:
   push:
     paths:
       - 'github_pages/public/**'
-    branches:
-      - main  # デプロイを実行するブランチを指定
 
 jobs:
   deploy:
