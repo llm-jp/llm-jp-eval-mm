@@ -24,6 +24,11 @@ jobs:
           cd github_pages
           npm install
 
+      - name: Set Git user for deploy
+        run: |
+          git config --global user.email "bot@example.com"
+          git config --global user.name "GitHub Actions Bot"
+
       - name: Run deployment
         run: |
           cd github_pages
