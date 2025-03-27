@@ -3,7 +3,7 @@ name: Deploy GitHub Pages
 on:
   push:
     paths:
-      - 'github_pages/public/**'
+      - 'github_pages/**'
 
 jobs:
   deploy:
@@ -27,4 +27,4 @@ jobs:
       - name: Run deployment
         run: |
           cd github_pages
-          npm run deploy
+          CI=false npm run deploy
