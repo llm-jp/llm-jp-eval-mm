@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/llm-jp-eval-mm/static/css/main.f60c52df.css",
-    "main.js": "/llm-jp-eval-mm/static/js/main.13d26bc8.js",
-    "static/media/llm_jp_eval_mm_overview.png": "/llm-jp-eval-mm/static/media/llm_jp_eval_mm_overview.3b34daf9902bc1907983.png",
-    "index.html": "/llm-jp-eval-mm/index.html",
-    "main.f60c52df.css.map": "/llm-jp-eval-mm/static/css/main.f60c52df.css.map",
-    "main.13d26bc8.js.map": "/llm-jp-eval-mm/static/js/main.13d26bc8.js.map"
+    "main.css": "/static/css/main.f60c52df.css",
+    "main.js": "/static/js/main.7a4658e4.js",
+    "static/media/teaser.png": "/static/media/teaser.2e6c58b72fac122dfcbb.png",
+    "index.html": "/index.html",
+    "main.f60c52df.css.map": "/static/css/main.f60c52df.css.map",
+    "main.7a4658e4.js.map": "/static/js/main.7a4658e4.js.map"
   },
   "entrypoints": [
     "static/css/main.f60c52df.css",
-    "static/js/main.13d26bc8.js"
+    "static/js/main.7a4658e4.js"
   ]
 }
