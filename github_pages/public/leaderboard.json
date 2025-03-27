@@ -694,6 +694,11 @@
     }
   },
   {
+    "model": "Qwen/Qwen2.5-VL-32B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2.5-VL-32B-Instruct",
+    "scores": {}
+  },
+  {
     "model": "Qwen/Qwen2.5-VL-72B-Instruct",
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct",
     "scores": {
@@ -706,6 +711,9 @@
       },
       "JIC": {
         "Acc": 0.9
+      },
+      "MECHA": {
+        "Acc": 0.75
       },
       "MMMU": {
         "Acc": 0.63
