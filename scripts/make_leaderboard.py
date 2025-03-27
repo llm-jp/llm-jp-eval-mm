@@ -47,7 +47,7 @@ def load_evaluation_data(result_dir: str, model: str, task_dirs: List[str]) -> d
             evaluation = json.load(f)
 
         for metric, aggregate_output in evaluation.items():
-            if metric not in eval_mm.metrics.ScorerRegistry._scorers.keys():
+            if metric not in eval_mm.ScorerRegistry.get_metric_list():
                 logger.warning(f"Skipping unsupported metric: {metric}")
                 continue
 
@@ -56,15 +56,24 @@ def load_evaluation_data(result_dir: str, model: str, task_dirs: List[str]) -> d
     return model_results
 
 
-def process_results(result_dir: str, model_list: List[str]) -> pd.DataFrame:
+def process_results(
+    result_dir: str,
+    model_list: List[str],
+    add_avg: bool = False,
+    task_id_list: Optional[List[str]] = None,
+) -> pd.DataFrame:
     """Process all evaluation results into a structured DataFrame."""
-    task_dirs = [d for d in os.listdir(result_dir) if not d.startswith(".")]
+    if task_id_list:
+        task_dirs = task_id_list
+    else:
+        task_dirs = [d for d in os.listdir(result_dir) if not d.startswith(".")]
+
     df = pd.DataFrame()
 
     for model in model_list:
         logger.info(f"Processing results for {model}")
         model_results = load_evaluation_data(result_dir, model, task_dirs)
-        if not model_results:
+        if len(model_results) == 1:
             continue
         df = df._append(model_results, ignore_index=True)
 
@@ -75,11 +84,12 @@ def process_results(result_dir: str, model_list: List[str]) -> pd.DataFrame:
             for k in df.columns
         }
     )
-    # すべてのスコアを 100 点満点に正規化
-    df_normalized = df.apply(lambda x: x / x.max() * 100, axis=0)
+    if add_avg:
+        # すべてのスコアを 100 点満点に正規化
+        df_normalized = df.apply(lambda x: x / x.max() * 100, axis=0)
 
-    # 各モデルの全体スコア（平均）を計算し、最後の列に追加
-    df["Avg/Avg"] = df_normalized.mean(axis=1).round(2)
+        # 各モデルの全体スコア（平均）を計算し、最後の列に追加
+        df["Avg/Avg"] = df_normalized.mean(axis=1).round(2)
 
     return df
 
@@ -172,6 +182,7 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
             df.loc[top2_model, col] = f"<u>{top2_score}</u>"
 
     df = df.fillna("")
+
     if output_format == "markdown":
         return df.to_markdown(mode="github", floatfmt=".3g")
     elif output_format == "latex":
@@ -187,8 +198,10 @@ def main(
     plot_bar: bool = False,
     plot_corr: bool = False,
     update_pages: bool = False,
+    add_avg: bool = False,
+    task_id_list: Optional[List[str]] = None,
 ):
-    df = process_results(result_dir, model_list)
+    df = process_results(result_dir, model_list, add_avg, task_id_list)
     if plot_corr:
         plot_correlation(df.copy(), "correlation.png")
     # plot_correlation(df.T, "correlation_model.png")
@@ -236,6 +249,14 @@ def parse_args():
     parser.add_argument(
         "--update_pages", action="store_true", help="Update the GitHub Pages JSON"
     )
+    parser.add_argument(
+        "--add_avg", action="store_true", help="Add average score column"
+    )
+    parser.add_argument(
+        "--task_id_list",
+        type=str,
+        help="List of task IDs to include in the leaderboard (e.g. jmmmu,mmmu). If not specified, all tasks will be included.",
+    )
     return parser.parse_args()
 
 
@@ -267,6 +288,7 @@ if __name__ == "__main__":
         "microsoft/Phi-4-multimodal-instruct",
         "gpt-4o-2024-11-20",
     ]
+    print(args.task_id_list)
     main(
         args.result_dir,
         model_list,
@@ -275,4 +297,6 @@ if __name__ == "__main__":
         args.plot_bar,
         args.plot_corr,
         args.update_pages,
+        args.add_avg,
+        args.task_id_list.split(",") if args.task_id_list else None,
     )
