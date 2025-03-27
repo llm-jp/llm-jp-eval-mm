@@ -694,11 +694,6 @@
     }
   },
   {
-    "model": "Qwen/Qwen2.5-VL-32B-Instruct",
-    "url": "https://huggingface.co/Qwen/Qwen2.5-VL-32B-Instruct",
-    "scores": {}
-  },
-  {
     "model": "Qwen/Qwen2.5-VL-72B-Instruct",
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct",
     "scores": {
