@@ -3,7 +3,7 @@
 
 [ [**Japanese**](./README_ja.md) | English ]
 
-llm-jp-eval-mm automates the evaluation of multi-modal large language models (VLMs) across various datasets, mainly focusing on Japanese tasks.
+llm-jp-eval-mm is a lightweight framework for evaluating visual-language models across various benchmark tasks, mainly focusing on Japanese tasks.
 
 This tool supports multi-modal text generation tasks and calculates task-specific evaluation metrics based on the inference results provided by users.
 
