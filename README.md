@@ -238,6 +238,10 @@ git push origin --tags
 ### Updating the Website
 For website updates, refer to the [github_pages/README.md](./github_pages/README.md).
 
+To update the leaderboard data on the website, run:
+```bash
+python scripts/make_leaderboard.py --update_pages
+```
 
 ## Acknowledgements
 - [Heron](https://github.com/turingmotors/heron): We refer to the Heron code for the evaluation of the Japanese Heron Bench task.

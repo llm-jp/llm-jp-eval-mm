@@ -64,6 +64,8 @@ def process_results(result_dir: str, model_list: List[str]) -> pd.DataFrame:
     for model in model_list:
         logger.info(f"Processing results for {model}")
         model_results = load_evaluation_data(result_dir, model, task_dirs)
+        if not model_results:
+            continue
         df = df._append(model_results, ignore_index=True)
 
     df = df.set_index("Model").round(2)
@@ -81,6 +83,8 @@ def generate_json_path(df: pd.DataFrame, output_path: str):
     json_data = []
 
     for model, row in df.iterrows():
+        if pd.isna(row).all():
+            continue
         model_entry = {
             "model": model,
             "url": f"https://huggingface.co/{model}",
@@ -178,15 +182,33 @@ def main(
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument("--result_dir", type=str, default="result")
-    parser.add_argument("--output_path", type=str, default="leaderboard.md")
     parser.add_argument(
-        "--output_format", type=str, default="markdown", choices=["markdown", "latex"]
+        "--result_dir",
+        type=str,
+        default="result",
+        help="Directory containing evaluation results",
     )
-    parser.add_argument("--plot_bar", action="store_true")
-    parser.add_argument("--plot_corr", action="store_true")
     parser.add_argument(
-        "--update_pages", action="store_true"
+        "--output_path",
+        type=str,
+        default="leaderboard.md",
+        help="Output path for the leaderboard",
+    )
+    parser.add_argument(
+        "--output_format",
+        type=str,
+        default="markdown",
+        choices=["markdown", "latex"],
+        help="Output format",
+    )
+    parser.add_argument(
+        "--plot_bar", action="store_true", help="Plot bar plots for each task"
+    )
+    parser.add_argument(
+        "--plot_corr", action="store_true", help="Plot correlation matrix between tasks"
+    )
+    parser.add_argument(
+        "--update_pages", action="store_true", help="Update the GitHub Pages JSON"
     )
     return parser.parse_args()
 
