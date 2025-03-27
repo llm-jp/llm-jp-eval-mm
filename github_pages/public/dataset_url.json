@@ -5,14 +5,14 @@
     "JVB-ItW": {
         "url": "https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild"
     },
-    "VGVQA": {
+    "VG-VQA": {
         "url": "https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500"
     },
     "MulIm-VQA": {
         "url": "https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA"
     },
     "JDocQA": {
-        "url": "https://huggingface.co/datasets/shunk031/JDocQA"
+        "url": "https://github.com/mizuumi/JDocQA"
     },
     "JMMMU": {
         "url": "https://huggingface.co/datasets/JMMMU/JMMMU"
@@ -20,7 +20,13 @@
     "MMMU": {
         "url": "https://huggingface.co/datasets/MMMU/MMMU"
     },
-    "LLavaB-ItW": {
+    "LLavaB": {
         "url": "https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild"
+    },
+    "JIC": {
+        "url": "https://huggingface.co/datasets/line-corporation/JIC-VQA"
+    },
+    "MECHA": {
+        "url": "https://huggingface.co/datasets/llm-jp/MECHA-ja"
     }
 }

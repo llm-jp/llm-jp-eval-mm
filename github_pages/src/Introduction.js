@@ -1,5 +1,5 @@
 import Figure from './Figure';
-import overviewFigure from './assets/llm_jp_eval_mm_overview.png';
+import overviewFigure from './assets/teaser.png';
 import './Introduction.css';
 
 const Introduction = () => {
