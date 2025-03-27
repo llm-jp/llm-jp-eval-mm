@@ -75,6 +75,12 @@ def process_results(result_dir: str, model_list: List[str]) -> pd.DataFrame:
             for k in df.columns
         }
     )
+    # すべてのスコアを 100 点満点に正規化
+    df_normalized = df.apply(lambda x: x / x.max() * 100, axis=0)
+
+    # 各モデルの全体スコア（平均）を計算し、最後の列に追加
+    df["Avg/Avg"] = df_normalized.mean(axis=1).round(2)
+
     return df
 
 
@@ -93,6 +99,9 @@ def generate_json_path(df: pd.DataFrame, output_path: str):
 
         for col, score in row.items():
             if isinstance(score, (int, float)) and not pd.isna(score):
+                if "/" not in col:
+                    model_entry["scores"][col] = score
+                    continue
                 task, metric = col.split("/")
                 if task not in model_entry["scores"]:
                     model_entry["scores"][task] = {}
@@ -145,6 +154,23 @@ def plot_task_performance(df: pd.DataFrame):
 
 def format_output(df: pd.DataFrame, output_format: str) -> str:
     """Format the DataFrame output for markdown or LaTeX."""
+
+    # textbf top1 score and underline top2 score for each task
+    for col in df.columns:
+        top1_model = df[col].astype(float).idxmax()
+        top2_model = df[col].astype(float).nlargest(2).index[-1]
+        top1_score = f"{float(df.loc[top1_model, col]):.3g}"
+        top2_score = f"{float(df.loc[top2_model, col]):.3g}"
+        # apply formatting
+        if output_format == "latex":
+            df.loc[top1_model, col] = f"\\textbf{{{top1_score}}}"
+            df.loc[top2_model, col] = f"\\textit{{{top2_score}}}"
+            df.loc[top2_model, col] = f"\\underline{{{top2_score}}}"
+        else:
+            df.loc[top1_model, col] = f"**{top1_score}**"
+            df.loc[top2_model, col] = f"*{top2_score}*"
+            df.loc[top2_model, col] = f"<u>{top2_score}</u>"
+
     df = df.fillna("")
     if output_format == "markdown":
         return df.to_markdown(mode="github", floatfmt=".3g")
@@ -164,12 +190,12 @@ def main(
 ):
     df = process_results(result_dir, model_list)
     if plot_corr:
-        plot_correlation(df, "correlation.png")
+        plot_correlation(df.copy(), "correlation.png")
     # plot_correlation(df.T, "correlation_model.png")
     if plot_bar:
-        plot_task_performance(df)
+        plot_task_performance(df.copy())
 
-    table = format_output(df, output_format)
+    table = format_output(df.copy(), output_format)
     print(table)
 
     if output_path:
@@ -177,7 +203,7 @@ def main(
             f.write(table)
 
     if update_pages:
-        generate_json_path(df, "github_pages/public/leaderboard.json")
+        generate_json_path(df.copy(), "github_pages/public/leaderboard.json")
 
 
 def parse_args():
