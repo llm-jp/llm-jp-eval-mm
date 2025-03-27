@@ -2,33 +2,53 @@ name: Deploy GitHub Pages
 
 on:
   push:
-    paths:
-      - 'github_pages/**'
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches:
+      - dev
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: github_pages
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Instal Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+        env:
+          PUBLIC_URL: /llm-jp-eval-mm
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: github_pages/dist
+
   deploy:
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Node.js
-        run: |
-          sudo apt update
-          sudo apt install -y nodejs npm
-          sudo npm install -g n
-
-      - name: Install dependencies
-        run: |
-          cd github_pages
-          npm install
-
-      - name: Run deployment
-        run: |
-          cd github_pages
-          CI=false npm run deploy
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        id: deployment
