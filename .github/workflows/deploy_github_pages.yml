@@ -1,0 +1,32 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    paths:
+      - 'github_pages/public/**'
+    branches:
+      - main  # デプロイを実行するブランチを指定
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        run: |
+          sudo apt update
+          sudo apt install -y nodejs npm
+          sudo npm install -g n
+
+      - name: Install dependencies
+        run: |
+          cd github_pages
+          npm install
+
+      - name: Run deployment
+        run: |
+          cd github_pages
+          npm run deploy
