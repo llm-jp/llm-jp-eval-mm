@@ -156,7 +156,7 @@ def main(
     output_format: str = "markdown",
     plot_bar: bool = False,
     plot_corr: bool = False,
-    json_path: str = "leaderboard.json",
+    update_pages: bool = False,
 ):
     df = process_results(result_dir, model_list)
     if plot_corr:
@@ -172,8 +172,8 @@ def main(
         with open(output_path, "w") as f:
             f.write(table)
 
-    if json_path:
-        generate_json_path(df, json_path)
+    if update_pages:
+        generate_json_path(df, "github_pages/public/leaderboard.json")
 
 
 def parse_args():
@@ -186,10 +186,7 @@ def parse_args():
     parser.add_argument("--plot_bar", action="store_true")
     parser.add_argument("--plot_corr", action="store_true")
     parser.add_argument(
-        "--json_path",
-        type=str,
-        default=None,
-        help="Path to save JSON file that is used for leaderboard website",
+        "--update_pages", action="store_true"
     )
     return parser.parse_args()
 
@@ -229,5 +226,5 @@ if __name__ == "__main__":
         args.output_format,
         args.plot_bar,
         args.plot_corr,
-        args.json_path,
+        args.update_pages,
     )
