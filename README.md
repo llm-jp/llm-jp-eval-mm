@@ -3,9 +3,7 @@
 
 [ [**Japanese**](./README_ja.md) | English ]
 
-llm-jp-eval-mm automates the evaluation of multi-modal large language models (VLMs) across various datasets, mainly focusing on Japanese tasks.
-
-This tool supports multi-modal text generation tasks and calculates task-specific evaluation metrics based on the inference results provided by users.
+llm-jp-eval-mm is a lightweight framework for evaluating visual-language models across various benchmark tasks, mainly focusing on Japanese tasks.
 
 ![What llm-jp-eval-mm provides](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/assets/teaser.png)
 
@@ -61,9 +59,7 @@ If you're not using the LLM-as-a-judge method, you can set any value in the .env
 
 ### Running an Evaluation
 
-To evaluate your model on a specific task, we provide an example script: `examples/sample.py`.
-
-For example, to evaluate the `llava-hf/llava-1.5-7b-hf` model on the japanese-heron-bench task, run:
+To evaluate a model on a task, we provide an example script: `examples/sample.py`.
 
 ```bash
 uv sync --group normal
@@ -78,6 +74,7 @@ uv run --group normal python examples/sample.py \
 
 The evaluation results will be saved in the result directory:
 ```
+result
 ├── japanese-heron-bench
 │   ├── llava-hf
 │   │   ├── llava-1.5-7b-hf
@@ -86,7 +83,6 @@ The evaluation results will be saved in the result directory:
 ```
 
 If you want to evaluate multiple models on multiple tasks, please check `eval_all.sh`.
-
 
 ### Use llm-jp-eval-mm as a Library
 
@@ -157,10 +153,9 @@ English Tasks:
 - [MMMU](https://huggingface.co/datasets/MMMU/MMMU)
 - [LlaVA-Bench-In-the-Wild](https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild)
 
-## Required Libraries for Each VLM Model Inference
+## Required Dependencies for Each Model
 
-Each VLM model may have different dependencies.
-To manage these, llm-jp-eval-mm uses uv's dependency groups.
+We use uv’s dependency groups to manage each model’s dependencies.
 
 For example, to use llm-jp/llm-jp-3-vila-14b, run:
 ```bash
@@ -168,33 +163,23 @@ uv sync --group vilaja
 uv run --group vilaja python examples/VILA_ja.py
 ```
 
-Refer to eval_all.sh for a full list of model dependencies.
+See eval_all.sh for the complete list of model dependencies.
 
-When you add a new group, don’t forget to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
+When adding a new group, remember to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
 
-## Benchmark-Specific Required Libraries
-
-- JIC-VQA
-
-For the JIC-VQA dataset, you need to download images from URLs. Use the following script to prepare the dataset:
-
-```python
-python scripts/prepare_jic_vqa.py
-```
-
-## Analyze VLMs Prediction
+## Analyze Model Predictions
 
 Visualize your model’s predictions with the following Streamlit app:
 ```bash
 uv run streamlit run scripts/browse_prediction.py --task_id "japanese-heron-bench" --result_dir "result"
 ```
-You will be able to see the visualized predictions, like this:
+You can view the visualized predictions below:
 ![Streamlit](./assets/streamlit_visualization.png)
 
 
 ## Contribution
 
-We welcome contributions! If you encounter issues, or if you have suggestions or improvements, please open an issue or submit a pull request.
+If you encounter issues, or if you have suggestions or improvements, please open an issue or submit a pull request.
 
 ### How to Add a Benchmark Task
 Refer to the `src/eval_mm/tasks` directory to implement new benchmark tasks.
