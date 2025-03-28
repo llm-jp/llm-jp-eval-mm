@@ -50,8 +50,10 @@ def load_evaluation_data(result_dir: str, model: str, task_dirs: List[str]) -> d
             if metric not in eval_mm.ScorerRegistry.get_metric_list():
                 logger.warning(f"Skipping unsupported metric: {metric}")
                 continue
-
-            model_results[f"{task_dir}/{metric}"] = aggregate_output["overall_score"]
+            overall_score = aggregate_output["overall_score"]
+            if metric in ["jdocqa", "jmmmu", "jic-vqa", "mecha-ja", "mmmu"]:
+                overall_score = overall_score * 100
+            model_results[f"{task_dir}/{metric}"] = overall_score
 
     return model_results
 
@@ -169,8 +171,8 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
     for col in df.columns:
         top1_model = df[col].astype(float).idxmax()
         top2_model = df[col].astype(float).nlargest(2).index[-1]
-        top1_score = f"{float(df.loc[top1_model, col]):.3g}"
-        top2_score = f"{float(df.loc[top2_model, col]):.3g}"
+        top1_score = f"{float(df.loc[top1_model, col]):.1f}"
+        top2_score = f"{float(df.loc[top2_model, col]):.1f}"
         # apply formatting
         if output_format == "latex":
             df.loc[top1_model, col] = f"\\textbf{{{top1_score}}}"
@@ -184,9 +186,11 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
     df = df.fillna("")
 
     if output_format == "markdown":
-        return df.to_markdown(mode="github", floatfmt=".3g")
+        return df.to_markdown(mode="github", floatfmt=".1f")
     elif output_format == "latex":
-        return df.to_latex(float_format="%.3g")
+        return df.to_latex(
+            float_format="%.1f", column_format="l" + "c" * len(df.columns)
+        )
     return ""
 
 
