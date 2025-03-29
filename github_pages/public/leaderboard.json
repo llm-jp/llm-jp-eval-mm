@@ -3,6 +3,9 @@
     "model": "stabilityai/japanese-instructblip-alpha",
     "url": "https://huggingface.co/stabilityai/japanese-instructblip-alpha",
     "scores": {
+      "Avg": {
+        "Avg": 42.05
+      },
       "Heron": {
         "LLM": 23.53
       },
@@ -11,13 +14,13 @@
         "Rouge": 34.06
       },
       "JIC": {
-        "Acc": 0.57
+        "Acc": 56.63
       },
       "MECHA": {
-        "Acc": 0.23
+        "Acc": 23.39
       },
       "MMMU": {
-        "Acc": 0.26
+        "Acc": 25.56
       },
       "JVB-ItW": {
         "LLM": 2.26,
@@ -28,7 +31,7 @@
         "Rouge": 0.15
       },
       "JDocQA": {
-        "Acc": 0.12,
+        "Acc": 12.4,
         "LLM": 2.08
       },
       "MulIm-VQA": {
@@ -36,7 +39,7 @@
         "Rouge": 25.01
       },
       "JMMMU": {
-        "Acc": 0.26
+        "Acc": 26.44
       }
     }
   },
@@ -44,6 +47,9 @@
     "model": "stabilityai/japanese-stable-vlm",
     "url": "https://huggingface.co/stabilityai/japanese-stable-vlm",
     "scores": {
+      "Avg": {
+        "Avg": 45.69
+      },
       "Heron": {
         "LLM": 48.44
       },
@@ -52,13 +58,13 @@
         "Rouge": 45.72
       },
       "JIC": {
-        "Acc": 0.69
+        "Acc": 69.27
       },
       "MECHA": {
-        "Acc": 0.05
+        "Acc": 4.83
       },
       "MMMU": {
-        "Acc": 0.07
+        "Acc": 7.11
       },
       "JVB-ItW": {
         "LLM": 3.28,
@@ -69,7 +75,7 @@
         "Rouge": 0.58
       },
       "JDocQA": {
-        "Acc": 0.13,
+        "Acc": 13.09,
         "LLM": 2.09
       },
       "MulIm-VQA": {
@@ -77,7 +83,7 @@
         "Rouge": 40.7
       },
       "JMMMU": {
-        "Acc": 0.03
+        "Acc": 3.41
       }
     }
   },
@@ -85,6 +91,9 @@
     "model": "SakanaAI/Llama-3-EvoVLM-JP-v2",
     "url": "https://huggingface.co/SakanaAI/Llama-3-EvoVLM-JP-v2",
     "scores": {
+      "Avg": {
+        "Avg": 66.93
+      },
       "Heron": {
         "LLM": 47.59
       },
@@ -93,13 +102,13 @@
         "Rouge": 24.67
       },
       "JIC": {
-        "Acc": 0.67
+        "Acc": 67.05
       },
       "MECHA": {
-        "Acc": 0.51
+        "Acc": 50.74
       },
       "MMMU": {
-        "Acc": 0.39
+        "Acc": 38.89
       },
       "JVB-ItW": {
         "LLM": 3.48,
@@ -110,7 +119,7 @@
         "Rouge": 27.88
       },
       "JDocQA": {
-        "Acc": 0.15,
+        "Acc": 15.45,
         "LLM": 2.35
       },
       "MulIm-VQA": {
@@ -118,7 +127,7 @@
         "Rouge": 44.31
       },
       "JMMMU": {
-        "Acc": 0.36
+        "Acc": 36.36
       }
     }
   },
@@ -126,6 +135,9 @@
     "model": "cyberagent/llava-calm2-siglip",
     "url": "https://huggingface.co/cyberagent/llava-calm2-siglip",
     "scores": {
+      "Avg": {
+        "Avg": 49.03
+      },
       "Heron": {
         "LLM": 54.1
       },
@@ -134,13 +146,13 @@
         "Rouge": 17.7
       },
       "JIC": {
-        "Acc": 0.58
+        "Acc": 58.48
       },
       "MECHA": {
-        "Acc": 0.11
+        "Acc": 11.2
       },
       "MMMU": {
-        "Acc": 0.27
+        "Acc": 26.67
       },
       "JVB-ItW": {
         "LLM": 3.66,
@@ -151,7 +163,7 @@
         "Rouge": 2.92
       },
       "JDocQA": {
-        "Acc": 0.08,
+        "Acc": 8.15,
         "LLM": 2.05
       },
       "MulIm-VQA": {
@@ -159,7 +171,7 @@
         "Rouge": 40.63
       },
       "JMMMU": {
-        "Acc": 0.06
+        "Acc": 6.14
       }
     }
   },
@@ -167,6 +179,9 @@
     "model": "llm-jp/llm-jp-3-vila-14b",
     "url": "https://huggingface.co/llm-jp/llm-jp-3-vila-14b",
     "scores": {
+      "Avg": {
+        "Avg": 71.43
+      },
       "Heron": {
         "LLM": 68.03
       },
@@ -175,13 +190,13 @@
         "Rouge": 16.21
       },
       "JIC": {
-        "Acc": 0.81
+        "Acc": 81.35
       },
       "MECHA": {
-        "Acc": 0.46
+        "Acc": 45.63
       },
       "MMMU": {
-        "Acc": 0.33
+        "Acc": 32.67
       },
       "JVB-ItW": {
         "LLM": 4.08,
@@ -192,7 +207,7 @@
         "Rouge": 36.04
       },
       "JDocQA": {
-        "Acc": 0.17,
+        "Acc": 17.34,
         "LLM": 2.51
       },
       "MulIm-VQA": {
@@ -200,7 +215,7 @@
         "Rouge": 46.96
       },
       "JMMMU": {
-        "Acc": 0.19
+        "Acc": 19.02
       }
     }
   },
@@ -208,6 +223,9 @@
     "model": "sbintuitions/sarashina2-vision-8b",
     "url": "https://huggingface.co/sbintuitions/sarashina2-vision-8b",
     "scores": {
+      "Avg": {
+        "Avg": 67.38
+      },
       "Heron": {
         "LLM": 60.45
       },
@@ -216,13 +234,13 @@
         "Rouge": 25.45
       },
       "JIC": {
-        "Acc": 0.79
+        "Acc": 78.68
       },
       "MECHA": {
-        "Acc": 0.56
+        "Acc": 56.29
       },
       "MMMU": {
-        "Acc": 0.3
+        "Acc": 29.67
       },
       "JVB-ItW": {
         "LLM": 4.06,
@@ -233,7 +251,7 @@
         "Rouge": 16.94
       },
       "JDocQA": {
-        "Acc": 0.23,
+        "Acc": 22.61,
         "LLM": 2.98
       },
       "MulIm-VQA": {
@@ -241,7 +259,7 @@
         "Rouge": 30.2
       },
       "JMMMU": {
-        "Acc": 0.39
+        "Acc": 39.17
       }
     }
   },
@@ -249,6 +267,9 @@
     "model": "sbintuitions/sarashina2-vision-14b",
     "url": "https://huggingface.co/sbintuitions/sarashina2-vision-14b",
     "scores": {
+      "Avg": {
+        "Avg": 69.77
+      },
       "Heron": {
         "LLM": 60.15
       },
@@ -257,13 +278,13 @@
         "Rouge": 25.34
       },
       "JIC": {
-        "Acc": 0.8
+        "Acc": 80.03
       },
       "MECHA": {
-        "Acc": 0.64
+        "Acc": 64.42
       },
       "MMMU": {
-        "Acc": 0.34
+        "Acc": 33.78
       },
       "JVB-ItW": {
         "LLM": 4.04,
@@ -274,7 +295,7 @@
         "Rouge": 15.59
       },
       "JDocQA": {
-        "Acc": 0.24,
+        "Acc": 23.94,
         "LLM": 3.07
       },
       "MulIm-VQA": {
@@ -282,7 +303,7 @@
         "Rouge": 35.3
       },
       "JMMMU": {
-        "Acc": 0.43
+        "Acc": 42.95
       }
     }
   },
@@ -290,6 +311,9 @@
     "model": "MIL-UT/Asagi-14B",
     "url": "https://huggingface.co/MIL-UT/Asagi-14B",
     "scores": {
+      "Avg": {
+        "Avg": 40.1
+      },
       "Heron": {
         "LLM": 41.85
       },
@@ -298,13 +322,13 @@
         "Rouge": 9.29
       },
       "JIC": {
-        "Acc": 0.76
+        "Acc": 76.2
       },
       "MECHA": {
-        "Acc": 0.24
+        "Acc": 24.05
       },
       "MMMU": {
-        "Acc": 0.15
+        "Acc": 15.33
       },
       "JVB-ItW": {
         "LLM": 2.9,
@@ -315,7 +339,7 @@
         "Rouge": 0.05
       },
       "JDocQA": {
-        "Acc": 0.1,
+        "Acc": 10.38,
         "LLM": 1.99
       },
       "MulIm-VQA": {
@@ -323,7 +347,7 @@
         "Rouge": 18.39
       },
       "JMMMU": {
-        "Acc": 0.22
+        "Acc": 21.74
       }
     }
   },
@@ -331,6 +355,9 @@
     "model": "llava-hf/llava-1.5-7b-hf",
     "url": "https://huggingface.co/llava-hf/llava-1.5-7b-hf",
     "scores": {
+      "Avg": {
+        "Avg": 58.19
+      },
       "Heron": {
         "LLM": 43.14
       },
@@ -339,13 +366,13 @@
         "Rouge": 13.97
       },
       "JIC": {
-        "Acc": 0.44
+        "Acc": 43.99
       },
       "MECHA": {
-        "Acc": 0.38
+        "Acc": 38.17
       },
       "MMMU": {
-        "Acc": 0.34
+        "Acc": 34.0
       },
       "JVB-ItW": {
         "LLM": 3.02,
@@ -356,7 +383,7 @@
         "Rouge": 34.55
       },
       "JDocQA": {
-        "Acc": 0.15,
+        "Acc": 14.79,
         "LLM": 2.17
       },
       "MulIm-VQA": {
@@ -364,7 +391,7 @@
         "Rouge": 35.78
       },
       "JMMMU": {
-        "Acc": 0.3
+        "Acc": 29.62
       }
     }
   },
@@ -372,6 +399,9 @@
     "model": "llava-hf/llava-v1.6-mistral-7b-hf",
     "url": "https://huggingface.co/llava-hf/llava-v1.6-mistral-7b-hf",
     "scores": {
+      "Avg": {
+        "Avg": 53.75
+      },
       "Heron": {
         "LLM": 30.04
       },
@@ -380,13 +410,13 @@
         "Rouge": 11.71
       },
       "JIC": {
-        "Acc": 0.58
+        "Acc": 58.22
       },
       "MECHA": {
-        "Acc": 0.34
+        "Acc": 34.43
       },
       "MMMU": {
-        "Acc": 0.36
+        "Acc": 35.89
       },
       "JVB-ItW": {
         "LLM": 2.92,
@@ -397,7 +427,7 @@
         "Rouge": 30.72
       },
       "JDocQA": {
-        "Acc": 0.14,
+        "Acc": 14.38,
         "LLM": 1.98
       },
       "MulIm-VQA": {
@@ -405,7 +435,7 @@
         "Rouge": 25.22
       },
       "JMMMU": {
-        "Acc": 0.25
+        "Acc": 25.45
       }
     }
   },
@@ -413,6 +443,9 @@
     "model": "neulab/Pangea-7B-hf",
     "url": "https://huggingface.co/neulab/Pangea-7B-hf",
     "scores": {
+      "Avg": {
+        "Avg": 74.22
+      },
       "Heron": {
         "LLM": 56.97
       },
@@ -421,13 +454,13 @@
         "Rouge": 54.19
       },
       "JIC": {
-        "Acc": 0.86
+        "Acc": 85.57
       },
       "MECHA": {
-        "Acc": 0.57
+        "Acc": 56.51
       },
       "MMMU": {
-        "Acc": 0.44
+        "Acc": 43.67
       },
       "JVB-ItW": {
         "LLM": 3.86,
@@ -438,7 +471,7 @@
         "Rouge": 25.94
       },
       "JDocQA": {
-        "Acc": 0.16,
+        "Acc": 16.17,
         "LLM": 2.36
       },
       "MulIm-VQA": {
@@ -446,7 +479,7 @@
         "Rouge": 40.27
       },
       "JMMMU": {
-        "Acc": 0.37
+        "Acc": 37.42
       }
     }
   },
@@ -454,6 +487,9 @@
     "model": "mistralai/Pixtral-12B-2409",
     "url": "https://huggingface.co/mistralai/Pixtral-12B-2409",
     "scores": {
+      "Avg": {
+        "Avg": 67.27
+      },
       "Heron": {
         "LLM": 60.88
       },
@@ -462,13 +498,13 @@
         "Rouge": 13.08
       },
       "JIC": {
-        "Acc": 0.61
+        "Acc": 61.07
       },
       "MECHA": {
-        "Acc": 0.56
+        "Acc": 56.4
       },
       "MMMU": {
-        "Acc": 0.49
+        "Acc": 48.56
       },
       "JVB-ItW": {
         "LLM": 3.9,
@@ -479,7 +515,7 @@
         "Rouge": 31.56
       },
       "JDocQA": {
-        "Acc": 0.15,
+        "Acc": 14.77,
         "LLM": 2.44
       },
       "MulIm-VQA": {
@@ -487,7 +523,7 @@
         "Rouge": 34.48
       },
       "JMMMU": {
-        "Acc": 0.19
+        "Acc": 18.71
       }
     }
   },
@@ -495,6 +531,9 @@
     "model": "meta-llama/Llama-3.2-11B-Vision-Instruct",
     "url": "https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct",
     "scores": {
+      "Avg": {
+        "Avg": 62.58
+      },
       "Heron": {
         "LLM": 38.08
       },
@@ -503,13 +542,13 @@
         "Rouge": 14.23
       },
       "JIC": {
-        "Acc": 0.79
+        "Acc": 78.71
       },
       "MECHA": {
-        "Acc": 0.49
+        "Acc": 49.31
       },
       "MMMU": {
-        "Acc": 0.38
+        "Acc": 38.22
       },
       "JVB-ItW": {
         "LLM": 3.36,
@@ -520,7 +559,7 @@
         "Rouge": 30.2
       },
       "JDocQA": {
-        "Acc": 0.18,
+        "Acc": 17.61,
         "LLM": 2.52
       },
       "MulIm-VQA": {
@@ -528,7 +567,7 @@
         "Rouge": 24.5
       },
       "JMMMU": {
-        "Acc": 0.35
+        "Acc": 34.62
       }
     }
   },
@@ -536,6 +575,9 @@
     "model": "Efficient-Large-Model/VILA1.5-13b",
     "url": "https://huggingface.co/Efficient-Large-Model/VILA1.5-13b",
     "scores": {
+      "Avg": {
+        "Avg": 64.58
+      },
       "Heron": {
         "LLM": 46.93
       },
@@ -543,11 +585,14 @@
         "LLM": 3.23,
         "Rouge": 12.97
       },
+      "JIC": {
+        "Acc": 58.2
+      },
       "MECHA": {
-        "Acc": 0.46
+        "Acc": 46.35
       },
       "MMMU": {
-        "Acc": 0.37
+        "Acc": 37.0
       },
       "JVB-ItW": {
         "LLM": 3.48,
@@ -558,7 +603,7 @@
         "Rouge": 34.96
       },
       "JDocQA": {
-        "Acc": 0.15,
+        "Acc": 14.82,
         "LLM": 2.22
       },
       "MulIm-VQA": {
@@ -566,7 +611,7 @@
         "Rouge": 40.01
       },
       "JMMMU": {
-        "Acc": 0.33
+        "Acc": 33.48
       }
     }
   },
@@ -574,6 +619,9 @@
     "model": "OpenGVLab/InternVL2-8B",
     "url": "https://huggingface.co/OpenGVLab/InternVL2-8B",
     "scores": {
+      "Avg": {
+        "Avg": 66.41
+      },
       "Heron": {
         "LLM": 49.82
       },
@@ -582,13 +630,13 @@
         "Rouge": 11.66
       },
       "JIC": {
-        "Acc": 0.66
+        "Acc": 65.73
       },
       "MECHA": {
-        "Acc": 0.51
+        "Acc": 50.52
       },
       "MMMU": {
-        "Acc": 0.5
+        "Acc": 49.67
       },
       "JVB-ItW": {
         "LLM": 3.52,
@@ -599,7 +647,7 @@
         "Rouge": 31.47
       },
       "JDocQA": {
-        "Acc": 0.2,
+        "Acc": 19.79,
         "LLM": 2.7
       },
       "MulIm-VQA": {
@@ -607,7 +655,7 @@
         "Rouge": 34.48
       },
       "JMMMU": {
-        "Acc": 0.39
+        "Acc": 39.09
       }
     }
   },
@@ -615,6 +663,9 @@
     "model": "OpenGVLab/InternVL2-26B",
     "url": "https://huggingface.co/OpenGVLab/InternVL2-26B",
     "scores": {
+      "Avg": {
+        "Avg": 67.65
+      },
       "Heron": {
         "LLM": 59.69
       },
@@ -623,13 +674,13 @@
         "Rouge": 11.58
       },
       "JIC": {
-        "Acc": 0.74
+        "Acc": 73.92
       },
       "MECHA": {
-        "Acc": 0.51
+        "Acc": 51.29
       },
       "MMMU": {
-        "Acc": 0.48
+        "Acc": 48.22
       },
       "JVB-ItW": {
         "LLM": 3.08,
@@ -640,7 +691,7 @@
         "Rouge": 30.55
       },
       "JDocQA": {
-        "Acc": 0.15,
+        "Acc": 15.28,
         "LLM": 2.6
       },
       "MulIm-VQA": {
@@ -648,7 +699,7 @@
         "Rouge": 45.4
       },
       "JMMMU": {
-        "Acc": 0.39
+        "Acc": 39.02
       }
     }
   },
@@ -656,6 +707,9 @@
     "model": "Qwen/Qwen2.5-VL-7B-Instruct",
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct",
     "scores": {
+      "Avg": {
+        "Avg": 78.63
+      },
       "Heron": {
         "LLM": 70.29
       },
@@ -664,13 +718,13 @@
         "Rouge": 8.99
       },
       "JIC": {
-        "Acc": 0.83
+        "Acc": 82.66
       },
       "MECHA": {
-        "Acc": 0.6
+        "Acc": 60.02
       },
       "MMMU": {
-        "Acc": 0.5
+        "Acc": 50.0
       },
       "JVB-ItW": {
         "LLM": 4.28,
@@ -681,7 +735,7 @@
         "Rouge": 27.13
       },
       "JDocQA": {
-        "Acc": 0.26,
+        "Acc": 26.47,
         "LLM": 3.59
       },
       "MulIm-VQA": {
@@ -689,7 +743,51 @@
         "Rouge": 50.37
       },
       "JMMMU": {
-        "Acc": 0.48
+        "Acc": 48.18
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-VL-32B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2.5-VL-32B-Instruct",
+    "scores": {
+      "Avg": {
+        "Avg": 77.86
+      },
+      "Heron": {
+        "LLM": 74.8
+      },
+      "VG-VQA": {
+        "LLM": 3.76,
+        "Rouge": 5.22
+      },
+      "JIC": {
+        "Acc": 96.01
+      },
+      "MECHA": {
+        "Acc": 68.37
+      },
+      "MMMU": {
+        "Acc": 59.11
+      },
+      "JVB-ItW": {
+        "LLM": 4.3,
+        "Rouge": 14.67
+      },
+      "LLAVA": {
+        "LLM": 4.0,
+        "Rouge": 18.95
+      },
+      "JDocQA": {
+        "Acc": 25.21,
+        "LLM": 3.8
+      },
+      "MulIm-VQA": {
+        "LLM": 4.64,
+        "Rouge": 42.21
+      },
+      "JMMMU": {
+        "Acc": 48.79
       }
     }
   },
@@ -697,6 +795,9 @@
     "model": "Qwen/Qwen2.5-VL-72B-Instruct",
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct",
     "scores": {
+      "Avg": {
+        "Avg": 87.5
+      },
       "Heron": {
         "LLM": 85.46
       },
@@ -705,13 +806,13 @@
         "Rouge": 9.83
       },
       "JIC": {
-        "Acc": 0.9
+        "Acc": 90.36
       },
       "MECHA": {
-        "Acc": 0.75
+        "Acc": 74.68
       },
       "MMMU": {
-        "Acc": 0.63
+        "Acc": 63.0
       },
       "JVB-ItW": {
         "LLM": 4.4,
@@ -722,7 +823,7 @@
         "Rouge": 28.67
       },
       "JDocQA": {
-        "Acc": 0.24,
+        "Acc": 23.92,
         "LLM": 3.89
       },
       "MulIm-VQA": {
@@ -730,7 +831,7 @@
         "Rouge": 60.86
       },
       "JMMMU": {
-        "Acc": 0.61
+        "Acc": 60.61
       }
     }
   },
@@ -738,6 +839,9 @@
     "model": "google/gemma-3-4b-it",
     "url": "https://huggingface.co/google/gemma-3-4b-it",
     "scores": {
+      "Avg": {
+        "Avg": 67.93
+      },
       "Heron": {
         "LLM": 52.83
       },
@@ -746,13 +850,13 @@
         "Rouge": 12.46
       },
       "JIC": {
-        "Acc": 0.75
+        "Acc": 75.36
       },
       "MECHA": {
-        "Acc": 0.47
+        "Acc": 47.17
       },
       "MMMU": {
-        "Acc": 0.41
+        "Acc": 40.67
       },
       "JVB-ItW": {
         "LLM": 3.68,
@@ -763,7 +867,7 @@
         "Rouge": 22.13
       },
       "JDocQA": {
-        "Acc": 0.18,
+        "Acc": 17.55,
         "LLM": 2.59
       },
       "MulIm-VQA": {
@@ -771,7 +875,7 @@
         "Rouge": 52.69
       },
       "JMMMU": {
-        "Acc": 0.37
+        "Acc": 36.97
       }
     }
   },
@@ -779,6 +883,9 @@
     "model": "google/gemma-3-12b-it",
     "url": "https://huggingface.co/google/gemma-3-12b-it",
     "scores": {
+      "Avg": {
+        "Avg": 77.95
+      },
       "Heron": {
         "LLM": 72.19
       },
@@ -787,13 +894,13 @@
         "Rouge": 12.49
       },
       "JIC": {
-        "Acc": 0.86
+        "Acc": 85.72
       },
       "MECHA": {
-        "Acc": 0.63
+        "Acc": 62.6
       },
       "MMMU": {
-        "Acc": 0.48
+        "Acc": 48.11
       },
       "JVB-ItW": {
         "LLM": 4.3,
@@ -804,7 +911,7 @@
         "Rouge": 22.11
       },
       "JDocQA": {
-        "Acc": 0.2,
+        "Acc": 20.13,
         "LLM": 2.98
       },
       "MulIm-VQA": {
@@ -812,7 +919,7 @@
         "Rouge": 59.66
       },
       "JMMMU": {
-        "Acc": 0.48
+        "Acc": 47.58
       }
     }
   },
@@ -820,6 +927,9 @@
     "model": "google/gemma-3-27b-it",
     "url": "https://huggingface.co/google/gemma-3-27b-it",
     "scores": {
+      "Avg": {
+        "Avg": 78.46
+      },
       "Heron": {
         "LLM": 69.15
       },
@@ -828,13 +938,13 @@
         "Rouge": 10.91
       },
       "JIC": {
-        "Acc": 0.88
+        "Acc": 88.23
       },
       "MECHA": {
-        "Acc": 0.68
+        "Acc": 67.66
       },
       "MMMU": {
-        "Acc": 0.56
+        "Acc": 56.11
       },
       "JVB-ItW": {
         "LLM": 4.36,
@@ -845,7 +955,7 @@
         "Rouge": 21.07
       },
       "JDocQA": {
-        "Acc": 0.2,
+        "Acc": 20.17,
         "LLM": 3.1
       },
       "MulIm-VQA": {
@@ -853,7 +963,7 @@
         "Rouge": 56.29
       },
       "JMMMU": {
-        "Acc": 0.51
+        "Acc": 50.53
       }
     }
   },
@@ -861,6 +971,9 @@
     "model": "microsoft/Phi-4-multimodal-instruct",
     "url": "https://huggingface.co/microsoft/Phi-4-multimodal-instruct",
     "scores": {
+      "Avg": {
+        "Avg": 67.26
+      },
       "Heron": {
         "LLM": 45.52
       },
@@ -869,13 +982,13 @@
         "Rouge": 19.0
       },
       "JIC": {
-        "Acc": 0.52
+        "Acc": 52.27
       },
       "MECHA": {
-        "Acc": 0.46
+        "Acc": 46.35
       },
       "MMMU": {
-        "Acc": 0.54
+        "Acc": 53.67
       },
       "JVB-ItW": {
         "LLM": 3.2,
@@ -886,7 +999,7 @@
         "Rouge": 29.48
       },
       "JDocQA": {
-        "Acc": 0.23,
+        "Acc": 22.85,
         "LLM": 2.9
       },
       "MulIm-VQA": {
@@ -894,7 +1007,7 @@
         "Rouge": 42.34
       },
       "JMMMU": {
-        "Acc": 0.39
+        "Acc": 39.17
       }
     }
   },
@@ -902,6 +1015,9 @@
     "model": "gpt-4o-2024-11-20",
     "url": "https://huggingface.co/gpt-4o-2024-11-20",
     "scores": {
+      "Avg": {
+        "Avg": 87.93
+      },
       "Heron": {
         "LLM": 93.7
       },
@@ -910,13 +1026,13 @@
         "Rouge": 11.77
       },
       "JIC": {
-        "Acc": 0.96
+        "Acc": 95.77
       },
       "MECHA": {
-        "Acc": 0.84
+        "Acc": 83.69
       },
       "MMMU": {
-        "Acc": 0.56
+        "Acc": 56.11
       },
       "JVB-ItW": {
         "LLM": 4.44,
@@ -927,7 +1043,7 @@
         "Rouge": 29.77
       },
       "JDocQA": {
-        "Acc": 0.22,
+        "Acc": 22.0,
         "LLM": 3.59
       },
       "MulIm-VQA": {
@@ -935,7 +1051,7 @@
         "Rouge": 62.51
       },
       "JMMMU": {
-        "Acc": 0.57
+        "Acc": 57.5
       }
     }
   }

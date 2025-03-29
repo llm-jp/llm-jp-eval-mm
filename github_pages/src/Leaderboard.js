@@ -147,7 +147,7 @@ function Leaderboard() {
                           : ''
                       }
                     >
-                      {item.scores[dataset]?.[metric] || '-'}
+                      {item.scores[dataset]?.[metric]?.toFixed(1) || '-'}
                     </td>
                   )),
                 )}
