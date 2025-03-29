@@ -33,6 +33,33 @@ METRIC_ALIAS = {
     "mmmu": "Acc",
 }
 
+MODEL_LIST = [
+    "stabilityai/japanese-instructblip-alpha",
+    "stabilityai/japanese-stable-vlm",
+    "SakanaAI/Llama-3-EvoVLM-JP-v2",
+    "cyberagent/llava-calm2-siglip",
+    "llm-jp/llm-jp-3-vila-14b",
+    "sbintuitions/sarashina2-vision-8b",
+    "sbintuitions/sarashina2-vision-14b",
+    "MIL-UT/Asagi-14B",
+    "llava-hf/llava-1.5-7b-hf",
+    "llava-hf/llava-v1.6-mistral-7b-hf",
+    "neulab/Pangea-7B-hf",
+    "mistralai/Pixtral-12B-2409",
+    "meta-llama/Llama-3.2-11B-Vision-Instruct",
+    "Efficient-Large-Model/VILA1.5-13b",
+    "OpenGVLab/InternVL2-8B",
+    "OpenGVLab/InternVL2-26B",
+    "Qwen/Qwen2.5-VL-7B-Instruct",
+    "Qwen/Qwen2.5-VL-32B-Instruct",
+    "Qwen/Qwen2.5-VL-72B-Instruct",
+    "google/gemma-3-4b-it",
+    "google/gemma-3-12b-it",
+    "google/gemma-3-27b-it",
+    "microsoft/Phi-4-multimodal-instruct",
+    "gpt-4o-2024-11-20",
+]
+
 
 def load_evaluation_data(result_dir: str, model: str, task_dirs: List[str]) -> dict:
     """Load evaluation results for a given model across multiple tasks."""
@@ -266,36 +293,11 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    model_list = [
-        "stabilityai/japanese-instructblip-alpha",
-        "stabilityai/japanese-stable-vlm",
-        "SakanaAI/Llama-3-EvoVLM-JP-v2",
-        "cyberagent/llava-calm2-siglip",
-        "llm-jp/llm-jp-3-vila-14b",
-        "sbintuitions/sarashina2-vision-8b",
-        "sbintuitions/sarashina2-vision-14b",
-        "MIL-UT/Asagi-14B",
-        "llava-hf/llava-1.5-7b-hf",
-        "llava-hf/llava-v1.6-mistral-7b-hf",
-        "neulab/Pangea-7B-hf",
-        "mistralai/Pixtral-12B-2409",
-        "meta-llama/Llama-3.2-11B-Vision-Instruct",
-        "Efficient-Large-Model/VILA1.5-13b",
-        "OpenGVLab/InternVL2-8B",
-        "OpenGVLab/InternVL2-26B",
-        "Qwen/Qwen2.5-VL-7B-Instruct",
-        "Qwen/Qwen2.5-VL-32B-Instruct",
-        "Qwen/Qwen2.5-VL-72B-Instruct",
-        "google/gemma-3-4b-it",
-        "google/gemma-3-12b-it",
-        "google/gemma-3-27b-it",
-        "microsoft/Phi-4-multimodal-instruct",
-        "gpt-4o-2024-11-20",
-    ]
+
     print(args.task_id_list)
     main(
         args.result_dir,
-        model_list,
+        MODEL_LIST,
         args.output_path,
         args.output_format,
         args.plot_bar,
