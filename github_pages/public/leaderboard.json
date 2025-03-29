@@ -3,6 +3,9 @@
     "model": "stabilityai/japanese-instructblip-alpha",
     "url": "https://huggingface.co/stabilityai/japanese-instructblip-alpha",
     "scores": {
+      "Avg": {
+        "Avg": 42.05
+      },
       "Heron": {
         "LLM": 23.53
       },
@@ -37,9 +40,6 @@
       },
       "JMMMU": {
         "Acc": 26.44
-      },
-      "Avg": {
-        "Avg": 42.05
       }
     }
   },
@@ -47,6 +47,9 @@
     "model": "stabilityai/japanese-stable-vlm",
     "url": "https://huggingface.co/stabilityai/japanese-stable-vlm",
     "scores": {
+      "Avg": {
+        "Avg": 45.69
+      },
       "Heron": {
         "LLM": 48.44
       },
@@ -81,9 +84,6 @@
       },
       "JMMMU": {
         "Acc": 3.41
-      },
-      "Avg": {
-        "Avg": 45.69
       }
     }
   },
@@ -91,6 +91,9 @@
     "model": "SakanaAI/Llama-3-EvoVLM-JP-v2",
     "url": "https://huggingface.co/SakanaAI/Llama-3-EvoVLM-JP-v2",
     "scores": {
+      "Avg": {
+        "Avg": 66.93
+      },
       "Heron": {
         "LLM": 47.59
       },
@@ -125,9 +128,6 @@
       },
       "JMMMU": {
         "Acc": 36.36
-      },
-      "Avg": {
-        "Avg": 66.93
       }
     }
   },
@@ -135,6 +135,9 @@
     "model": "cyberagent/llava-calm2-siglip",
     "url": "https://huggingface.co/cyberagent/llava-calm2-siglip",
     "scores": {
+      "Avg": {
+        "Avg": 49.03
+      },
       "Heron": {
         "LLM": 54.1
       },
@@ -169,9 +172,6 @@
       },
       "JMMMU": {
         "Acc": 6.14
-      },
-      "Avg": {
-        "Avg": 49.03
       }
     }
   },
@@ -179,6 +179,9 @@
     "model": "llm-jp/llm-jp-3-vila-14b",
     "url": "https://huggingface.co/llm-jp/llm-jp-3-vila-14b",
     "scores": {
+      "Avg": {
+        "Avg": 71.43
+      },
       "Heron": {
         "LLM": 68.03
       },
@@ -213,9 +216,6 @@
       },
       "JMMMU": {
         "Acc": 19.02
-      },
-      "Avg": {
-        "Avg": 71.43
       }
     }
   },
@@ -223,6 +223,9 @@
     "model": "sbintuitions/sarashina2-vision-8b",
     "url": "https://huggingface.co/sbintuitions/sarashina2-vision-8b",
     "scores": {
+      "Avg": {
+        "Avg": 67.38
+      },
       "Heron": {
         "LLM": 60.45
       },
@@ -257,9 +260,6 @@
       },
       "JMMMU": {
         "Acc": 39.17
-      },
-      "Avg": {
-        "Avg": 67.38
       }
     }
   },
@@ -267,6 +267,9 @@
     "model": "sbintuitions/sarashina2-vision-14b",
     "url": "https://huggingface.co/sbintuitions/sarashina2-vision-14b",
     "scores": {
+      "Avg": {
+        "Avg": 69.77
+      },
       "Heron": {
         "LLM": 60.15
       },
@@ -301,9 +304,6 @@
       },
       "JMMMU": {
         "Acc": 42.95
-      },
-      "Avg": {
-        "Avg": 69.77
       }
     }
   },
@@ -311,6 +311,9 @@
     "model": "MIL-UT/Asagi-14B",
     "url": "https://huggingface.co/MIL-UT/Asagi-14B",
     "scores": {
+      "Avg": {
+        "Avg": 40.1
+      },
       "Heron": {
         "LLM": 41.85
       },
@@ -345,9 +348,6 @@
       },
       "JMMMU": {
         "Acc": 21.74
-      },
-      "Avg": {
-        "Avg": 40.1
       }
     }
   },
@@ -355,6 +355,9 @@
     "model": "llava-hf/llava-1.5-7b-hf",
     "url": "https://huggingface.co/llava-hf/llava-1.5-7b-hf",
     "scores": {
+      "Avg": {
+        "Avg": 58.19
+      },
       "Heron": {
         "LLM": 43.14
       },
@@ -389,9 +392,6 @@
       },
       "JMMMU": {
         "Acc": 29.62
-      },
-      "Avg": {
-        "Avg": 58.19
       }
     }
   },
@@ -399,6 +399,9 @@
     "model": "llava-hf/llava-v1.6-mistral-7b-hf",
     "url": "https://huggingface.co/llava-hf/llava-v1.6-mistral-7b-hf",
     "scores": {
+      "Avg": {
+        "Avg": 53.75
+      },
       "Heron": {
         "LLM": 30.04
       },
@@ -433,9 +436,6 @@
       },
       "JMMMU": {
         "Acc": 25.45
-      },
-      "Avg": {
-        "Avg": 53.75
       }
     }
   },
@@ -443,6 +443,9 @@
     "model": "neulab/Pangea-7B-hf",
     "url": "https://huggingface.co/neulab/Pangea-7B-hf",
     "scores": {
+      "Avg": {
+        "Avg": 74.22
+      },
       "Heron": {
         "LLM": 56.97
       },
@@ -477,9 +480,6 @@
       },
       "JMMMU": {
         "Acc": 37.42
-      },
-      "Avg": {
-        "Avg": 74.22
       }
     }
   },
@@ -487,6 +487,9 @@
     "model": "mistralai/Pixtral-12B-2409",
     "url": "https://huggingface.co/mistralai/Pixtral-12B-2409",
     "scores": {
+      "Avg": {
+        "Avg": 67.27
+      },
       "Heron": {
         "LLM": 60.88
       },
@@ -521,9 +524,6 @@
       },
       "JMMMU": {
         "Acc": 18.71
-      },
-      "Avg": {
-        "Avg": 67.27
       }
     }
   },
@@ -531,6 +531,9 @@
     "model": "meta-llama/Llama-3.2-11B-Vision-Instruct",
     "url": "https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct",
     "scores": {
+      "Avg": {
+        "Avg": 62.58
+      },
       "Heron": {
         "LLM": 38.08
       },
@@ -565,9 +568,6 @@
       },
       "JMMMU": {
         "Acc": 34.62
-      },
-      "Avg": {
-        "Avg": 62.58
       }
     }
   },
@@ -575,6 +575,9 @@
     "model": "Efficient-Large-Model/VILA1.5-13b",
     "url": "https://huggingface.co/Efficient-Large-Model/VILA1.5-13b",
     "scores": {
+      "Avg": {
+        "Avg": 64.58
+      },
       "Heron": {
         "LLM": 46.93
       },
@@ -609,9 +612,6 @@
       },
       "JMMMU": {
         "Acc": 33.48
-      },
-      "Avg": {
-        "Avg": 64.58
       }
     }
   },
@@ -619,6 +619,9 @@
     "model": "OpenGVLab/InternVL2-8B",
     "url": "https://huggingface.co/OpenGVLab/InternVL2-8B",
     "scores": {
+      "Avg": {
+        "Avg": 66.41
+      },
       "Heron": {
         "LLM": 49.82
       },
@@ -653,9 +656,6 @@
       },
       "JMMMU": {
         "Acc": 39.09
-      },
-      "Avg": {
-        "Avg": 66.41
       }
     }
   },
@@ -663,6 +663,9 @@
     "model": "OpenGVLab/InternVL2-26B",
     "url": "https://huggingface.co/OpenGVLab/InternVL2-26B",
     "scores": {
+      "Avg": {
+        "Avg": 67.65
+      },
       "Heron": {
         "LLM": 59.69
       },
@@ -697,9 +700,6 @@
       },
       "JMMMU": {
         "Acc": 39.02
-      },
-      "Avg": {
-        "Avg": 67.65
       }
     }
   },
@@ -707,6 +707,9 @@
     "model": "Qwen/Qwen2.5-VL-7B-Instruct",
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct",
     "scores": {
+      "Avg": {
+        "Avg": 78.63
+      },
       "Heron": {
         "LLM": 70.29
       },
@@ -741,9 +744,6 @@
       },
       "JMMMU": {
         "Acc": 48.18
-      },
-      "Avg": {
-        "Avg": 78.63
       }
     }
   },
@@ -751,6 +751,9 @@
     "model": "Qwen/Qwen2.5-VL-32B-Instruct",
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-32B-Instruct",
     "scores": {
+      "Avg": {
+        "Avg": 77.86
+      },
       "Heron": {
         "LLM": 74.8
       },
@@ -785,9 +788,6 @@
       },
       "JMMMU": {
         "Acc": 48.79
-      },
-      "Avg": {
-        "Avg": 77.86
       }
     }
   },
@@ -795,6 +795,9 @@
     "model": "Qwen/Qwen2.5-VL-72B-Instruct",
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct",
     "scores": {
+      "Avg": {
+        "Avg": 87.5
+      },
       "Heron": {
         "LLM": 85.46
       },
@@ -829,9 +832,6 @@
       },
       "JMMMU": {
         "Acc": 60.61
-      },
-      "Avg": {
-        "Avg": 87.5
       }
     }
   },
@@ -839,6 +839,9 @@
     "model": "google/gemma-3-4b-it",
     "url": "https://huggingface.co/google/gemma-3-4b-it",
     "scores": {
+      "Avg": {
+        "Avg": 67.93
+      },
       "Heron": {
         "LLM": 52.83
       },
@@ -873,9 +876,6 @@
       },
       "JMMMU": {
         "Acc": 36.97
-      },
-      "Avg": {
-        "Avg": 67.93
       }
     }
   },
@@ -883,6 +883,9 @@
     "model": "google/gemma-3-12b-it",
     "url": "https://huggingface.co/google/gemma-3-12b-it",
     "scores": {
+      "Avg": {
+        "Avg": 77.95
+      },
       "Heron": {
         "LLM": 72.19
       },
@@ -917,9 +920,6 @@
       },
       "JMMMU": {
         "Acc": 47.58
-      },
-      "Avg": {
-        "Avg": 77.95
       }
     }
   },
@@ -927,6 +927,9 @@
     "model": "google/gemma-3-27b-it",
     "url": "https://huggingface.co/google/gemma-3-27b-it",
     "scores": {
+      "Avg": {
+        "Avg": 78.46
+      },
       "Heron": {
         "LLM": 69.15
       },
@@ -961,9 +964,6 @@
       },
       "JMMMU": {
         "Acc": 50.53
-      },
-      "Avg": {
-        "Avg": 78.46
       }
     }
   },
@@ -971,6 +971,9 @@
     "model": "microsoft/Phi-4-multimodal-instruct",
     "url": "https://huggingface.co/microsoft/Phi-4-multimodal-instruct",
     "scores": {
+      "Avg": {
+        "Avg": 67.26
+      },
       "Heron": {
         "LLM": 45.52
       },
@@ -1005,9 +1008,6 @@
       },
       "JMMMU": {
         "Acc": 39.17
-      },
-      "Avg": {
-        "Avg": 67.26
       }
     }
   },
@@ -1015,6 +1015,9 @@
     "model": "gpt-4o-2024-11-20",
     "url": "https://huggingface.co/gpt-4o-2024-11-20",
     "scores": {
+      "Avg": {
+        "Avg": 87.93
+      },
       "Heron": {
         "LLM": 93.7
       },
@@ -1049,9 +1052,6 @@
       },
       "JMMMU": {
         "Acc": 57.5
-      },
-      "Avg": {
-        "Avg": 87.93
       }
     }
   }
