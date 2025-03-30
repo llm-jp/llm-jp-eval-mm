@@ -36,8 +36,8 @@ uv run --group normal python examples/sample.py \
   --model_id llava-hf/llava-1.5-7b-hf \
   --task_id japanese-heron-bench  \
   --result_dir result  \
-  --metrics "heron-bench" \
-  --judge_model "gpt-4o-2024-11-20" \
+  --metrics heron-bench \
+  --judge_model gpt-4o-2024-11-20 \
   --overwrite
 ```
 
@@ -136,9 +136,9 @@ See `eval_all.sh` for the complete list of model dependencies.
 When adding a new group, remember to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
 
 ## Browse Predictions with Streamlit
-
+f
 ```bash
-uv run streamlit run scripts/browse_prediction.py --task_id "japanese-heron-bench" --result_dir "result"
+uv run streamlit run scripts/browse_prediction.py -- --task_id japanese-heron-bench --result_dir result --model_list llava-hf/llava-1.5-7b-hf
 ```
 
 ![Streamlit](./assets/streamlit_visualization.png)

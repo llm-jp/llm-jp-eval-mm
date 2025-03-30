@@ -286,7 +286,8 @@ def parse_args():
     parser.add_argument(
         "--task_id_list",
         type=str,
-        help="List of task IDs to include in the leaderboard (e.g. jmmmu,mmmu). If not specified, all tasks will be included.",
+        nargs="+",
+        help=f"List of task IDs to include in the leaderboard. Available: {TASK_ALIAS.keys()}",
     )
     return parser.parse_args()
 

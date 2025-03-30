@@ -14,7 +14,11 @@ from model_table import get_class_from_model_id
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_id", default="llava-hf/llava-1.5-7b-hf")
-    parser.add_argument("--task_id", default="japanese-heron-bench")
+    parser.add_argument(
+        "--task_id",
+        default="japanese-heron-bench",
+        help=f"Task ID to evaluate. Available: {eval_mm.TaskRegistry().get_task_list()}",
+    )
     parser.add_argument("--judge_model", default="gpt-4o-2024-11-20")
     parser.add_argument("--batch_size_for_evaluation", type=int, default=10)
     parser.add_argument("--overwrite", action="store_true")
@@ -27,7 +31,13 @@ def parse_args():
     parser.add_argument("--do_sample", action="store_true", default=False)
     parser.add_argument("--use_cache", action="store_true", default=True)
     parser.add_argument("--max_dataset_len", type=int)
-    parser.add_argument("--metrics", default="llm_as_a_judge_heron_bench")
+    parser.add_argument(
+        "--metrics",
+        type=str,
+        nargs="+",
+        default=["heron-bench"],
+        help=f"Metrics to evaluate. Available: {eval_mm.ScorerRegistry().get_metric_list()}",
+    )
     parser.add_argument(
         "--rotate_choices", action="store_true", help="This option is used in MECHA-ja"
     )
@@ -137,7 +147,6 @@ def save_final_results(preds, task, metrics, scores_by_metric, output_path):
 
 def main():
     args = parse_args()
-    metrics = args.metrics.split(",")
 
     gen_kwargs = GenerationConfig(
         max_new_tokens=args.max_new_tokens,
@@ -163,10 +172,10 @@ def main():
         logger.info("Inference only mode. Skipping evaluation.")
         return
 
-    scores_by_metric, aggregated_metrics = evaluate(args, task, preds, metrics)
+    scores_by_metric, aggregated_metrics = evaluate(args, task, preds, args.metrics)
 
     prediction_path = os.path.join(output_dir, "prediction.jsonl")
-    save_final_results(preds, task, metrics, scores_by_metric, prediction_path)
+    save_final_results(preds, task, args.metrics, scores_by_metric, prediction_path)
 
     evaluation_path = os.path.join(output_dir, "evaluation.jsonl")
     with open(evaluation_path, "w") as f:
