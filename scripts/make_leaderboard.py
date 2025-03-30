@@ -33,6 +33,33 @@ METRIC_ALIAS = {
     "mmmu": "Acc",
 }
 
+MODEL_LIST = [
+    "stabilityai/japanese-instructblip-alpha",
+    "stabilityai/japanese-stable-vlm",
+    "SakanaAI/Llama-3-EvoVLM-JP-v2",
+    "cyberagent/llava-calm2-siglip",
+    "llm-jp/llm-jp-3-vila-14b",
+    "sbintuitions/sarashina2-vision-8b",
+    "sbintuitions/sarashina2-vision-14b",
+    "MIL-UT/Asagi-14B",
+    "llava-hf/llava-1.5-7b-hf",
+    "llava-hf/llava-v1.6-mistral-7b-hf",
+    "neulab/Pangea-7B-hf",
+    "mistralai/Pixtral-12B-2409",
+    "meta-llama/Llama-3.2-11B-Vision-Instruct",
+    "Efficient-Large-Model/VILA1.5-13b",
+    "OpenGVLab/InternVL2-8B",
+    "OpenGVLab/InternVL2-26B",
+    "Qwen/Qwen2.5-VL-7B-Instruct",
+    "Qwen/Qwen2.5-VL-32B-Instruct",
+    "Qwen/Qwen2.5-VL-72B-Instruct",
+    "google/gemma-3-4b-it",
+    "google/gemma-3-12b-it",
+    "google/gemma-3-27b-it",
+    "microsoft/Phi-4-multimodal-instruct",
+    "gpt-4o-2024-11-20",
+]
+
 
 def load_evaluation_data(result_dir: str, model: str, task_dirs: List[str]) -> dict:
     """Load evaluation results for a given model across multiple tasks."""
@@ -47,24 +74,35 @@ def load_evaluation_data(result_dir: str, model: str, task_dirs: List[str]) -> d
             evaluation = json.load(f)
 
         for metric, aggregate_output in evaluation.items():
-            if metric not in eval_mm.metrics.ScorerRegistry._scorers.keys():
+            if metric not in eval_mm.ScorerRegistry.get_metric_list():
                 logger.warning(f"Skipping unsupported metric: {metric}")
                 continue
-
-            model_results[f"{task_dir}/{metric}"] = aggregate_output["overall_score"]
+            overall_score = aggregate_output["overall_score"]
+            if metric in ["jdocqa", "jmmmu", "jic-vqa", "mecha-ja", "mmmu"]:
+                overall_score = overall_score * 100
+            model_results[f"{task_dir}/{metric}"] = overall_score
 
     return model_results
 
 
-def process_results(result_dir: str, model_list: List[str]) -> pd.DataFrame:
+def process_results(
+    result_dir: str,
+    model_list: List[str],
+    add_avg: bool = False,
+    task_id_list: Optional[List[str]] = None,
+) -> pd.DataFrame:
     """Process all evaluation results into a structured DataFrame."""
-    task_dirs = [d for d in os.listdir(result_dir) if not d.startswith(".")]
+    if task_id_list:
+        task_dirs = task_id_list
+    else:
+        task_dirs = [d for d in os.listdir(result_dir) if not d.startswith(".")]
+
     df = pd.DataFrame()
 
     for model in model_list:
         logger.info(f"Processing results for {model}")
         model_results = load_evaluation_data(result_dir, model, task_dirs)
-        if not model_results:
+        if len(model_results) == 1:
             continue
         df = df._append(model_results, ignore_index=True)
 
@@ -75,6 +113,13 @@ def process_results(result_dir: str, model_list: List[str]) -> pd.DataFrame:
             for k in df.columns
         }
     )
+    if add_avg:
+        # すべてのスコアを 100 点満点に正規化
+        df_normalized = df.apply(lambda x: x / x.max() * 100, axis=0)
+
+        # 各モデルの全体スコア（平均）を計算し、最後の列に追加
+        df["Avg/Avg"] = df_normalized.mean(axis=1).round(2)
+
     return df
 
 
@@ -93,6 +138,9 @@ def generate_json_path(df: pd.DataFrame, output_path: str):
 
         for col, score in row.items():
             if isinstance(score, (int, float)) and not pd.isna(score):
+                if "/" not in col:
+                    model_entry["scores"][col] = score
+                    continue
                 task, metric = col.split("/")
                 if task not in model_entry["scores"]:
                     model_entry["scores"][task] = {}
@@ -145,11 +193,31 @@ def plot_task_performance(df: pd.DataFrame):
 
 def format_output(df: pd.DataFrame, output_format: str) -> str:
     """Format the DataFrame output for markdown or LaTeX."""
+
+    # textbf top1 score and underline top2 score for each task
+    for col in df.columns:
+        top1_model = df[col].astype(float).idxmax()
+        top2_model = df[col].astype(float).nlargest(2).index[-1]
+        top1_score = f"{float(df.loc[top1_model, col]):.1f}"
+        top2_score = f"{float(df.loc[top2_model, col]):.1f}"
+        # apply formatting
+        if output_format == "latex":
+            df.loc[top1_model, col] = f"\\textbf{{{top1_score}}}"
+            df.loc[top2_model, col] = f"\\textit{{{top2_score}}}"
+            df.loc[top2_model, col] = f"\\underline{{{top2_score}}}"
+        else:
+            df.loc[top1_model, col] = f"**{top1_score}**"
+            df.loc[top2_model, col] = f"*{top2_score}*"
+            df.loc[top2_model, col] = f"<u>{top2_score}</u>"
+
     df = df.fillna("")
+
     if output_format == "markdown":
-        return df.to_markdown(mode="github", floatfmt=".3g")
+        return df.to_markdown(mode="github", floatfmt=".1f")
     elif output_format == "latex":
-        return df.to_latex(float_format="%.3g")
+        return df.to_latex(
+            float_format="%.1f", column_format="l" + "c" * len(df.columns)
+        )
     return ""
 
 
@@ -161,15 +229,17 @@ def main(
     plot_bar: bool = False,
     plot_corr: bool = False,
     update_pages: bool = False,
+    add_avg: bool = False,
+    task_id_list: Optional[List[str]] = None,
 ):
-    df = process_results(result_dir, model_list)
+    df = process_results(result_dir, model_list, add_avg, task_id_list)
     if plot_corr:
-        plot_correlation(df, "correlation.png")
+        plot_correlation(df.copy(), "correlation.png")
     # plot_correlation(df.T, "correlation_model.png")
     if plot_bar:
-        plot_task_performance(df)
+        plot_task_performance(df.copy())
 
-    table = format_output(df, output_format)
+    table = format_output(df.copy(), output_format)
     print(table)
 
     if output_path:
@@ -177,7 +247,7 @@ def main(
             f.write(table)
 
     if update_pages:
-        generate_json_path(df, "github_pages/public/leaderboard.json")
+        generate_json_path(df.copy(), "github_pages/public/leaderboard.json")
 
 
 def parse_args():
@@ -210,43 +280,29 @@ def parse_args():
     parser.add_argument(
         "--update_pages", action="store_true", help="Update the GitHub Pages JSON"
     )
+    parser.add_argument(
+        "--add_avg", action="store_true", help="Add average score column"
+    )
+    parser.add_argument(
+        "--task_id_list",
+        type=str,
+        help="List of task IDs to include in the leaderboard (e.g. jmmmu,mmmu). If not specified, all tasks will be included.",
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    model_list = [
-        "stabilityai/japanese-instructblip-alpha",
-        "stabilityai/japanese-stable-vlm",
-        "SakanaAI/Llama-3-EvoVLM-JP-v2",
-        "cyberagent/llava-calm2-siglip",
-        "llm-jp/llm-jp-3-vila-14b",
-        "sbintuitions/sarashina2-vision-8b",
-        "sbintuitions/sarashina2-vision-14b",
-        "MIL-UT/Asagi-14B",
-        "llava-hf/llava-1.5-7b-hf",
-        "llava-hf/llava-v1.6-mistral-7b-hf",
-        "neulab/Pangea-7B-hf",
-        "mistralai/Pixtral-12B-2409",
-        "meta-llama/Llama-3.2-11B-Vision-Instruct",
-        "Efficient-Large-Model/VILA1.5-13b",
-        "OpenGVLab/InternVL2-8B",
-        "OpenGVLab/InternVL2-26B",
-        "Qwen/Qwen2.5-VL-7B-Instruct",
-        "Qwen/Qwen2.5-VL-32B-Instruct",
-        "Qwen/Qwen2.5-VL-72B-Instruct",
-        "google/gemma-3-4b-it",
-        "google/gemma-3-12b-it",
-        "google/gemma-3-27b-it",
-        "microsoft/Phi-4-multimodal-instruct",
-        "gpt-4o-2024-11-20",
-    ]
+
+    print(args.task_id_list)
     main(
         args.result_dir,
-        model_list,
+        MODEL_LIST,
         args.output_path,
         args.output_format,
         args.plot_bar,
         args.plot_corr,
         args.update_pages,
+        args.add_avg,
+        args.task_id_list.split(",") if args.task_id_list else None,
     )

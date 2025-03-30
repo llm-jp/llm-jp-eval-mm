@@ -1,35 +1,9 @@
 # llm-jp-eval-mm
 [![pypi](https://img.shields.io/pypi/v/eval-mm.svg)](https://pypi.python.org/pypi/eval-mm) [![Test workflow](https://github.com/llm-jp/llm-jp-eval-mm/actions/workflows/test.yml/badge.svg)](https://github.com/llm-jp/llm-jp-eval-mm/actions/workflows/test.yml) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[ [**Japanese**](./README_ja.md) | English ]
-
 llm-jp-eval-mm is a lightweight framework for evaluating visual-language models across various benchmark tasks, mainly focusing on Japanese tasks.
 
-![What llm-jp-eval-mm provides](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/assets/teaser.png)
-
-## Table of Contents
-
-- [llm-jp-eval-mm](#llm-jp-eval-mm)
-  - [Table of Contents](#table-of-contents)
-  - [Getting Started](#getting-started)
-  - [How to Evaluate](#how-to-evaluate)
-    - [Running an Evaluation](#running-an-evaluation)
-    - [Use llm-jp-eval-mm as a Library](#use-llm-jp-eval-mm-as-a-library)
-    - [Leaderboard](#leaderboard)
-  - [Supported Tasks](#supported-tasks)
-  - [Required Libraries for Each VLM Model Inference](#required-libraries-for-each-vlm-model-inference)
-  - [Benchmark-Specific Required Libraries](#benchmark-specific-required-libraries)
-  - [Analyze VLMs Prediction](#analyze-vlms-prediction)
-  - [Contribution](#contribution)
-    - [How to Add a Benchmark Task](#how-to-add-a-benchmark-task)
-    - [How to Add a Metric](#how-to-add-a-metric)
-    - [How to Add Inference Code for a VLM Model](#how-to-add-inference-code-for-a-vlm-model)
-    - [How to Add Dependencies](#how-to-add-dependencies)
-    - [Testing](#testing)
-    - [Formatting and Linting with Ruff](#formatting-and-linting-with-ruff)
-    - [Releasing to PyPI](#releasing-to-pypi)
-    - [Updating the Website](#updating-the-website)
-  - [Acknowledgements](#acknowledgements)
+![Overview of llm-jp-eval-mm](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/assets/teaser.png)
 
 ## Getting Started
 
@@ -47,20 +21,15 @@ uv sync
 pip install eval_mm
 ```
 
-This tool uses the LLM-as-a-judge method for evaluation, which sends requests to GPT-4o via the OpenAI API.
-You need to configure the API keys in a .env file:
-- For Azure:`AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_KEY`
-- For OpenAI: `OPENAI_API_KEY`
+To use LLM-as-a-Judge, configure your OpenAI API keys in a`.env` file:
+- For Azure: Set `AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_KEY`
+- For OpenAI: Set `OPENAI_API_KEY`
 
-If you're not using the LLM-as-a-judge method, you can set any value in the .env file to bypass the error.
+If you are not using LLM-as-a-Judge, you can assign any value in the `.env` file to bypass the error.
 
+## Usage
 
-## How to Evaluate
-
-### Running an Evaluation
-
-To evaluate a model on a task, we provide an example script: `examples/sample.py`.
-
+To evaluate a model on a task, run the following command:
 ```bash
 uv sync --group normal
 uv run --group normal python examples/sample.py \
@@ -82,11 +51,11 @@ result
 │   │   │   └── prediction.jsonl
 ```
 
-If you want to evaluate multiple models on multiple tasks, please check `eval_all.sh`.
+To evaluate multiple models on multiple tasks, please check `eval_all.sh`.
 
-### Use llm-jp-eval-mm as a Library
+## Hello World Example
 
-You can also integrate llm-jp-eval-mm into your own code. Here's an example:
+You can integrate llm-jp-eval-mm into your own code. Here's an example:
 ```python
 from PIL import Image
 from eval_mm import TaskRegistry, ScorerRegistry, ScorerConfig
@@ -114,7 +83,8 @@ print(result)
 # AggregateOutput(overall_score=5.128205128205128, details={'rougel': 5.128205128205128})
 ```
 
-### Leaderboard
+
+## Leaderboard
 
 To generate a leaderboard from your evaluation results, run:
 ```bash
@@ -137,8 +107,6 @@ The official leaderboard is available [here](https://llm-jp.github.io/llm-jp-eva
 
 ## Supported Tasks
 
-Currently, the following benchmark tasks are supported:
-
 Japanese Tasks:
 - [Japanese Heron Bench](https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench)
 - [JA-VG-VQA500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500)
@@ -153,7 +121,7 @@ English Tasks:
 - [MMMU](https://huggingface.co/datasets/MMMU/MMMU)
 - [LlaVA-Bench-In-the-Wild](https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild)
 
-## Required Dependencies for Each Model
+## Managing Dependencies
 
 We use uv’s dependency groups to manage each model’s dependencies.
 
@@ -163,36 +131,37 @@ uv sync --group vilaja
 uv run --group vilaja python examples/VILA_ja.py
 ```
 
-See eval_all.sh for the complete list of model dependencies.
+See `eval_all.sh` for the complete list of model dependencies.
 
 When adding a new group, remember to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
 
-## Analyze Model Predictions
+## Browse Predictions with Streamlit
 
-Visualize your model’s predictions with the following Streamlit app:
 ```bash
 uv run streamlit run scripts/browse_prediction.py --task_id "japanese-heron-bench" --result_dir "result"
 ```
-You can view the visualized predictions below:
+
 ![Streamlit](./assets/streamlit_visualization.png)
 
 
-## Contribution
+## Development
 
-If you encounter issues, or if you have suggestions or improvements, please open an issue or submit a pull request.
+### Adding a new task
 
-### How to Add a Benchmark Task
-Refer to the `src/eval_mm/tasks` directory to implement new benchmark tasks.
+To add a new task, implement the Task class in `src/eval_mm/tasks/task.py`.
 
-### How to Add a Metric
-To add new metrics, implement them in the Scorer class. The code for existing scorers can be found in `src/eval_mm/metrics`.
+### Adding a new metric
 
-### How to Add Inference Code for a VLM Model
-Implement the inference code for VLM models in the VLM class. For reference, check `examples/base_vlm.py`.
+To add a new metric, implement the Scorer class in `src/eval_mm/metrics/scorer.py`.
 
-### How to Add Dependencies
-To add a new dependency, run:
-```
+### Adding a new model
+
+To add a new model, implement the VLM class in `examples/base_vlm.py`
+
+### Adding a new dependency
+
+Install a new dependency using the following command:
+```bash
 uv add <package_name>
 uv add --group <group_name> <package_name>
 ```
@@ -200,30 +169,34 @@ uv add --group <group_name> <package_name>
 
 ### Testing
 
-Run the following commands to test the task classes and metrics and to test the VLM models:
+Run the following commands to test tasks, metrics, and models::
 ```bash
 bash test.sh
 bash test_model.sh
 ```
 
-### Formatting and Linting with Ruff
-```
+### Formatting and Linting
+
+Ensure code consistency with:
+```bash
 uv run ruff format src
 uv run ruff check --fix src
 ```
 
 ### Releasing to PyPI
-To release a new version to PyPI:
-```
+
+To release a new version:
+```bash
 git tag -a v0.x.x -m "version 0.x.x"
 git push origin --tags
 ```
 
 
 ### Updating the Website
-For website updates, refer to the [github_pages/README.md](./github_pages/README.md).
 
-To update the leaderboard data on the website, run:
+For website updates, see [github_pages/README.md](./github_pages/README.md).
+
+To update leaderboard data:
 ```bash
 python scripts/make_leaderboard.py --update_pages
 ```
