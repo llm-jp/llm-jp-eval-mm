@@ -10,6 +10,7 @@ def parse_args():
     parser = ArgumentParser()
     parser.add_argument("--task_id", type=str, default="japanese-heron-bench")
     parser.add_argument("--result_dir", type=str, default="result")
+    parser.add_argument("--model_list", type=str, nargs="+", default=[])
 
     return parser.parse_args()
 
@@ -23,18 +24,11 @@ def scrollable_text(text):
 if __name__ == "__main__":
     args = parse_args()
 
-    task = eval_mm.tasks.TaskRegistry().get_task_cls(args.task_id)(
-        eval_mm.tasks.TaskConfig()
-    )
+    task = eval_mm.TaskRegistry().load_task(args.task_id)
 
     # Load model prediction
-    model_list = [
-        "google/gemma-3-12b-it",
-        "google/gemma-3-27b-it",
-        "microsoft/Phi-4-multimodal-instruct",
-    ]
     predictions_per_model = {}
-    for model_id in model_list:
+    for model_id in args.model_list:
         prediction_path = os.path.join(
             args.result_dir, args.task_id, model_id, "prediction.jsonl"
         )
@@ -50,8 +44,8 @@ if __name__ == "__main__":
 
     SAMPLES_PER_PAGE = 30  # 1ページに表示する件数
     # Question ID, Image, Question, Answer, Prediction_model1, Prediction_model2,..
-    column_width_list = [1, 3, 3, 3] + [4] * len(model_list)
-    st.write(f"# {args.task_id} dataset")
+    column_width_list = [1, 3, 3, 3] + [4] * len(args.model_list)
+    st.write(f"# {args.task_id}")
 
     def show_sample(idx):
         sample = ds[idx]
@@ -64,8 +58,8 @@ if __name__ == "__main__":
         cols[3].markdown(
             scrollable_text(task.doc_to_answer(sample)), unsafe_allow_html=True
         )
-        for model_id in model_list:
-            cols[4 + model_list.index(model_id)].markdown(
+        for model_id in args.model_list:
+            cols[4 + args.model_list.index(model_id)].markdown(
                 scrollable_text(predictions_per_model[model_id][idx]["text"]),
                 unsafe_allow_html=True,
             )
@@ -93,8 +87,10 @@ if __name__ == "__main__":
     header_cols[1].markdown("Image")
     header_cols[2].markdown("Question")
     header_cols[3].markdown("Answer")
-    for model_id in model_list:
-        header_cols[4 + model_list.index(model_id)].markdown(f"Prediction ({model_id})")
+    for model_id in args.model_list:
+        header_cols[4 + args.model_list.index(model_id)].markdown(
+            f"Prediction ({model_id})"
+        )
 
     # サンプルを表示
     for idx in range(start_idx, end_idx):

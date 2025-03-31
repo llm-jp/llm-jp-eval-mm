@@ -9,6 +9,7 @@ from .llava_bench_in_the_wild import LlavaBenchIntheWild
 from .jic_vqa import JICVQA
 from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
+from .mnist import MNIST
 from .task import TaskConfig, Task
 
 
@@ -27,6 +28,7 @@ class TaskRegistry:
         "jic-vqa": JICVQA,
         "mecha-ja": MECHAJa,
         "mmmlu": MMMLU,
+        "mnist": MNIST,
     }
 
     @classmethod
