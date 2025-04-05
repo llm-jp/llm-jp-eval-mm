@@ -1,7 +1,6 @@
 from transformers import (
-    Qwen2VLForConditionalGeneration,
-    AutoProcessor,
     Qwen2_5_VLForConditionalGeneration,
+    AutoProcessor,
 )
 from qwen_vl_utils import process_vision_info
 from base_vlm import BaseVLM
@@ -9,23 +8,14 @@ from utils import GenerationConfig
 
 
 class VLM(BaseVLM):
-    def __init__(self, model_id: str = "Qwen/Qwen2-VL-2B-Instruct") -> None:
+    def __init__(self, model_id: str = "Qwen/Qwen2.5-VL-3B-Instruct") -> None:
         self.model_id = model_id
-
-        if "Qwen2.5-VL" in model_id:
-            self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-                self.model_id,
-                torch_dtype="bfloat16",
-                device_map="auto",
-                attn_implementation="flash_attention_2",
-            )
-        elif "Qwen2-VL" in model_id:
-            self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-                self.model_id,
-                torch_dtype="bfloat16",
-                device_map="auto",
-                attn_implementation="flash_attention_2",
-            )
+        self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+            self.model_id,
+            torch_dtype="bfloat16",
+            device_map="auto",
+            attn_implementation="flash_attention_2",
+        )
 
         min_pixels = 256 * 28 * 28
         max_pixels = 1280 * 28 * 28
@@ -81,4 +71,4 @@ class VLM(BaseVLM):
 
 if __name__ == "__main__":
     vlm = VLM()
-    vlm.test_vlm()
+    vlm.test_vlm() 

@@ -57,6 +57,7 @@ allow-direct-references = true
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",
+    "pre-commit>=4.2.0",
     "pytest>=8.3.4",
     "seaborn>=0.13.2",
     "streamlit>=1.43.2",

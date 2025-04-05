@@ -10,3 +10,21 @@ repos:
       # Run the Ruff formatter.
       - id: ruff-format
         exclude: "(__init__\\.py|migrations/)"
+
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace        # 末尾の空白を除去
+      - id: end-of-file-fixer          # ファイル末の改行統一
+      - id: check-merge-conflict       # コンフリクト残りの検出
+      - id: check-yaml                 # YAML構文確認
+      - id: check-added-large-files    # 巨大ファイルの誤add防止
+      - id: no-commit-to-branch        # main/master直コミット防止
+        args: ["--branch", "main", "--branch", "master"]
+
+  # TODO: mypy：型の静的解析
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.9.0
+  #   hooks:
+  #     - id: mypy
