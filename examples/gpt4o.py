@@ -4,6 +4,8 @@ from io import BytesIO
 import base64
 from base_vlm import BaseVLM
 from utils import GenerationConfig
+import backoff
+from typing import Dict, List, Union
 
 
 def encode_image_to_base64(image):
@@ -11,9 +13,6 @@ def encode_image_to_base64(image):
     image.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return img_str
-
-
-import backoff
 
 
 @backoff.on_exception(backoff.expo, (ValueError, APIError), max_tries=5)
@@ -40,7 +39,9 @@ class VLM(BaseVLM):
         self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ) -> str:
         message = []
-        image__base64_list = [encode_image_to_base64(img) for img in images]
+        ContentBlock = Dict[str, Union[str, Dict[str, str]]]
+        content: List[ContentBlock] = []
+        image_base64_list = [encode_image_to_base64(img) for img in images]
         message_base = {
             "role": "user",
             "content": [
@@ -50,8 +51,15 @@ class VLM(BaseVLM):
                 },
             ],
         }
-        for image_base64 in image__base64_list:
-            message_base["content"].append(
+
+        content.append(
+            {
+                "type": "text",
+                "text": text,
+            },
+        )
+        for image_base64 in image_base64_list:
+            content.append(
                 {
                     "type": "image_url",
                     "image_url": {
@@ -60,6 +68,10 @@ class VLM(BaseVLM):
                     },
                 }
             )
+        message_base = {
+            "role": "user",
+            "content": content,
+        }
         message = [message_base]
 
         response = make_api_call(self, message, gen_kwargs)

@@ -10,12 +10,13 @@ from .jdocqa_scorer import JDocQAScorer
 from .jic_vqa_scorer import JICVQAScorer
 from .mecha_ja_scorer import MECHAJaScorer
 from .scorer import ScorerConfig
+from typing import Any, Callable
 
 
 class ScorerRegistry:
     """Registry to map metrics to their corresponding scorer classes."""
 
-    _scorers = {
+    _scorers: dict[str, Callable[[ScorerConfig], Any]] = {
         "heron-bench": HeronBenchScorer,
         "exact-match": ExactMatchScorer,
         "llm-as-a-judge": LlmAsaJudgeScorer,
@@ -36,7 +37,7 @@ class ScorerRegistry:
     @classmethod
     def load_scorer(
         cls, metric: str, scorer_config: ScorerConfig = ScorerConfig()
-    ) -> Scorer:
+    ) -> Any:
         """Load a scorer instance from the scorer registry."""
         try:
             return cls._scorers[metric](scorer_config)

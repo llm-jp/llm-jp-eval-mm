@@ -1,9 +1,10 @@
 import torch
+from torch import Tensor
 import torchvision.transforms as T
 from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
 from transformers import AutoModel, AutoTokenizer
-from typing import Union
+from typing import Union, Tuple
 from base_vlm import BaseVLM
 from utils import GenerationConfig
 import copy
@@ -100,7 +101,8 @@ def load_image(image, input_size=448, max_num=12):
 # 画像の数だけ画像を読み込んでcatする
 def load_images(images: Union[Image.Image, list[Image.Image]]):
     if isinstance(images, list):
-        tuples = ()
+        tuples: Tuple[Tensor, ...] = ()
+
         for image in images:
             tuples += (load_image(image).to(torch.bfloat16).cuda(),)
         return torch.cat(tuples, dim=0)
@@ -140,8 +142,7 @@ class VLM(BaseVLM):
         self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ) -> str:
         if "<image>" not in text:
-            image_tokens = ["<image>"] * len(images)
-            image_tokens = " ".join(image_tokens)
+            image_tokens = " ".join(["<image>"] * len(images))
             text = f"{image_tokens}\n{text}"
 
         pixel_values_list = []

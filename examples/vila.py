@@ -65,7 +65,7 @@ class VLM(BaseVLM):
         )
 
         stop_str = conv.sep if conv.sep_style != SeparatorStyle.TWO else conv.sep2
-        keywords = [stop_str]
+        # keywords = [stop_str] # if needed, add keywords
 
         with torch.inference_mode():
             output_ids = self.model.generate(

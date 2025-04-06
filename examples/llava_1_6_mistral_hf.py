@@ -33,10 +33,13 @@ class VLM(BaseVLM):
             messages, add_generation_prompt=True
         )
         if len(images) == 0:
-            images = None
-        inputs = self.processor(images=images, text=input_text, return_tensors="pt").to(
-            "cuda"
-        )
+            inputs = self.processor(text=input_text, return_tensors="pt").to(
+                self.device
+            )
+        else:
+            inputs = self.processor(
+                images=images, text=input_text, return_tensors="pt"
+            ).to(self.device)
 
         # autoregressively complete prompt
         output = self.model.generate(**inputs, **gen_kwargs.__dict__)[0]

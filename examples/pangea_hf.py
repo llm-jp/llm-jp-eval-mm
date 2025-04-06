@@ -29,11 +29,14 @@ class VLM(BaseVLM):
         )
         input_text = prompt_template.format(text=text)
         if len(images) == 0:
-            images = None
-            # TODO: text only need to reload model https://huggingface.co/neulab/Pangea-7B
-        model_inputs = self.processor(
-            images=images, text=input_text, return_tensors="pt"
-        ).to("cuda", torch.float16)
+            # TODO: text only need to reload model https://huggingface.co/neulab/Pangea-7B <-?
+            model_inputs = self.processor(text=input_text, return_tensors="pt").to(
+                self.device, torch.float16
+            )
+        else:
+            model_inputs = self.processor(
+                images=images, text=input_text, return_tensors="pt"
+            ).to(self.device, torch.float16)
         output = self.model.generate(
             **model_inputs,
             **gen_kwargs.__dict__,

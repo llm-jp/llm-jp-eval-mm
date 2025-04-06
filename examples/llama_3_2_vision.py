@@ -16,6 +16,7 @@ class VLM(BaseVLM):
             device_map="auto",
         )
         self.processor = AutoProcessor.from_pretrained(self.model_id)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     def generate(
         self,
@@ -36,10 +37,16 @@ class VLM(BaseVLM):
             messages, add_generation_prompt=True
         )
         if len(images) == 0:
-            images = None
-        inputs = self.processor(
-            images, input_text, add_special_tokens=False, return_tensors="pt"
-        ).to(self.model.device)
+            inputs = self.processor(text=input_text, return_tensors="pt").to(
+                self.device
+            )
+        else:
+            inputs = self.processor(
+                images=images,
+                text=input_text,
+                add_special_tokens=False,
+                return_tensors="pt",
+            ).to(self.device)
         output_ids = self.model.generate(**inputs, **gen_kwargs.__dict__)
         generated_ids = [
             output_ids[len(input_ids) :]

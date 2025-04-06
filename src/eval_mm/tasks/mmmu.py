@@ -81,17 +81,11 @@ class MMMU(Task):
     @staticmethod
     def _prepare_dataset() -> Dataset:
         configs = get_dataset_config_names("MMMU/MMMU")
-        dataset = None
-        for subject in configs:
-            if dataset is None:
-                dataset = load_dataset("MMMU/MMMU", name=subject, split="validation")
-            else:
-                dataset = concatenate_datasets(
-                    [
-                        dataset,
-                        load_dataset("MMMU/MMMU", name=subject, split="validation"),
-                    ]
-                )
+        datasets = [
+            load_dataset("MMMU/MMMU", name=subject, split="validation")
+            for subject in configs
+        ]
+        dataset = concatenate_datasets(datasets)
         dataset = dataset.map(
             lambda x: {
                 "input_text": mmmu_doc_to_text(x),
@@ -110,7 +104,7 @@ class MMMU(Task):
         return mmmu_doc_to_visual(doc)
 
     @staticmethod
-    def doc_to_id(doc) -> str:
+    def doc_to_id(doc) -> int:
         return doc["question_id"]
 
     @staticmethod
@@ -127,5 +121,5 @@ def test_task():
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
-    assert isinstance(task.doc_to_id(ds[0]), str)
+    assert isinstance(task.doc_to_id(ds[0]), int)
     assert isinstance(task.doc_to_answer(ds[0]), str)

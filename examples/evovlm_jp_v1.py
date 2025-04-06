@@ -18,7 +18,7 @@ class VLM(BaseVLM):
     def generate(
         self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
     ) -> str:
-        text = "<image>" * len(image) + f"{text}"
+        text = "<image>" * len(images) + text
 
         messages = [
             {

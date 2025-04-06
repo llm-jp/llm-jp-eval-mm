@@ -84,14 +84,11 @@ class JMMMU(Task):
     @staticmethod
     def _prepare_dataset() -> Dataset:
         configs = get_dataset_config_names("JMMMU/JMMMU")
-        dataset = None
-        for subject in configs:
-            if dataset is None:
-                dataset = load_dataset("JMMMU/JMMMU", name=subject, split="test")
-            else:
-                dataset = concatenate_datasets(
-                    [dataset, load_dataset("JMMMU/JMMMU", name=subject, split="test")]
-                )
+        datasets = [
+            load_dataset("JMMMU/JMMMU", name=subject, split="test")
+            for subject in configs
+        ]
+        dataset = concatenate_datasets(datasets)
         dataset = dataset.map(
             lambda x: {
                 "input_text": jmmmu_doc_to_text(x),
@@ -110,7 +107,7 @@ class JMMMU(Task):
         return jmmmu_doc_to_visual(doc)
 
     @staticmethod
-    def doc_to_id(doc) -> str:
+    def doc_to_id(doc) -> int:
         return doc["question_id"]
 
     @staticmethod
@@ -127,5 +124,5 @@ def test_task():
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
-    assert isinstance(task.doc_to_id(ds[0]), str)
+    assert isinstance(task.doc_to_id(ds[0]), int)
     assert isinstance(task.doc_to_answer(ds[0]), str)

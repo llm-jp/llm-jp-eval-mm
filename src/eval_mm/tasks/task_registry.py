@@ -10,13 +10,14 @@ from .jic_vqa import JICVQA
 from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
 from .mnist import MNIST
-from .task import TaskConfig, Task
+from .task import TaskConfig
+from typing import Any, Callable
 
 
 class TaskRegistry:
     """Registry to map metrics to their corresponding scorer classes."""
 
-    _tasks = {
+    _tasks: dict[str, Callable[[TaskConfig], Any]] = {
         "japanese-heron-bench": JapaneseHeronBench,
         "ja-vlm-bench-in-the-wild": JaVLMBenchIntheWild,
         "ja-vg-vqa-500": JaVGVQA500,
@@ -33,12 +34,10 @@ class TaskRegistry:
 
     @classmethod
     def get_task_list(cls):
-        """Get the list of supported tasks."""
         return list(cls._tasks.keys())
 
     @classmethod
-    def load_task(cls, task_name: str, task_config: TaskConfig = TaskConfig()) -> Task:
-        """Load a task instance from the task registry."""
+    def load_task(cls, task_name: str, task_config: TaskConfig = TaskConfig()) -> Any:
         try:
             return cls._tasks[task_name](task_config)
         except KeyError:

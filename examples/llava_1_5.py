@@ -40,19 +40,16 @@ class VLM(BaseVLM):
             messages, add_generation_prompt=True
         )
 
+        # processorがimages=Noneと[]を区別する可能性があるため、分岐で処理
         if len(images) == 0:
-            images = None
+            inputs = self.processor(text=prompt, return_tensors="pt").to(self.device)
+        else:
+            inputs = self.processor(images=images, text=prompt, return_tensors="pt").to(
+                self.device
+            )
 
-        inputs = self.processor(images=images, text=prompt, return_tensors="pt").to(
-            "cuda"
-        )
-
-        # autoregressively complete prompt
         output = self.model.generate(**inputs, **gen_kwargs.__dict__)[0]
-
         generated_text = self.processor.decode(output, skip_special_tokens=True)
-
-        # extract the answer
         answer = generated_text.split("ASSISTANT:")[-1].strip()
         return answer
 

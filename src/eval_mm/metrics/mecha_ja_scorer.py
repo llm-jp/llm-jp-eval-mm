@@ -1,4 +1,5 @@
 # mecha-ja-scorer.py
+from typing import DefaultDict
 from .scorer import Scorer, AggregateOutput
 import re
 from collections import defaultdict
@@ -50,16 +51,8 @@ class MECHAJaScorer(Scorer):
           ...
         }
         """
-        # data_by_rot[rot_id] = {
-        #   "overall": [],
-        #   "factoid": [],
-        #   "non_factoid": [],
-        #   "with_bg": [],
-        #   "without_bg": []
-        # }
-
         data_all = defaultdict(list)
-        data_by_rot = defaultdict(
+        data_by_rot: DefaultDict[str, dict[str, list[int]]] = defaultdict(
             lambda: {
                 "overall": [],
                 "factoid": [],
@@ -69,6 +62,7 @@ class MECHAJaScorer(Scorer):
             }
         )
         docs = self.config.docs
+        assert docs is not None
         for doc, score in zip(docs, scores):
             rot_id = MECHAJaScorer._parse_rotation_id(doc["question_id"])
             is_factoid = doc["answer_type"] == ANSWER_TYPE_MAP["Factoid"]

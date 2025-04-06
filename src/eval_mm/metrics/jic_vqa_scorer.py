@@ -9,6 +9,7 @@ class JICVQAScorer(Scorer):
 
     def aggregate(self, scores: list[int]) -> AggregateOutput:
         docs = self.config.docs
+        assert docs is not None
         domain_scores = {}
 
         # Accumulate scores for each domain and overall

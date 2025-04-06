@@ -30,14 +30,22 @@ class VLM(BaseVLM):
         text = text.replace(
             "<|prefix|><|file|><|suffix|>", "<|prefix|><|file|><|suffix|>" * len(images)
         )
+
+        # Use text-only processing if no images are provided
+        # Distinguish between images=None and images=[] in processor behavior
         if len(images) == 0:
-            images = None
-        inputs = self.processor(
-            text=[text],
-            images=images,
-            padding=True,
-            return_tensors="pt",
-        ).to(self.model.device)
+            inputs = self.processor(
+                text=[text],
+                padding=True,
+                return_tensors="pt",
+            ).to(self.model.device)
+        else:
+            inputs = self.processor(
+                text=[text],
+                images=images,
+                padding=True,
+                return_tensors="pt",
+            ).to(self.model.device)
 
         stopping_criteria = self.processor.get_stopping_criteria(["\n###"])
 

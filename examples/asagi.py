@@ -29,9 +29,11 @@ class VLM(BaseVLM):
         ### 応答:
         """
 
+        # Distinguish between images=None and images=[] in processor behavior
         if len(images) == 0:
-            images = None
-        inputs = self.processor(text=prompt, images=images, return_tensors="pt")
+            inputs = self.processor(text=prompt, return_tensors="pt")
+        else:
+            inputs = self.processor(text=prompt, images=images, return_tensors="pt")
         inputs_text = self.processor.tokenizer(prompt, return_tensors="pt")
         inputs["input_ids"] = inputs_text["input_ids"]
         inputs["attention_mask"] = inputs_text["attention_mask"]
