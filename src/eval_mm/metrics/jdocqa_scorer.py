@@ -41,6 +41,7 @@ def bleu_ja(refs, pred):
 class JDocQAScorer(Scorer):
     def score(self, refs: list[str], preds: list[str]) -> list[int]:
         docs = self.config.docs
+        assert docs is not None
         scores = []
 
         for doc, ref, pred in zip(docs, refs, preds):
@@ -64,28 +65,32 @@ class JDocQAScorer(Scorer):
 
     def aggregate(self, scores: list[int]) -> AggregateOutput:
         docs = self.config.docs
-        metrics = {
+        assert docs is not None
+
+        # スコア収集用の dict（値はリスト）
+        raw_metrics: dict[str, list[float]] = {
             "yesno_exact": [],
             "factoid_exact": [],
             "numerical_exact": [],
             "open-ended_bleu": [],
         }
+
         for doc, score in zip(docs, scores):
             answer_type = doc["answer_type"]
             if answer_type == ANSWER_TYPE_MAP["open-ended"]:
-                metrics["open-ended_bleu"].append(score)
+                raw_metrics["open-ended_bleu"].append(score)
             else:
-                metrics[f"{NUM_TO_ANSWER_TYPE[answer_type]}_exact"].append(score)
+                key = f"{NUM_TO_ANSWER_TYPE[answer_type]}_exact"
+                raw_metrics[key].append(score)
 
-        for key, value in metrics.items():
-            if len(value) == 0:
-                metrics[key] = 0
-                continue
-            metrics[key] = sum(value) / len(value)
-        metrics["overall"] = sum(scores) / len(scores)
-        output = AggregateOutput(metrics["overall"], metrics)
+        # 平均値をとって dict[str, float] にする
+        metrics: dict[str, float] = {}
+        for key, value in raw_metrics.items():
+            metrics[key] = sum(value) / len(value) if value else 0.0
 
-        return output
+        metrics["overall"] = sum(scores) / len(scores) if scores else 0.0
+
+        return AggregateOutput(metrics["overall"], metrics)
 
 
 def test_jdocqa_scorer():

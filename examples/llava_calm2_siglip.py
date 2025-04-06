@@ -2,6 +2,7 @@ from transformers import AutoProcessor, LlavaForConditionalGeneration
 import torch
 from base_vlm import BaseVLM
 from utils import GenerationConfig
+from PIL import Image
 
 
 class VLM(BaseVLM):
@@ -14,8 +15,13 @@ class VLM(BaseVLM):
         self.processor = AutoProcessor.from_pretrained(self.model_id)
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         prefix = None
         if "<image>" in text:
             prompt = "USER: " + text + "\nASSISTANT: "
@@ -23,10 +29,14 @@ class VLM(BaseVLM):
             num_images = len(images)
             prefix = "<image> " * num_images
             prompt = "USER: " + prefix + text + "\nASSISTANT: "
-        if len(images) == 0:
-            images = None
+
         inputs = (
-            self.processor(text=prompt, images=images, return_tensors="pt")
+            self.processor(
+                text=prompt,
+                images=images,
+                add_special_tokens=False,
+                return_tensors="pt",
+            )
             .to(self.model.device)
             .to(self.model.dtype)
         )

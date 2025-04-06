@@ -11,8 +11,8 @@ class AggregateOutput:
 
 @dataclass
 class ScorerConfig:
-    docs: dict = None
-    judge_model: str = None
+    docs: dict | None = None
+    judge_model: str | None = None
     client: OpenAIChatAPI | None = None
     batch_size: int = 10
     random_choice: bool = False

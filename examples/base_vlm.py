@@ -10,8 +10,8 @@ class BaseVLM:
 
     def generate(
         self,
-        images: list[Image.Image],
-        prompt: str,
+        images: list[Image.Image] | None,
+        text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
         """Generate a response given an image (or list of images) and a prompt."""

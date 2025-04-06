@@ -6,7 +6,7 @@ from fugashi import Tagger
 import emoji
 import unicodedata
 from .scorer import Scorer, AggregateOutput
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, Future
 
 
 class MecabTokenizer:
@@ -75,16 +75,16 @@ def rouge_ja(refs: list[str], preds: list[str]) -> dict:
 class RougeLScorer(Scorer):
     @staticmethod
     def score(refs: list[str], preds: list[str]) -> list[float]:
-        scores = []
+        futures: list[Future[dict[str, float]]] = []
         with ProcessPoolExecutor() as executor:
             for ref, pred in zip(refs, preds):
                 future = executor.submit(rouge_ja, [ref], [pred])
-                scores.append(future)
-            scores = [future.result()["rougeL"] for future in scores]
+                futures.append(future)
+        scores = [f.result()["rougeL"] for f in futures]
         return scores
 
     @staticmethod
-    def aggregate(scores: list[dict]) -> AggregateOutput:
+    def aggregate(scores: list[float]) -> AggregateOutput:
         mean = sum(scores) / len(scores)
         return AggregateOutput(mean, {"rougel": mean})
 

@@ -15,10 +15,12 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         image_content = []
         for image in images:
             image_content.append({"type": "image", "image": image})

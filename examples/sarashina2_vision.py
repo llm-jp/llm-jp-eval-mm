@@ -19,10 +19,12 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         message = [{"role": "user", "content": text}]
 
         text = self.processor.apply_chat_template(message, add_generation_prompt=True)
@@ -30,8 +32,10 @@ class VLM(BaseVLM):
         text = text.replace(
             "<|prefix|><|file|><|suffix|>", "<|prefix|><|file|><|suffix|>" * len(images)
         )
-        if len(images) == 0:
-            images = None
+
+        # Use text-only processing if no images are provided
+        if images is None:
+            images = []
         inputs = self.processor(
             text=[text],
             images=images,

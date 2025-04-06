@@ -413,6 +413,7 @@ def get_score(doc: Dataset, pred: str, random_choice: bool) -> int:
 class MMMUScorer(Scorer):
     def score(self, refs: list[str], preds: list[str]) -> list[int]:
         docs = self.config.docs
+        assert docs is not None
         scores = []
         for doc, pred in zip(docs, preds):
             score = get_score(doc, pred, self.config.random_choice)
@@ -421,6 +422,7 @@ class MMMUScorer(Scorer):
 
     def aggregate(self, scores: list[int]) -> AggregateOutput:
         docs = self.config.docs
+        assert docs is not None
         evaluation_result = {}
         subset_to_eval_samples = defaultdict(list)
         for doc, score in zip(docs, scores):
@@ -439,12 +441,12 @@ class MMMUScorer(Scorer):
                 else:
                     pass
             in_domain_ins_acc = calculate_ins_level_acc(in_domain_cat_results)
-            in_domain_data_num = sum(
-                [
-                    cat_results["num_example"]
-                    for cat_results in in_domain_cat_results.values()
-                ]
-            )
+            # in_domain_data_num = sum(
+            #     [
+            #         cat_results["num_example"]
+            #         for cat_results in in_domain_cat_results.values()
+            #     ]
+            # )
             printable_results["Overall-" + domain] = round(in_domain_ins_acc, 5)
             # add sub category
             for cat_name, cat_results in in_domain_cat_results.items():

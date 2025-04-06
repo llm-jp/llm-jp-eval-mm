@@ -5,6 +5,7 @@ from transformers import (
 from qwen_vl_utils import process_vision_info
 from base_vlm import BaseVLM
 from utils import GenerationConfig
+from PIL import Image
 
 
 class VLM(BaseVLM):
@@ -24,8 +25,13 @@ class VLM(BaseVLM):
         )
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         if "<image>" in text:
             text = text.replace("<image>", "")
         message = []

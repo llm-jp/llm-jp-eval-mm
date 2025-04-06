@@ -81,17 +81,11 @@ class MMMU(Task):
     @staticmethod
     def _prepare_dataset() -> Dataset:
         configs = get_dataset_config_names("MMMU/MMMU")
-        dataset = None
-        for subject in configs:
-            if dataset is None:
-                dataset = load_dataset("MMMU/MMMU", name=subject, split="validation")
-            else:
-                dataset = concatenate_datasets(
-                    [
-                        dataset,
-                        load_dataset("MMMU/MMMU", name=subject, split="validation"),
-                    ]
-                )
+        datasets = [
+            load_dataset("MMMU/MMMU", name=subject, split="validation")
+            for subject in configs
+        ]
+        dataset = concatenate_datasets(datasets)
         dataset = dataset.map(
             lambda x: {
                 "input_text": mmmu_doc_to_text(x),
@@ -111,7 +105,7 @@ class MMMU(Task):
 
     @staticmethod
     def doc_to_id(doc) -> str:
-        return doc["question_id"]
+        return str(doc["question_id"])
 
     @staticmethod
     def doc_to_answer(doc) -> str:

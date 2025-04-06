@@ -1,7 +1,7 @@
 from datasets import load_dataset
 import os
 import requests
-from PIL import Image
+from PIL import Image as PILImage
 from io import BytesIO
 import backoff
 import webdataset as wds
@@ -10,11 +10,11 @@ from tqdm import tqdm
 
 # 画像をダウンロード
 @backoff.on_exception(
-    backoff.expo,  # 指数バックオフ
-    requests.exceptions.RequestException,  # 対象例外
-    max_tries=5,  # 最大リトライ回数
+    backoff.expo,
+    requests.exceptions.RequestException,
+    max_tries=5,
 )
-def download_image(image_url: str) -> Image:
+def download_image(image_url: str) -> PILImage.Image:
     user_agent_string = (
         "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:72.0) Gecko/20100101 Firefox/72.0"
     )
@@ -22,11 +22,11 @@ def download_image(image_url: str) -> Image:
         image_url, headers={"User-Agent": user_agent_string}, timeout=10
     )
     response.raise_for_status()
-    image = Image.open(BytesIO(response.content)).convert("RGB")
+    image = PILImage.open(BytesIO(response.content)).convert("RGB")
     return image
 
 
-def download_image_wrap(image_url: str) -> Image:
+def download_image_wrap(image_url: str) -> PILImage.Image | None:
     try:
         return download_image(image_url)
     except Exception as e:
@@ -34,38 +34,41 @@ def download_image_wrap(image_url: str) -> Image:
         return None
 
 
-def get_domain_from_question(question: str) -> str:
+def get_domain_from_question(question: str) -> str | None:
     for keyword, domain in domain_dict.items():
         if keyword in question:
             return domain
+    return None
 
 
-ds = load_dataset("line-corporation/JIC-VQA", split="train")
+# 型アノテーション付き変数定義
+input_texts: list[str] = []
+answers: list[str] = []
+images: list[PILImage.Image | None] = []
+question_ids: list[str] = []
+domains: list[str] = []
 
-input_texts = []
-answers = []
-images = []
-question_ids = []
-domains = []
-
-domain_dict = {
+# ドメイン辞書
+domain_dict: dict[str, str] = {
     "花": "jaflower30",
     "食べ物": "jafood101",
     "ランドマーク": "jalandmark10",
     "施設": "jafacility20",
 }
 
+# データセット読み込み＆画像保存処理
 output_dir = "dataset/jic_vqa"
 os.makedirs(output_dir, exist_ok=True)
+
+ds = load_dataset("line-corporation/JIC-VQA", split="train")
+
 if not os.path.exists(f"{output_dir}/images.tar"):
     with wds.TarWriter(f"{output_dir}/images.tar") as sink:
         for i, example in tqdm(enumerate(ds), total=len(ds)):
             image_url = example["url"]
             image = download_image_wrap(image_url)
-            # resize
             if image is not None:
-                image = image.resize((224, 224))
-                image = image.convert("RGB")
+                image = image.resize((224, 224)).convert("RGB")
             if image is None:
                 continue
             sample = {
@@ -77,6 +80,7 @@ if not os.path.exists(f"{output_dir}/images.tar"):
             }
             sink.write(sample)
 
+# WebDatasetの読み込みと加工処理
 ds = load_dataset("webdataset", data_files=f"{output_dir}/images.tar", split="train")
 print(ds)
 print(ds[0])
@@ -90,7 +94,6 @@ ds = ds.rename_columns(
     }
 )
 
-# Phase 2: Load images and populate data structures
 ds = ds.map(
     lambda x: {
         "input_text": x["question"].decode("utf-8"),
@@ -101,9 +104,9 @@ ds = ds.map(
         "domain": get_domain_from_question(str(x["question"].decode("utf-8"))),
     }
 )
+
 ds = ds.remove_columns(["question", "__key__", "jpg"])
 
 print(ds)
 print(ds[0])
-# {'category': 'ガソリンスタンド', 'url': b'https://live.staticflickr.com/5536/11190751074_f97587084e_o.jpg', 'input_text': "この画像にはどの施設が映っていますか？次の四つの選択肢から正しいものを選んでください: ['スーパーマーケット', 'コンビニ', '駐車場', 'ガソリンスタンド']", 'answer': 'ガソリンスタンド', 'image': <PIL.JpegImagePlugin.JpegImageFile image mode=RGB size=224x224 at 0x7F83A660F710>, 'question_id': '11190751074', 'domain': 'jafacility20'}
 ds.to_parquet("dataset/jic_vqa.parquet")

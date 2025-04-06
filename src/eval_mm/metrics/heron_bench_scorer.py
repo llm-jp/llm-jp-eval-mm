@@ -6,12 +6,11 @@ import re
 import json
 
 
-def parse_score(llm_output: str) -> dict | None:
+def parse_score(llm_output: str) -> dict[str, int]:
     json_pattern = r"```json(.*?)```"
     matches = re.findall(json_pattern, llm_output, re.DOTALL)
 
     if not matches:
-        # Fallback: Try to find any JSON-like content in the output
         json_pattern = r"\{.*?\}"
         matches = re.findall(json_pattern, llm_output, re.DOTALL)
 
@@ -19,16 +18,30 @@ def parse_score(llm_output: str) -> dict | None:
         json_string = json_string.strip()
         try:
             parsed_json = json.loads(json_string)
-            return parsed_json
+            if (
+                isinstance(parsed_json, dict)
+                and "score" in parsed_json
+                and "score_gpt" in parsed_json
+            ):
+                return {
+                    "score": int(parsed_json["score"]),
+                    "score_gpt": int(parsed_json["score_gpt"]),
+                }
         except json.JSONDecodeError:
-            # Attempt to fix common JSON issues
             try:
-                # Remove invalid control characters
                 json_string_clean = re.sub(r"[\x00-\x1F\x7F]", "", json_string)
                 parsed_json = json.loads(json_string_clean)
-                return parsed_json
+                if (
+                    isinstance(parsed_json, dict)
+                    and "score" in parsed_json
+                    and "score_gpt" in parsed_json
+                ):
+                    return {
+                        "score": int(parsed_json["score"]),
+                        "score_gpt": int(parsed_json["score_gpt"]),
+                    }
             except json.JSONDecodeError:
-                continue  # Try next match
+                continue
 
     return {"score": -1, "score_gpt": -1}
 
@@ -72,8 +85,11 @@ Output:
 
 
 def ask_gpt4_batch(
-    content_list: str, max_tokens: int, async_client: OpenAIChatAPI, model_name: str
-) -> list:
+    content_list: list[str],
+    max_tokens: int,
+    async_client: OpenAIChatAPI,
+    model_name: str,
+) -> list[str]:
     message_list = [
         [
             {
@@ -97,23 +113,30 @@ def ask_gpt4_batch(
 class HeronBenchScorer(Scorer):
     def score(self, refs, preds: list[str]) -> list[dict[str, int]]:
         docs = self.config.docs
-        contents = []
-        for doc, ref, pred in zip(docs, refs, preds):
-            content = INSTRUCTION.format(
+        assert docs is not None
+        assert self.config.client is not None
+        assert self.config.judge_model is not None
+
+        contents = [
+            INSTRUCTION.format(
                 context=doc["context"],
                 question=doc["input_text"],
                 gpt4o_answer=ref,
                 model_answer=pred,
             )
-            contents.append(content)
-        completions = ask_gpt4_batch(
+            for doc, ref, pred in zip(docs, refs, preds)
+        ]
+
+        completions: list[str] = ask_gpt4_batch(
             contents, 1024, self.config.client, self.config.judge_model
         )
-        scores = [parse_score(completion) for completion in completions]
+
+        scores: list[dict[str, int]] = [parse_score(c) for c in completions]
         return scores
 
     def aggregate(self, scores: list[dict[str, int]]) -> AggregateOutput:
         docs = self.config.docs
+        assert docs is not None
         category_list = ["conv", "detail", "complex"]
         heron_metrics = defaultdict(float)
         for category in category_list:

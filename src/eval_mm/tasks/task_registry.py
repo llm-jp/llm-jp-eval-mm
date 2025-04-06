@@ -10,13 +10,14 @@ from .jic_vqa import JICVQA
 from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
 from .mnist import MNIST
-from .task import TaskConfig, Task
+from .task import Task, TaskConfig
+from typing import Callable
 
 
 class TaskRegistry:
     """Registry to map metrics to their corresponding scorer classes."""
 
-    _tasks = {
+    _tasks: dict[str, Callable[[TaskConfig], Task]] = {
         "japanese-heron-bench": JapaneseHeronBench,
         "ja-vlm-bench-in-the-wild": JaVLMBenchIntheWild,
         "ja-vg-vqa-500": JaVGVQA500,
@@ -33,13 +34,11 @@ class TaskRegistry:
 
     @classmethod
     def get_task_list(cls):
-        """Get the list of supported tasks."""
         return list(cls._tasks.keys())
 
     @classmethod
     def load_task(cls, task_name: str, task_config: TaskConfig = TaskConfig()) -> Task:
-        """Load a task instance from the task registry."""
         try:
-            return cls._tasks[task_name](task_config)
+            return cls._tasks[task_name](task_config)  # type: ignore
         except KeyError:
             raise ValueError(f"Task '{task_name}' is not supported.")

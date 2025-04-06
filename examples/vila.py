@@ -15,6 +15,7 @@ from llava_vila.mm_utils import (
     tokenizer_image_token,
 )
 from llava_vila.model.builder import load_pretrained_model
+from PIL import Image
 
 
 class VLM(BaseVLM):
@@ -31,9 +32,14 @@ class VLM(BaseVLM):
         # self.image_processor = AutoProcessor.from_pretrained("Efficient-Large-Model/VILA-13b")
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
         qs = text
+        if images is None:
+            images = []
         if "<image>" not in text:
             qs = "<image>\n" * len(images) + text
 
@@ -50,7 +56,7 @@ class VLM(BaseVLM):
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
         prompt = conv.get_prompt()
-        if len(images) == 0:
+        if images is None:
             images_tensor = None
         else:
             images_tensor = [
@@ -65,7 +71,7 @@ class VLM(BaseVLM):
         )
 
         stop_str = conv.sep if conv.sep_style != SeparatorStyle.TWO else conv.sep2
-        keywords = [stop_str]
+        # keywords = [stop_str] # if needed, add keywords
 
         with torch.inference_mode():
             output_ids = self.model.generate(

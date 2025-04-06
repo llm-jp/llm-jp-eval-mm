@@ -165,7 +165,7 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
@@ -178,7 +178,7 @@ class VLM(BaseVLM):
         text_encoding["qformer_attention_mask"] = text_encoding[
             "attention_mask"
         ].clone()
-        if len(images) == 0:
+        if images is None:
             inputs = text_encoding
             inputs["pixel_values"] = None
             # TODO:

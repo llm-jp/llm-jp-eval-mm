@@ -3,6 +3,7 @@ from transformers import AutoModelForVision2Seq, AutoProcessor
 import torch
 from base_vlm import BaseVLM
 from utils import GenerationConfig
+from PIL import Image
 
 
 class VLM(BaseVLM):
@@ -16,9 +17,14 @@ class VLM(BaseVLM):
         self.model.to(self.device)
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
-        text = "<image>" * len(image) + f"{text}"
+        if images is None:
+            images = []
+        text = "<image>" * len(images) + text
 
         messages = [
             {
@@ -27,15 +33,10 @@ class VLM(BaseVLM):
             },
             {"role": "user", "content": text},
         ]
-        if len(images) == 0:
-            inputs = self.processor.text_processor(
-                messages=messages, return_tensors="pt"
-            )
-        else:
-            inputs = self.processor.image_processor(images=images, return_tensors="pt")
-            inputs["input_ids"] = self.processor.tokenizer.apply_chat_template(
-                messages, return_tensors="pt"
-            )
+        inputs = self.processor.image_processor(images=images, return_tensors="pt")
+        inputs["input_ids"] = self.processor.tokenizer.apply_chat_template(
+            messages, return_tensors="pt"
+        )
 
         output_ids = self.model.generate(
             **inputs.to(self.device), **gen_kwargs.__dict__

@@ -2,7 +2,6 @@ import json
 import os
 import pandas as pd
 from argparse import ArgumentParser
-from typing import List, Optional
 from loguru import logger
 import eval_mm
 import eval_mm.metrics
@@ -61,7 +60,7 @@ MODEL_LIST = [
 ]
 
 
-def load_evaluation_data(result_dir: str, model: str, task_dirs: List[str]) -> dict:
+def load_evaluation_data(result_dir: str, model: str, task_dirs: list[str]) -> dict:
     """Load evaluation results for a given model across multiple tasks."""
     model_results = {"Model": model}
     for task_dir in task_dirs:
@@ -87,9 +86,9 @@ def load_evaluation_data(result_dir: str, model: str, task_dirs: List[str]) -> d
 
 def process_results(
     result_dir: str,
-    model_list: List[str],
+    model_list: list[str],
     add_avg: bool = False,
-    task_id_list: Optional[List[str]] = None,
+    task_id_list: list[str] | None = None,
 ) -> pd.DataFrame:
     """Process all evaluation results into a structured DataFrame."""
     if task_id_list:
@@ -223,14 +222,14 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
 
 def main(
     result_dir: str,
-    model_list: List[str],
-    output_path: Optional[str] = None,
+    model_list: list[str],
+    output_path: str | None = None,
     output_format: str = "markdown",
     plot_bar: bool = False,
     plot_corr: bool = False,
     update_pages: bool = False,
     add_avg: bool = False,
-    task_id_list: Optional[List[str]] = None,
+    task_id_list: list[str] | None = None,
 ):
     df = process_results(result_dir, model_list, add_avg, task_id_list)
     if plot_corr:

@@ -18,22 +18,29 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
+
         prompt_template = (
             "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user"
             + "\n<image>" * len(images)
             + "\n{text}<|im_end|>\n<|im_start|>assistant\n"
         )
         input_text = prompt_template.format(text=text)
-        if len(images) == 0:
-            images = None
-            # TODO: text only need to reload model https://huggingface.co/neulab/Pangea-7B
-        model_inputs = self.processor(
-            images=images, text=input_text, return_tensors="pt"
-        ).to("cuda", torch.float16)
+        if images is None:
+            # TODO: text only need to reload model https://huggingface.co/neulab/Pangea-7B <-?
+            model_inputs = self.processor(text=input_text, return_tensors="pt").to(
+                self.device, torch.float16
+            )
+        else:
+            model_inputs = self.processor(
+                images=images, text=input_text, return_tensors="pt"
+            ).to(self.device, torch.float16)
+
         output = self.model.generate(
             **model_inputs,
             **gen_kwargs.__dict__,

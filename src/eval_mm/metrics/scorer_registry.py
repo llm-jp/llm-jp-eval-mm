@@ -10,12 +10,13 @@ from .jdocqa_scorer import JDocQAScorer
 from .jic_vqa_scorer import JICVQAScorer
 from .mecha_ja_scorer import MECHAJaScorer
 from .scorer import ScorerConfig
+from typing import Callable
 
 
 class ScorerRegistry:
     """Registry to map metrics to their corresponding scorer classes."""
 
-    _scorers = {
+    _scorers: dict[str, Callable[[ScorerConfig], Scorer]] = {
         "heron-bench": HeronBenchScorer,
         "exact-match": ExactMatchScorer,
         "llm-as-a-judge": LlmAsaJudgeScorer,
@@ -39,6 +40,6 @@ class ScorerRegistry:
     ) -> Scorer:
         """Load a scorer instance from the scorer registry."""
         try:
-            return cls._scorers[metric](scorer_config)
+            return cls._scorers[metric](scorer_config)  # type: ignore
         except KeyError:
             raise ValueError(f"Metric '{metric}' is not supported.")

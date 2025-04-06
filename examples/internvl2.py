@@ -1,9 +1,9 @@
 import torch
+from torch import Tensor
 import torchvision.transforms as T
 from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
 from transformers import AutoModel, AutoTokenizer
-from typing import Union
 from base_vlm import BaseVLM
 from utils import GenerationConfig
 import copy
@@ -98,9 +98,10 @@ def load_image(image, input_size=448, max_num=12):
 
 
 # 画像の数だけ画像を読み込んでcatする
-def load_images(images: Union[Image.Image, list[Image.Image]]):
+def load_images(images: Image.Image | list[Image.Image]):
     if isinstance(images, list):
-        tuples = ()
+        tuples: tuple[Tensor, ...] = ()
+
         for image in images:
             tuples += (load_image(image).to(torch.bfloat16).cuda(),)
         return torch.cat(tuples, dim=0)
@@ -109,7 +110,7 @@ def load_images(images: Union[Image.Image, list[Image.Image]]):
 
 
 # 画像の数だけ <image> をpromptの先頭に追加する
-def add_image_tags(images: Union[Image.Image, list[Image.Image]], prompt: str) -> str:
+def add_image_tags(images: Image.Image | list[Image.Image], prompt: str) -> str:
     if isinstance(images, list):
         num_images = len(images)
     else:
@@ -137,11 +138,15 @@ class VLM(BaseVLM):
         )
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         if "<image>" not in text:
-            image_tokens = ["<image>"] * len(images)
-            image_tokens = " ".join(image_tokens)
+            image_tokens = " ".join(["<image>"] * len(images))
             text = f"{image_tokens}\n{text}"
 
         pixel_values_list = []

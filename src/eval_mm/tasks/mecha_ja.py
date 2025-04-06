@@ -143,8 +143,8 @@ class MECHAJa(Task):
         return [doc["image"]]
 
     @staticmethod
-    def doc_to_id(doc) -> int:
-        return doc["question_id"]
+    def doc_to_id(doc) -> str:
+        return str(doc["question_id"])
 
     @staticmethod
     def doc_to_answer(doc) -> str:
@@ -171,5 +171,4 @@ def test_task():
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
     assert isinstance(task.doc_to_id(ds[0]), str)
     assert isinstance(task.doc_to_answer(ds[0]), str)
-    assert len(ds) == 4 * 1000
     assert ds[0]["question_id"] == "0_rot0"

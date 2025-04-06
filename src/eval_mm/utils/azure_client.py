@@ -1,22 +1,21 @@
 import os
-from openai import AsyncAzureOpenAI, AsyncOpenAI
 import asyncio
-from typing import Optional
-import openai
 import logging
+from openai import AsyncAzureOpenAI, AsyncOpenAI, APIError
+from openai.types.chat import ChatCompletion
 import backoff
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
 
-@backoff.on_exception(backoff.expo, openai.APIError, max_tries=5)
+@backoff.on_exception(backoff.expo, APIError, max_tries=5)
 async def call_openai(
-    client: AsyncOpenAI, model_name: str, messages_list: list[dict[str, str]], **kwargs
-) -> dict:
-    """
-    Calls OpenAI's chat completion API and handles retries on failure.
-    """
+    client: AsyncOpenAI,
+    model_name: str,
+    messages_list: list[dict[str, str]],
+    **kwargs,
+) -> ChatCompletion:
     return await client.chat.completions.create(
         model=model_name,
         messages=messages_list,
@@ -25,11 +24,6 @@ async def call_openai(
 
 
 class OpenAIChatAPI:
-    """
-    Wrapper class for the OpenAI API client.
-    Provides a method to send multiple chat requests in parallel.
-    """
-
     def __init__(self) -> None:
         if os.getenv("AZURE_OPENAI_KEY") and os.getenv("AZURE_OPENAI_ENDPOINT"):
             self.client = AsyncAzureOpenAI(
@@ -47,50 +41,44 @@ class OpenAIChatAPI:
     async def _async_batch_run_chatgpt(
         self,
         messages_list: list[list[dict[str, str]]],
-        stop_sequences: Optional[str | list[str]] = None,
-        max_new_tokens: Optional[int] = None,
-        model_name: Optional[str] = None,
+        stop_sequences: str | list[str] | None = None,
+        max_new_tokens: int | None = None,
+        model_name: str | None = None,
         **kwargs,
-    ) -> list[Optional[dict]]:
-        """
-        Send multiple chat requests to the OpenAI API in parallel.
-        """
+    ) -> list[ChatCompletion | Exception]:
         if stop_sequences is not None:
             if "stop" in kwargs:
-                raise ValueError(
-                    "You specified both `stop_sequences` and `stop` in generation kwargs. Specify only one."
-                )
+                raise ValueError("Specify only one: `stop_sequences` or `stop`.")
             kwargs["stop"] = stop_sequences
 
         if max_new_tokens is not None:
             if "max_tokens" in kwargs:
-                raise ValueError(
-                    "You specified both `max_new_tokens` and `max_tokens` in generation kwargs. Specify only one."
-                )
+                raise ValueError("Specify only one: `max_new_tokens` or `max_tokens`.")
             kwargs["max_tokens"] = max_new_tokens
 
         tasks = [
             asyncio.create_task(call_openai(self.client, model_name, ms, **kwargs))
             for ms in messages_list
         ]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        results: list[ChatCompletion | Exception] = await asyncio.gather(
+            *tasks, return_exceptions=True
+        )
 
+        output: list[ChatCompletion | Exception] = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 logger.error(f"Error in task {i}: {result}")
-                results[i] = None
-
-        return results
+                output.append(None)
+            else:
+                output.append(result)
+        return output
 
     def batch_generate_chat_response(
         self,
         chat_messages_list: list[list[dict[str, str]]],
-        model_name: Optional[str] = None,
+        model_name: str | None = None,
         **kwargs,
     ) -> list[str]:
-        """
-        Generate chat responses for a batch of messages.
-        """
         api_responses = asyncio.run(
             self._async_batch_run_chatgpt(
                 chat_messages_list, model_name=model_name, **kwargs
@@ -98,14 +86,15 @@ class OpenAIChatAPI:
         )
         model_outputs = []
         for res in api_responses:
-            if res is None:
-                model_outputs.append("")
-                continue
-            model_output = res.choices[0].message.content
-            model_outputs.append(model_output)
+            if isinstance(res, ChatCompletion):
+                model_output = res.choices[0].message.content
+                model_outputs.append(model_output)
 
-            logger.info(f"Model output: {model_output}")
-            logger.info(f"Usage: {res.usage}")
+                logger.info(f"Model output: {model_output}")
+                logger.info(f"Usage: {res.usage}")
+            else:
+                logger.error(f"Unexpected error: {res}")
+                model_outputs.append("")
         return model_outputs
 
     def __repr__(self) -> str:
@@ -113,23 +102,16 @@ class OpenAIChatAPI:
 
 
 class MockChatAPI:
-    """
-    A mock class for the OpenAI API client.
-    """
-
     def __init__(self) -> None:
         pass
 
     def batch_generate_chat_response(
         self,
         chat_messages_list: list[list[dict[str, str]]],
-        model_name: Optional[str] = None,
+        model_name: str | None = None,
         **kwargs,
     ) -> list[str]:
-        """
-        Generate chat responses for a batch of messages
-        """
-        return ["Mock"] * len(chat_messages_list)
+        return ["Mock response"] * len(chat_messages_list)
 
 
 if __name__ == "__main__":
