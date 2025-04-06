@@ -23,8 +23,7 @@ repos:
       - id: no-commit-to-branch        # main/master直コミット防止
         args: ["--branch", "main", "--branch", "master"]
 
-  # TODO: mypy：型の静的解析
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: v1.9.0
-  #   hooks:
-  #     - id: mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.9.0
+    hooks:
+      - id: mypy
