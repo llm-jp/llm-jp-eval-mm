@@ -38,7 +38,7 @@ class Task(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def doc_to_id(self, doc) -> int:
+    def doc_to_id(self, doc) -> str:
         """Converts a document to id."""
         pass
 

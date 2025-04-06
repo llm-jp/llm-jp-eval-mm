@@ -143,8 +143,8 @@ class MECHAJa(Task):
         return [doc["image"]]
 
     @staticmethod
-    def doc_to_id(doc) -> int:
-        return doc["question_id"]
+    def doc_to_id(doc) -> str:
+        return str(doc["question_id"])
 
     @staticmethod
     def doc_to_answer(doc) -> str:
