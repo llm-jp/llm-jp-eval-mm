@@ -1,5 +1,4 @@
 # mecha-ja-scorer.py
-from typing import DefaultDict
 from .scorer import Scorer, AggregateOutput
 import re
 from collections import defaultdict
