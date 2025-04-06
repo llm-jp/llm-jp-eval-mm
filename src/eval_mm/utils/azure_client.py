@@ -1,7 +1,6 @@
 import os
 import asyncio
 import logging
-from typing import Optional, Union
 from openai import AsyncAzureOpenAI, AsyncOpenAI, APIError
 from openai.types.chat import ChatCompletion
 import backoff
@@ -42,11 +41,11 @@ class OpenAIChatAPI:
     async def _async_batch_run_chatgpt(
         self,
         messages_list: list[list[dict[str, str]]],
-        stop_sequences: Optional[Union[str, list[str]]] = None,
-        max_new_tokens: Optional[int] = None,
-        model_name: Optional[str] = None,
+        stop_sequences: str | list[str] | None = None,
+        max_new_tokens: int | None = None,
+        model_name: str | None = None,
         **kwargs,
-    ) -> list[Optional[ChatCompletion]]:
+    ) -> list[ChatCompletion | Exception]:
         if stop_sequences is not None:
             if "stop" in kwargs:
                 raise ValueError("Specify only one: `stop_sequences` or `stop`.")
@@ -61,11 +60,11 @@ class OpenAIChatAPI:
             asyncio.create_task(call_openai(self.client, model_name, ms, **kwargs))
             for ms in messages_list
         ]
-        results: list[Union[ChatCompletion, Exception]] = await asyncio.gather(
+        results: list[ChatCompletion | Exception] = await asyncio.gather(
             *tasks, return_exceptions=True
         )
 
-        output: list[Optional[ChatCompletion]] = []
+        output: list[ChatCompletion | Exception] = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 logger.error(f"Error in task {i}: {result}")
@@ -77,7 +76,7 @@ class OpenAIChatAPI:
     def batch_generate_chat_response(
         self,
         chat_messages_list: list[list[dict[str, str]]],
-        model_name: Optional[str] = None,
+        model_name: str | None = None,
         **kwargs,
     ) -> list[str]:
         api_responses = asyncio.run(
@@ -87,14 +86,15 @@ class OpenAIChatAPI:
         )
         model_outputs = []
         for res in api_responses:
-            if res is None:
-                model_outputs.append("")
-                continue
-            model_output = res.choices[0].message.content
-            model_outputs.append(model_output)
+            if isinstance(res, ChatCompletion):
+                model_output = res.choices[0].message.content
+                model_outputs.append(model_output)
 
-            logger.info(f"Model output: {model_output}")
-            logger.info(f"Usage: {res.usage}")
+                logger.info(f"Model output: {model_output}")
+                logger.info(f"Usage: {res.usage}")
+            else:
+                logger.error(f"Unexpected error: {res}")
+                model_outputs.append("")
         return model_outputs
 
     def __repr__(self) -> str:
@@ -108,7 +108,7 @@ class MockChatAPI:
     def batch_generate_chat_response(
         self,
         chat_messages_list: list[list[dict[str, str]]],
-        model_name: Optional[str] = None,
+        model_name: str | None = None,
         **kwargs,
     ) -> list[str]:
         return ["Mock response"] * len(chat_messages_list)

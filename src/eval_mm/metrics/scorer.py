@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional, Dict
 from eval_mm.utils.azure_client import OpenAIChatAPI
 
 
@@ -12,9 +11,9 @@ class AggregateOutput:
 
 @dataclass
 class ScorerConfig:
-    docs: Optional[Dict] = None
-    judge_model: Optional[str] = None
-    client: Optional[OpenAIChatAPI] = None
+    docs: dict | None = None
+    judge_model: str | None = None
+    client: OpenAIChatAPI | None = None
     batch_size: int = 10
     random_choice: bool = False
 

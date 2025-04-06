@@ -6,7 +6,6 @@ from io import BytesIO
 import backoff
 import webdataset as wds
 from tqdm import tqdm
-from typing import List, Optional, Dict
 
 
 # 画像をダウンロード
@@ -27,7 +26,7 @@ def download_image(image_url: str) -> PILImage.Image:
     return image
 
 
-def download_image_wrap(image_url: str) -> Optional[PILImage.Image]:
+def download_image_wrap(image_url: str) -> PILImage.Image | None:
     try:
         return download_image(image_url)
     except Exception as e:
@@ -35,7 +34,7 @@ def download_image_wrap(image_url: str) -> Optional[PILImage.Image]:
         return None
 
 
-def get_domain_from_question(question: str) -> Optional[str]:
+def get_domain_from_question(question: str) -> str | None:
     for keyword, domain in domain_dict.items():
         if keyword in question:
             return domain
@@ -43,14 +42,14 @@ def get_domain_from_question(question: str) -> Optional[str]:
 
 
 # 型アノテーション付き変数定義
-input_texts: List[str] = []
-answers: List[str] = []
-images: List[Optional[PILImage.Image]] = []
-question_ids: List[str] = []
-domains: List[str] = []
+input_texts: list[str] = []
+answers: list[str] = []
+images: list[PILImage.Image | None] = []
+question_ids: list[str] = []
+domains: list[str] = []
 
 # ドメイン辞書
-domain_dict: Dict[str, str] = {
+domain_dict: dict[str, str] = {
     "花": "jaflower30",
     "食べ物": "jafood101",
     "ランドマーク": "jalandmark10",

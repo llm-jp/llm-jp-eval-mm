@@ -52,7 +52,7 @@ class MECHAJaScorer(Scorer):
         }
         """
         data_all = defaultdict(list)
-        data_by_rot: DefaultDict[str, dict[str, list[int]]] = defaultdict(
+        data_by_rot: defaultdict[str, dict[str, list[int]]] = defaultdict(
             lambda: {
                 "overall": [],
                 "factoid": [],
