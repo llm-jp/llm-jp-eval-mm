@@ -71,4 +71,4 @@ class VLM(BaseVLM):
 
 if __name__ == "__main__":
     vlm = VLM()
-    vlm.test_vlm() 
+    vlm.test_vlm()

@@ -22,6 +22,7 @@ dependencies = [
     "webdataset>=0.2.111",
     "av>=14.1.0",
     "loguru>=0.7.3",
+    "types-requests>=2.32.0.20250328",
 ]
 readme = "README.md"
 license = "Apache-2.0"
