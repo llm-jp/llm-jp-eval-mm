@@ -17,10 +17,12 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         content = [{"type": "image"} for _ in range(len(images))]
         content.extend([{"type": "text", "text": text}])
         messages = [
@@ -32,14 +34,12 @@ class VLM(BaseVLM):
         input_text = self.processor.apply_chat_template(
             messages, add_generation_prompt=True
         )
-        if len(images) == 0:
-            inputs = self.processor(text=input_text, return_tensors="pt").to(
-                self.device
-            )
-        else:
-            inputs = self.processor(
-                images=images, text=input_text, return_tensors="pt"
-            ).to(self.device)
+        inputs = self.processor(
+            text=input_text,
+            images=images,
+            add_special_tokens=False,
+            return_tensors="pt",
+        ).to(self.device)
 
         # autoregressively complete prompt
         output = self.model.generate(**inputs, **gen_kwargs.__dict__)[0]

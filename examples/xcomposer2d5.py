@@ -5,6 +5,7 @@ from transformers import AutoModel, AutoTokenizer
 import os
 from utils import GenerationConfig
 from base_vlm import BaseVLM
+from PIL import Image
 
 torch.set_grad_enabled(False)
 
@@ -28,8 +29,13 @@ class VLM(BaseVLM):
         self.model.tokenizer = self.tokenizer
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         if "<image>" not in text:
             image_tokens = "".join(
                 [f"Image{i} <ImageHere>; " for i in range(1, len(images) + 1)]

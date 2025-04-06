@@ -24,10 +24,12 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         generation_config = transformers.GenerationConfig.from_pretrained(
             self.model_id, "generation_config.json"
         )
@@ -45,11 +47,11 @@ class VLM(BaseVLM):
             messages, tokenize=False, add_generation_prompt=True
         )
 
-        # processorがimages=Noneと[]を区別するため、条件分岐して明示的に処理
-        if len(images) == 0:
-            inputs = self.processor(prompt, return_tensors="pt").to(self.device)
-        else:
-            inputs = self.processor(prompt, images, return_tensors="pt").to(self.device)
+        if images is None:
+            images = []
+        inputs = self.processor(
+            prompt, images, add_special_tokens=False, return_tensors="pt"
+        ).to(self.device)
 
         generate_ids = self.model.generate(
             **inputs,

@@ -9,6 +9,7 @@ from llava.mm_utils import (
 from llava.model.builder import load_pretrained_model
 from base_vlm import BaseVLM
 from utils import GenerationConfig
+from PIL import Image
 
 
 class VLM(BaseVLM):
@@ -21,8 +22,13 @@ class VLM(BaseVLM):
         )
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         qs = text
         if "<image>" not in text:
             qs = "<image>\n" * len(images) + text
@@ -31,14 +37,12 @@ class VLM(BaseVLM):
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
         prompt = conv.get_prompt()
-        if len(images) == 0:
-            images_tensor = None
-        else:
-            images_tensor = [
-                process_images(images, self.image_processor, self.model.config).to(
-                    self.model.device, dtype=torch.float16
-                )
-            ]
+
+        images_tensor = [
+            process_images(images, self.image_processor, self.model.config).to(
+                self.model.device, dtype=torch.float16
+            )
+        ]
         input_ids = (
             tokenizer_image_token(
                 prompt, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt"

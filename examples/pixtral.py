@@ -42,10 +42,12 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         content = [image_to_content(image) for image in images]
         content.extend([{"type": "text", "text": text}])
         messages = [

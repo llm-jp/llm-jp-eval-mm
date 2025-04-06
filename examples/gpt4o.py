@@ -5,7 +5,7 @@ import base64
 from base_vlm import BaseVLM
 from utils import GenerationConfig
 import backoff
-from typing import Dict, List, Union
+from PIL import Image
 
 
 def encode_image_to_base64(image):
@@ -36,11 +36,15 @@ class VLM(BaseVLM):
         )
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
         message = []
-        ContentBlock = Dict[str, Union[str, Dict[str, str]]]
-        content: List[ContentBlock] = []
+        content: list[dict[str, str | dict[str, str]]] = []
+        if images is None:
+            images = []
         image_base64_list = [encode_image_to_base64(img) for img in images]
         message_base = {
             "role": "user",

@@ -21,10 +21,12 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         if DEFAULT_IMAGE_TOKEN in text:
             text = text.replace(DEFAULT_IMAGE_TOKEN, "")
         content = [{"type": "image"} for _ in range(len(images))]

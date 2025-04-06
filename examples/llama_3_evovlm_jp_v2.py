@@ -8,6 +8,7 @@ from mantis.models.mllava import (
 from mantis.models.mllava.utils import conv_templates
 from base_vlm import BaseVLM
 from utils import GenerationConfig
+from PIL import Image
 
 # 1. Set the system prompt
 conv_llama_3_elyza = Conversation(
@@ -34,12 +35,15 @@ class VLM(BaseVLM):
         self.processor.tokenizer.pad_token = self.processor.tokenizer.eos_token
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         if "<image>" not in text:
             text = "<image> " * len(images) + "\n" + text
-        if len(images) == 0:
-            images = None
         response, history = chat_mllava(
             text, images, self.model, self.processor, **gen_kwargs.__dict__
         )

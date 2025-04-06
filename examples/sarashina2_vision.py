@@ -19,10 +19,12 @@ class VLM(BaseVLM):
 
     def generate(
         self,
-        images: list[Image.Image],
+        images: list[Image.Image] | None,
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
+        if images is None:
+            images = []
         message = [{"role": "user", "content": text}]
 
         text = self.processor.apply_chat_template(message, add_generation_prompt=True)
@@ -32,20 +34,14 @@ class VLM(BaseVLM):
         )
 
         # Use text-only processing if no images are provided
-        # Distinguish between images=None and images=[] in processor behavior
-        if len(images) == 0:
-            inputs = self.processor(
-                text=[text],
-                padding=True,
-                return_tensors="pt",
-            ).to(self.model.device)
-        else:
-            inputs = self.processor(
-                text=[text],
-                images=images,
-                padding=True,
-                return_tensors="pt",
-            ).to(self.model.device)
+        if images is None:
+            images = []
+        inputs = self.processor(
+            text=[text],
+            images=images,
+            padding=True,
+            return_tensors="pt",
+        ).to(self.model.device)
 
         stopping_criteria = self.processor.get_stopping_criteria(["\n###"])
 
