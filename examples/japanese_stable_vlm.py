@@ -176,11 +176,14 @@ class VLM(BaseVLM):
         self.model.to(self.device)
 
     def generate(
-        self, images, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+        self,
+        images: list[Image.Image] | None,
+        text: str,
+        gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
         # instruct blip does not expect the <image> tag
         prompt = build_prompt(task="vqa", input=text)
-        if len(images) == 0:
+        if images is None:
             raise ValueError("Please provide at least one image.")
 
         else:

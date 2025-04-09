@@ -21,6 +21,19 @@ TASK_ALIAS = {
     "mmmu": "MMMU",
 }
 
+TASK_CLUSTER_ALIAS = {
+    "JMMMU": "言語・知識中心",
+    "JDocQA": "言語・知識中心",
+    "MECHA": "言語・知識中心",
+    "JIC": "視覚中心",
+    "VG-VQA": "視覚中心",
+    "Heron": "視覚中心",
+    "JVB-ItW": "視覚中心",
+    "MulIm-VQA": "非日本語",
+    "MMMU": "非日本語",
+    "LLAVA": "非日本語",
+}
+
 METRIC_ALIAS = {
     "heron-bench": "LLM",
     "llm-as-a-judge": "LLM",
@@ -190,6 +203,40 @@ def plot_task_performance(df: pd.DataFrame):
         plt.savefig(f"{task.replace('/', '-')}.png")
 
 
+def compute_cluster_scores(df: pd.DataFrame) -> pd.DataFrame:
+    df_filtered = df.loc[:, ~df.columns.str.contains("Rouge", case=False)]
+    task_names = [col.split("/")[0] for col in df_filtered.columns]
+    cluster_labels = [TASK_CLUSTER_ALIAS.get(task, None) for task in task_names]
+    cluster_scores: dict[str, list[str]] = {
+        c: [] for c in set(TASK_CLUSTER_ALIAS.values())
+    }
+    for col, label in zip(df_filtered.columns, cluster_labels):
+        if label:
+            cluster_scores[label].append(col)
+
+    df_z = df_filtered.copy()
+    df_z = (df_z - df_z.mean()) / df_z.std()
+
+    cluster_z = {}
+    for cluster, cols in cluster_scores.items():
+        cluster_z[cluster] = df_z[cols].mean(axis=1)
+
+    for cluster, z in cluster_z.items():
+        df[f"{cluster}偏差値"] = (z * 10 + 50).round(1)
+
+    overall_z = pd.concat(cluster_z.values(), axis=1).mean(axis=1)
+    df["総合偏差値"] = (overall_z * 10 + 50).round(1)
+
+    col_order = (
+        ["総合偏差値"]
+        + [f"{c}偏差値" for c in cluster_scores.keys()]
+        + df_filtered.columns.tolist()
+    )
+    df = df.loc[:, col_order]
+
+    return df
+
+
 def format_output(df: pd.DataFrame, output_format: str) -> str:
     """Format the DataFrame output for markdown or LaTeX."""
 
@@ -230,11 +277,16 @@ def main(
     update_pages: bool = False,
     add_avg: bool = False,
     task_id_list: list[str] | None = None,
+    add_clusterscore: bool = False,
 ):
     df = process_results(result_dir, model_list, add_avg, task_id_list)
+    if add_clusterscore:
+        df = compute_cluster_scores(df)
+
     if plot_corr:
         plot_correlation(df.copy(), "correlation.png")
     # plot_correlation(df.T, "correlation_model.png")
+
     if plot_bar:
         plot_task_performance(df.copy())
 
@@ -283,6 +335,11 @@ def parse_args():
         "--add_avg", action="store_true", help="Add average score column"
     )
     parser.add_argument(
+        "--add_clusterscore",
+        action="store_true",
+        help="Add category-based and overall deviation scores (偏差値)",
+    )
+    parser.add_argument(
         "--task_id_list",
         type=str,
         nargs="+",
@@ -305,4 +362,5 @@ if __name__ == "__main__":
         args.update_pages,
         args.add_avg,
         args.task_id_list.split(",") if args.task_id_list else None,
+        args.add_clusterscore,
     )
