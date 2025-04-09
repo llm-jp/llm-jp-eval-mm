@@ -125,3 +125,17 @@ __depr__/
 
 # examples/llava for evaluating LLM-jp-3 VILA
 examples/llava/*
+
+# experiments
+result/
+
+# uv.lock
+uv.lock
+
+# cursor config
+.cursor/
+.cursorrules
+.cursorignore
+
+# vscode
+.vscode/
