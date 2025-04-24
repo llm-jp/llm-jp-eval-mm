@@ -342,6 +342,7 @@ def parse_args():
     parser.add_argument(
         "--task_id_list",
         type=str,
+        default=None,
         nargs="+",
         help=f"List of task IDs to include in the leaderboard. Available: {TASK_ALIAS.keys()}",
     )
@@ -361,6 +362,6 @@ if __name__ == "__main__":
         args.plot_corr,
         args.update_pages,
         args.add_avg,
-        args.task_id_list.split(",") if args.task_id_list else None,
+        args.task_id_list,
         args.add_clusterscore,
     )

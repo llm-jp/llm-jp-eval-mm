@@ -49,9 +49,7 @@ class VLM(BaseVLM):
 
         if images is None:
             images = []
-        inputs = self.processor(
-            prompt, images, add_special_tokens=False, return_tensors="pt"
-        ).to(self.device)
+        inputs = self.processor(prompt, images, return_tensors="pt").to(self.device)
 
         generate_ids = self.model.generate(
             **inputs,
