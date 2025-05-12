@@ -37,6 +37,10 @@ MODEL_ID_TO_CLASS_PATH = {
     "sbintuitions/sarashina2-vision-14b": "sarashina2_vision.VLM",
     "microsoft/Phi-4-multimodal-instruct": "phi4_multimodal.VLM",
     "MIL-UT/Asagi-14B": "asagi.VLM",
+    "turing-motors/Heron-NVILA-Lite-1B": "heron_nvila.VLM",
+    "turing-motors/Heron-NVILA-Lite-2B": "heron_nvila.VLM",
+    "turing-motors/Heron-NVILA-Lite-15B": "heron_nvila.VLM",
+    "turing-motors/Heron-NVILA-Lite-33B": "heron_nvila.VLM",
 }
 
 
