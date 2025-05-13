@@ -2,7 +2,6 @@ from base_vlm import BaseVLM
 from utils import GenerationConfig
 import torch
 from transformers import GenerationConfig as HFGenerationConfig, AutoModel
-import unittest
 
 
 def create_prompt(text, image):
@@ -46,5 +45,4 @@ class VLM(BaseVLM):
 
 
 if __name__ == "__main__":
-    unittest.main(argv=["first-arg-is-ignored"], exit=False)
     VLM("turing-motors/Heron-NVILA-Lite-15B").test_vlm()
