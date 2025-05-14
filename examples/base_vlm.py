@@ -40,3 +40,21 @@ class BaseVLM:
         assert isinstance(
             output, str
         ), f"Expected output to be a string, but got {type(output)}"
+
+
+    def test_vlm_1000(self):
+        """Test the model with one or two images."""
+        image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
+        image = Image.open(requests.get(image_file, stream=True).raw)
+        
+        import time
+        start_time = time.time()
+        for _ in range(1000):
+            output = self.generate([image], "画像には何が映っていますか?")
+            logger.info(f"Output: {output}")
+            assert isinstance(
+                output, str
+            ), f"Expected output to be a string, but got {type(output)}"
+        end_time = time.time()
+        logger.info(f"Time taken: {end_time - start_time} seconds for 1000 times")
+
