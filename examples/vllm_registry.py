@@ -22,12 +22,17 @@ class VLLMModelRegistry:
         )
         self.loader_map = {
             "Qwen/Qwen2.5-VL-3B-Instruct": self.load_qwen2_5_vl,
+            "Qwen/Qwen2.5-VL-7B-Instruct": self.load_qwen2_5_vl,
+            "Qwen/Qwen2.5-VL-32B-Instruct": self.load_qwen2_5_vl,
+            "Qwen/Qwen2.5-VL-72B-Instruct": self.load_qwen2_5_vl,
             "google/gemma-3-4b-it": self.load_gemma3,
+            "google/gemma-3-12b-it": self.load_gemma3,
+            "google/gemma-3-27b-it": self.load_gemma3,
         }
 
     def get_engine_config(self, model_id: str) -> dict:
         return {
-            "max_model_len": 8192,
+            "max_model_len": 32768,
             "max_num_seqs": 5,
             "limit_mm_per_prompt": {"image": 5},
             "trust_remote_code": True,

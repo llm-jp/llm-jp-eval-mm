@@ -3,7 +3,6 @@ from PIL import Image
 from utils import GenerationConfig
 from base_vlm import BaseVLM
 from vllm_registry import VLLMModelRegistry
-from dataclasses import asdict
 
 
 class VLLM(BaseVLM):
@@ -84,11 +83,6 @@ class VLLM(BaseVLM):
 
 
 if __name__ == "__main__":
-    # print("=== google/gemma-3-4b-it ===")
-    # vllm = VLLM("google/gemma-3-4b-it")
-    # vllm.test_vlm()
-    # vllm.test_vlm_batch_100()
-
     print("=== Qwen/Qwen2.5-VL-3B-Instruct ===")
     vllm = VLLM("Qwen/Qwen2.5-VL-3B-Instruct")
     vllm.test_vlm()
