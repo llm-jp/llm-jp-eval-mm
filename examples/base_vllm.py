@@ -12,10 +12,14 @@ class VLLM(BaseVLM):
         self.registry = VLLMModelRegistry(self.model_id)
         self.processor = self.registry.processor
         self.vllm_loader = self.registry.loader_map[self.model_id]
-        self.engine_args = asdict(self.registry.get_engine_args(self.model_id)) | {
-            "download_dir": "./.cache/vllm"
+
+        engine_config = self.registry.get_engine_config(self.model_id)
+        self.engine_args_dict = {
+            "model": self.model_id,
+            "download_dir": "./.cache/vllm",
+            **engine_config,
         }
-        self.model = LLM(**self.engine_args)
+        self.model = LLM(**self.engine_args_dict)
 
     def generate(
         self,
@@ -25,7 +29,7 @@ class VLLM(BaseVLM):
     ) -> str:
         if images is None:
             images = []
-        req_data = self.vllm_loader(self.model_id, text, images)
+        req_data = self.vllm_loader(text, images)
         sampling_params = SamplingParams(
             temperature=gen_kwargs.temperature,
             max_tokens=gen_kwargs.max_new_tokens,
@@ -57,18 +61,23 @@ class VLLM(BaseVLM):
         req_data_list = []
 
         for text, images in tqdm(zip(text_list, images_list)):
-            req_data_list.append(self.vllm_loader(self.model_id, text, images))
+            req_data_list.append(self.vllm_loader(text, images))
 
         sampling_params = SamplingParams(
             temperature=gen_kwargs.temperature,
             max_tokens=gen_kwargs.max_new_tokens,
-            stop_token_ids=req_data_list[0].stop_token_ids,
         )
 
         print(f"Generated {len(req_data_list)} requests")
 
         outputs = self.model.generate(
-            [req_data.prompt for req_data in req_data_list],
+            [
+                {
+                    "prompt": req_data.prompt,
+                    "multi_modal_data": {"image": req_data.image_data},
+                }
+                for req_data in req_data_list
+            ],
             sampling_params=sampling_params,
         )
         return [output.outputs[0].text for output in outputs]
