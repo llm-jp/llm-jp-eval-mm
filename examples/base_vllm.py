@@ -3,6 +3,7 @@ from PIL import Image
 from utils import GenerationConfig
 from base_vlm import BaseVLM
 from vllm_registry import VLLMModelRegistry
+import torch
 
 
 class VLLM(BaseVLM):
@@ -15,6 +16,7 @@ class VLLM(BaseVLM):
         engine_config = self.registry.get_engine_config(self.model_id)
         self.engine_args_dict = {
             "model": self.model_id,
+            "tensor_parallel_size": 2,  # number of GPUs of the machine, but 40 should be divisible by tensor_parallel_size
             "download_dir": "./.cache/vllm",
             **engine_config,
         }
