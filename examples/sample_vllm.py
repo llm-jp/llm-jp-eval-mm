@@ -72,7 +72,7 @@ def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
 
     save_jsonl(prediction_path, preds)
     logger.info(f"Predictions saved to {prediction_path}")
-    return preds
+    return preds, []
 
 
 def save_jsonl(path, data):
@@ -150,7 +150,7 @@ def main():
     output_dir = os.path.join(args.result_dir, args.task_id, args.model_id + "_vllm")
     os.makedirs(output_dir, exist_ok=True)
 
-    preds = load_or_generate_predictions(args, task, gen_kwargs, output_dir)
+    preds, _ = load_or_generate_predictions(args, task, gen_kwargs, output_dir)
 
     if args.inference_only:
         logger.info("Inference only mode. Skipping evaluation.")
