@@ -44,6 +44,7 @@ declare -a task_list=(
     "llava-bench-in-the-wild"
     "jic-vqa"
     "mecha-ja"
+    "cc-ocr"
 )
 
 # Define metrics per task
@@ -58,6 +59,7 @@ declare -A METRIC_MAP=(
     ["llava-bench-in-the-wild"]="llm-as-a-judge,rougel"
     ["jic-vqa"]="jic-vqa"
     ["mecha-ja"]="mecha-ja"
+    ["cc-ocr"]="cc-ocr"
 )
 
 # Result directories

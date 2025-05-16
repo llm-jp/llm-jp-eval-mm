@@ -11,6 +11,7 @@ from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
 from .task_registry import TaskRegistry
 from .task import TaskConfig
+from .cc_ocr import CCOCR
 
 __all__ = [
     "JaVGVQA500",
@@ -26,4 +27,5 @@ __all__ = [
     "MMMLU",
     "TaskRegistry",
     "TaskConfig",
+    "CCOCR",
 ]
