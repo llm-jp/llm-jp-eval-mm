@@ -11,6 +11,7 @@ from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
 from .mnist import MNIST
 from .cc_ocr import CCOCR
+from .cvqa import CVQA
 from .task import Task, TaskConfig
 from typing import Callable
 
@@ -32,6 +33,7 @@ class TaskRegistry:
         "mmmlu": MMMLU,
         "mnist": MNIST,
         "cc-ocr": CCOCR,
+        "cvqa": CVQA,
     }
 
     @classmethod

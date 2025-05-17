@@ -9,9 +9,10 @@ from .llava_bench_in_the_wild import LlavaBenchIntheWild
 from .jic_vqa import JICVQA
 from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
+from .cc_ocr import CCOCR
+from .cvqa import CVQA
 from .task_registry import TaskRegistry
 from .task import TaskConfig
-from .cc_ocr import CCOCR
 
 __all__ = [
     "JaVGVQA500",
@@ -25,7 +26,8 @@ __all__ = [
     "JICVQA",
     "MECHAJa",
     "MMMLU",
+    "CCOCR",
+    "CVQA",
     "TaskRegistry",
     "TaskConfig",
-    "CCOCR",
 ]
