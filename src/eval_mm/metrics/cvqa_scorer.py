@@ -1,6 +1,5 @@
 # cvqa_scorer.py
-from .scorer import Scorer, AggregateOutput
-from collections import defaultdict
+from .scorer import Scorer, AggregateOutput, ScorerConfig
 
 
 class CVQAScorer(Scorer):
@@ -23,10 +22,10 @@ class CVQAScorer(Scorer):
         return output
 
 
-def test_mechaja_scorer():
+def test_cvqa_scorer():
     refs = ["私は猫です。"]
     preds = ["私は猫です。"]
-    scorer = CVQAScorer()
+    scorer = CVQAScorer(ScorerConfig())
     scores = CVQAScorer.score(refs, preds)
     assert scores == [1]
     output = scorer.aggregate(scores)
