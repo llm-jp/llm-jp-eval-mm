@@ -97,7 +97,15 @@ def load_evaluation_data(result_dir: str, model: str, task_dirs: list[str]) -> d
                 logger.warning(f"Skipping unsupported metric: {metric}")
                 continue
             overall_score = aggregate_output["overall_score"]
-            if metric in ["jdocqa", "jmmmu", "jic-vqa", "mecha-ja", "mmmu"]:
+            if metric in [
+                "jdocqa",
+                "jmmmu",
+                "jic-vqa",
+                "mecha-ja",
+                "mmmu",
+                "cc-ocr",
+                "cvqa",
+            ]:
                 overall_score = overall_score * 100
             model_results[f"{task_dir}/{metric}"] = overall_score
 

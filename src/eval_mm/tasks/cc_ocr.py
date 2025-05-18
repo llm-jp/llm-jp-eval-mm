@@ -16,6 +16,7 @@ class CCOCR(Task):
     entries labeled as "Japanese" and decodes base64-encoded images into PIL Image
     objects for visual processing.
     """
+
     default_metric = "ccocr"
 
     @staticmethod

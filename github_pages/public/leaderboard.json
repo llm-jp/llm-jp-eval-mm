@@ -4,7 +4,7 @@
     "url": "https://huggingface.co/stabilityai/japanese-instructblip-alpha",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.0
+        "macro_f1": 0.3
       },
       "CVQA": {
         "Acc": 0.24
@@ -92,7 +92,7 @@
     "url": "https://huggingface.co/SakanaAI/Llama-3-EvoVLM-JP-v2",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.1
+        "macro_f1": 10.44
       },
       "CVQA": {
         "Acc": 0.44
@@ -139,7 +139,7 @@
     "url": "https://huggingface.co/cyberagent/llava-calm2-siglip",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.11
+        "macro_f1": 11.37
       },
       "CVQA": {
         "Acc": 0.07
@@ -186,7 +186,7 @@
     "url": "https://huggingface.co/llm-jp/llm-jp-3-vila-14b",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.12
+        "macro_f1": 11.55
       },
       "CVQA": {
         "Acc": 0.3
@@ -233,7 +233,7 @@
     "url": "https://huggingface.co/sbintuitions/sarashina2-vision-8b",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.08
+        "macro_f1": 8.2
       },
       "CVQA": {
         "Acc": 0.49
@@ -280,7 +280,7 @@
     "url": "https://huggingface.co/sbintuitions/sarashina2-vision-14b",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.23
+        "macro_f1": 23.23
       },
       "CVQA": {
         "Acc": 0.56
@@ -365,7 +365,7 @@
     "url": "https://huggingface.co/llava-hf/llava-1.5-7b-hf",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.14
+        "macro_f1": 14.46
       },
       "CVQA": {
         "Acc": 0.41
@@ -412,7 +412,7 @@
     "url": "https://huggingface.co/llava-hf/llava-v1.6-mistral-7b-hf",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.2
+        "macro_f1": 20.12
       },
       "CVQA": {
         "Acc": 0.27
@@ -459,7 +459,7 @@
     "url": "https://huggingface.co/neulab/Pangea-7B-hf",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.19
+        "macro_f1": 18.74
       },
       "CVQA": {
         "Acc": 0.48
@@ -506,7 +506,7 @@
     "url": "https://huggingface.co/mistralai/Pixtral-12B-2409",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.27
+        "macro_f1": 27.17
       },
       "CVQA": {
         "Acc": 0.49
@@ -553,7 +553,7 @@
     "url": "https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.28
+        "macro_f1": 27.71
       },
       "CVQA": {
         "Acc": 0.52
@@ -600,7 +600,7 @@
     "url": "https://huggingface.co/Efficient-Large-Model/VILA1.5-13b",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.21
+        "macro_f1": 20.56
       },
       "CVQA": {
         "Acc": 0.44
@@ -647,7 +647,7 @@
     "url": "https://huggingface.co/OpenGVLab/InternVL2-8B",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.37
+        "macro_f1": 37.33
       },
       "CVQA": {
         "Acc": 0.48
@@ -694,7 +694,7 @@
     "url": "https://huggingface.co/OpenGVLab/InternVL2-26B",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.39
+        "macro_f1": 38.51
       },
       "CVQA": {
         "Acc": 0.5
@@ -741,7 +741,7 @@
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.75
+        "macro_f1": 74.77
       },
       "CVQA": {
         "Acc": 0.56
@@ -829,7 +829,7 @@
     "url": "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.77
+        "macro_f1": 77.14
       },
       "CVQA": {
         "Acc": 0.69
@@ -876,7 +876,7 @@
     "url": "https://huggingface.co/google/gemma-3-4b-it",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.55
+        "macro_f1": 55.49
       },
       "CVQA": {
         "Acc": 0.49
@@ -923,7 +923,7 @@
     "url": "https://huggingface.co/google/gemma-3-12b-it",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.65
+        "macro_f1": 64.92
       },
       "CVQA": {
         "Acc": 0.59
@@ -970,7 +970,7 @@
     "url": "https://huggingface.co/google/gemma-3-27b-it",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.67
+        "macro_f1": 66.92
       },
       "CVQA": {
         "Acc": 0.63
@@ -1017,7 +1017,7 @@
     "url": "https://huggingface.co/microsoft/Phi-4-multimodal-instruct",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.42
+        "macro_f1": 42.48
       },
       "CVQA": {
         "Acc": 0.37
@@ -1064,7 +1064,7 @@
     "url": "https://huggingface.co/gpt-4o-2024-11-20",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.64
+        "macro_f1": 64.11
       },
       "CVQA": {
         "Acc": 0.82
@@ -1111,7 +1111,7 @@
     "url": "https://huggingface.co/turing-motors/Heron-NVILA-Lite-15B",
     "scores": {
       "CC-OCR": {
-        "macro_f1": 0.45
+        "macro_f1": 44.54
       },
       "CVQA": {
         "Acc": 0.61
