@@ -37,7 +37,9 @@ class VLM(BaseVLM):
             model_id, trust_remote_code=True, device_map="auto"
         )
 
-    def generate(self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()):
+    def generate(
+        self, image, text: str, gen_kwargs: GenerationConfig = GenerationConfig()
+    ):
         gen_cfg = HFGenerationConfig(**gen_kwargs.__dict__)
         prompt = create_prompt(text, image)
         with torch.no_grad():

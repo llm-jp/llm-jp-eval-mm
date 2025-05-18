@@ -10,7 +10,6 @@ from .jdocqa_scorer import JDocQAScorer
 from .jic_vqa_scorer import JICVQAScorer
 from .mecha_ja_scorer import MECHAJaScorer
 from .cc_ocr_scorer import CCOCRScorer
-from .cvqa_scorer import CVQAScorer
 from .scorer import ScorerConfig
 from typing import Callable
 
@@ -30,7 +29,6 @@ class ScorerRegistry:
         "jic-vqa": JICVQAScorer,
         "mecha-ja": MECHAJaScorer,
         "cc-ocr": CCOCRScorer,
-        "cvqa": CVQAScorer,
     }
 
     @classmethod

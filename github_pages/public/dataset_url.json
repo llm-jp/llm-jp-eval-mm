@@ -28,5 +28,11 @@
     },
     "MECHA": {
         "url": "https://huggingface.co/datasets/llm-jp/MECHA-ja"
+    },
+    "CC-OCR": {
+        "url": "https://huggingface.co/datasets/wulipc/CC-OCR"
+    },
+    "CVQA": {
+        "url": "https://huggingface.co/datasets/afaji/cvqa"
     }
 }

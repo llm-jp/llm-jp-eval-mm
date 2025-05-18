@@ -19,6 +19,8 @@ TASK_ALIAS = {
     "mecha-ja": "MECHA",
     "llava-bench-in-the-wild": "LLAVA",
     "mmmu": "MMMU",
+    "cc-ocr": "CC-OCR",
+    "cvqa": "CVQA",
 }
 
 TASK_CLUSTER_ALIAS = {
@@ -32,6 +34,8 @@ TASK_CLUSTER_ALIAS = {
     "MulIm-VQA": "非日本語",
     "MMMU": "非日本語",
     "LLAVA": "非日本語",
+    "CC-OCR": "言語・知識中心",
+    "CVQA": "視覚中心",
 }
 
 METRIC_ALIAS = {
@@ -43,6 +47,8 @@ METRIC_ALIAS = {
     "jic-vqa": "Acc",
     "mecha-ja": "Acc",
     "mmmu": "Acc",
+    "cc-ocr": "macro_f1",
+    "substring-match": "Acc",
 }
 
 MODEL_LIST = [
@@ -70,6 +76,7 @@ MODEL_LIST = [
     "google/gemma-3-27b-it",
     "microsoft/Phi-4-multimodal-instruct",
     "gpt-4o-2024-11-20",
+    "turing-motors/Heron-NVILA-Lite-15B",
 ]
 
 
@@ -298,6 +305,8 @@ def main(
             f.write(table)
 
     if update_pages:
+        # sort by task
+        df = df.sort_index(axis=1)
         generate_json_path(df.copy(), "github_pages/public/leaderboard.json")
 
 

@@ -31,7 +31,7 @@ def construct_prompt(question, options):
 
 
 class CVQA(Task):
-    default_metric = "cvqa"
+    default_metric = "substring-match"
 
     @staticmethod
     def _prepare_dataset() -> Dataset:
