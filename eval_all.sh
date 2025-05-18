@@ -30,6 +30,7 @@ declare -A MODEL_GROUP_MAP=(
     ["sbintuitions/sarashina2-vision-8b"]="sarashina"
     ["sbintuitions/sarashina2-vision-14b"]="sarashina"
     ["microsoft/Phi-4-multimodal-instruct"]="phi"
+    ["turing-motors/Heron-NVILA-Lite-15B"]="heron_nvila"
 )
 
 # Task list
@@ -44,6 +45,8 @@ declare -a task_list=(
     "llava-bench-in-the-wild"
     "jic-vqa"
     "mecha-ja"
+    "cc-ocr"
+    "cvqa"
 )
 
 # Define metrics per task
@@ -58,6 +61,8 @@ declare -A METRIC_MAP=(
     ["llava-bench-in-the-wild"]="llm-as-a-judge,rougel"
     ["jic-vqa"]="jic-vqa"
     ["mecha-ja"]="mecha-ja"
+    ["cc-ocr"]="cc-ocr"
+    ["cvqa"]="substring-match"
 )
 
 # Result directories
@@ -77,9 +82,7 @@ for RESULT_DIR in "${result_dir_list[@]}"; do
                 --task_id "$task" \
                 --metrics "$METRIC" \
                 --judge_model "gpt-4o-2024-11-20" \
-                --result_dir "$RESULT_DIR" \
-                --inference_only
-
+                --result_dir "$RESULT_DIR"
         done
     done
 done

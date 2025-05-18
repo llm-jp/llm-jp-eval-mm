@@ -9,6 +9,7 @@ from .mmmu_scorer import MMMUScorer
 from .jdocqa_scorer import JDocQAScorer
 from .jic_vqa_scorer import JICVQAScorer
 from .mecha_ja_scorer import MECHAJaScorer
+from .cc_ocr_scorer import CCOCRScorer
 from .scorer import ScorerConfig
 from typing import Callable
 
@@ -27,6 +28,7 @@ class ScorerRegistry:
         "mmmu": MMMUScorer,
         "jic-vqa": JICVQAScorer,
         "mecha-ja": MECHAJaScorer,
+        "cc-ocr": CCOCRScorer,
     }
 
     @classmethod
