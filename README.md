@@ -116,6 +116,8 @@ Japanese Tasks:
 - [JMMMU](https://huggingface.co/datasets/JMMMU/JMMMU)
 - [JIC-VQA](https://huggingface.co/datasets/line-corporation/JIC-VQA)
 - [MECHA-ja](https://huggingface.co/datasets/llm-jp/MECHA-ja)
+- [CC-OCR](https://huggingface.co/datasets/wulipc/CC-OCR) (multi_lan_ocr split, ja subset)
+- [CVQA](https://huggingface.co/datasets/afaji/cvqa) (ja subset)
 
 English Tasks:
 - [MMMU](https://huggingface.co/datasets/MMMU/MMMU)
