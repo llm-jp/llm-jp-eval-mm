@@ -104,7 +104,7 @@ def load_evaluation_data(result_dir: str, model: str, task_dirs: list[str]) -> d
                 "mecha-ja",
                 "mmmu",
                 "cc-ocr",
-                "cvqa",
+                "substring-match",
             ]:
                 overall_score = overall_score * 100
             model_results[f"{task_dir}/{metric}"] = overall_score
