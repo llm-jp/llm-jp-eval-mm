@@ -10,6 +10,12 @@ def base64_to_pil_image(base64_string: str) -> Image.Image:
 
 
 class CCOCR(Task):
+    """
+    The CCOCR class processes the CC-OCR dataset for Japanese samples and provides
+    methods to interact with the dataset. It filters the dataset to include only
+    entries labeled as "Japanese" and decodes base64-encoded images into PIL Image
+    objects for visual processing.
+    """
     default_metric = "ccocr"
 
     @staticmethod
