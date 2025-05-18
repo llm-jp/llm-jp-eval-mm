@@ -1115,6 +1115,34 @@
       },
       "CVQA": {
         "Acc": 60.59
+      },
+      "Heron": {
+        "LLM": 68.45
+      },
+      "JDocQA": {
+        "Acc": 19.24,
+        "LLM": 2.74
+      },
+      "JMMMU": {
+        "Acc": 49.47
+      },
+      "JVB-ItW": {
+        "LLM": 4.4,
+        "Rouge": 50.65
+      },
+      "LLAVA": {
+        "LLM": 3.57,
+        "Rouge": 36.59
+      },
+      "MECHA": {
+        "Acc": 68.32
+      },
+      "MMMU": {
+        "Acc": 47.11
+      },
+      "MulIm-VQA": {
+        "LLM": 4.29,
+        "Rouge": 59.98
       }
     }
   }
