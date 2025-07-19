@@ -1,0 +1,3 @@
+[submodule "examples/llava"]
+	path = examples/llava
+	url = git@github.com:llm-jp/llm-jp-VILA.git
