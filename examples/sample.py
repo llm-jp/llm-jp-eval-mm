@@ -53,7 +53,7 @@ def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
     prediction_path = os.path.join(output_dir, "prediction.jsonl")
     if os.path.exists(prediction_path) and not args.overwrite:
         logger.info(f"Loading predictions from {prediction_path}")
-        with open(prediction_path) as f:
+        with open(prediction_path, "r", encoding="utf-8") as f:
             preds = [json.loads(line) for line in f]
         assert len(preds) == len(
             task.dataset
@@ -92,7 +92,7 @@ def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
 
 
 def save_jsonl(path, data):
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         for item in data:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
@@ -178,7 +178,7 @@ def main():
     save_final_results(preds, task, args.metrics, scores_by_metric, prediction_path)
 
     evaluation_path = os.path.join(output_dir, "evaluation.jsonl")
-    with open(evaluation_path, "w") as f:
+    with open(evaluation_path, "w", encoding="utf-8") as f:
         f.write(json.dumps(aggregated_metrics, ensure_ascii=False) + "\n")
     logger.info(f"Evaluation result saved to {evaluation_path}")
 
