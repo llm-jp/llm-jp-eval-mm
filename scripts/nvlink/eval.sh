@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=llm-jp-eval-mm
-#SBATCH --time=2:00:00
+#SBATCH --time=24:00:00
 #SBATCH --gres=gpu:NUM_GPUS
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -20,10 +20,11 @@ num_gpus=${4:-1}  # Default to 1 GPU if not specified
 # PATH config
 export PATH="$HOME/.local/bin:$PATH"
 export ROOT_DIR="/home/silviase/"
-export HF_HOME="$ROOT_DIR/.hf_cache"
-export HF_DATASETS_CACHE=$HF_HOME/datasets
-export HF_HUB_CACHE=$HF_HOME/models
-export APPTAINER_CACHEDIR="$ROOT_DIR/apptainer_cache"
+export DATA_DIR="/data/silviase/"
+export HF_HOME="$DATA_DIR/.hf_cache"
+export HF_DATASETS_CACHE=$DATA_DIR/datasets
+export HF_HUB_CACHE=$DATA_DIR/models
+export APPTAINER_CACHEDIR="$DATA_DIR/apptainer_cache"
 
 # Environment Variables
 export TORCH_COMPILE_DISABLE=1

@@ -7,8 +7,8 @@ EXIT_CODE=${1:-0}
 JOB_NAME=${2:-"Unknown Job"}
 
 # Load environment variables from .env file
-if [ -f "/home/silviase/augeo/.env" ]; then
-    export $(grep -v '^#' /home/silviase/augeo/.env | xargs)
+if [ -f "/home/silviase/llm-jp-eval-mm/.env" ]; then
+    export $(grep -v '^#' /home/silviase/llm-jp-eval-mm/.env | xargs)
 fi
 
 # Check if webhook URL is set
@@ -45,7 +45,7 @@ curl -X POST "$SLACK_WEBHOOK_URL" \
             {"title": "Node", "value": "$NODE", "short": true},
             {"title": "Completed", "value": "$CURRENT_TIME", "short": true}
         ],
-        "footer": "Augeo Project",
+        "footer": "LLM-jp EvalMM Project",
         "ts": $(date +%s)
     }]
 }
