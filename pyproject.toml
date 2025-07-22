@@ -98,6 +98,7 @@ normal = [
     "sentencepiece>=0.2.0",
     "timm>=1.0.13",
     "transformers>=4.50.0",
+    "vllm>=0.8.1,<=0.9.2",
 ]
 old = [
     "flash-attn==2.7.3",

@@ -62,6 +62,13 @@ MODEL_LIST = [
     "meta-llama/Llama-3.2-90B-Vision-Instruct",
     # "OpenGVLab/InternVL2-8B",
     # "OpenGVLab/InternVL2-26B",
+    "OpenGVLab/InternVL3-1B",
+    "OpenGVLab/InternVL3-2B",
+    "OpenGVLab/InternVL3-8B",
+    "OpenGVLab/InternVL3-9B",
+    "OpenGVLab/InternVL3-14B",
+    "OpenGVLab/InternVL3-38B",
+    "OpenGVLab/InternVL3-78B",
     "Qwen/Qwen2-VL-7B-Instruct",
     "Qwen/Qwen2-VL-72B-Instruct",
     "Qwen/Qwen2.5-VL-3B-Instruct",
@@ -88,6 +95,8 @@ MODEL_LIST = [
     "turing-motors/Heron-NVILA-Lite-2B",
     "turing-motors/Heron-NVILA-Lite-15B",
     "turing-motors/Heron-NVILA-Lite-33B",
+    "CohereLabs/aya-vision-8b",
+    "CohereLabs/aya-vision-32b",
 ]
 
 
