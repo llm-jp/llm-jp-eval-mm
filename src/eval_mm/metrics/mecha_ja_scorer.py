@@ -1,5 +1,6 @@
 # mecha-ja-scorer.py
 from .scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 import re
 from collections import defaultdict
 
@@ -9,6 +10,7 @@ ANSWER_TYPE_MAP = {
 }
 
 
+@register_scorer("mecha-ja", "MECHAJa", "MECHAJaScorer")
 class MECHAJaScorer(Scorer):
     @staticmethod
     def _parse_rotation_id(qid: str) -> str:

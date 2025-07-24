@@ -1,6 +1,8 @@
 from .scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 
 
+@register_scorer("substring-match", "SubstringMatch", "SubstringMatchScorer")
 class SubstringMatchScorer(Scorer):
     @staticmethod
     def score(refs: list[str], preds: list[str]) -> list[int]:

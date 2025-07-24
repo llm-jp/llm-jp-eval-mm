@@ -3,6 +3,7 @@ from collections import Counter
 from typing import List, Dict, Any, cast  # Added cast for type hinting clarity
 
 from .scorer import Scorer, AggregateOutput, ScorerConfig
+from .scorer_registry import register_scorer
 
 
 def token_normalize(
@@ -158,6 +159,7 @@ def calculate_metrics(
 
 
 # CCOCRScorer class, specialized for Japanese (character-level, no alphanum_only)
+@register_scorer("cc-ocr", "CC-OCR", "CCOCRScorer")
 class CCOCRScorer(Scorer):
     def __init__(self, config: ScorerConfig):
         super().__init__(config)

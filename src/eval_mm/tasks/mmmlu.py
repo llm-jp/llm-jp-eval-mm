@@ -1,9 +1,11 @@
 from datasets import load_dataset, Dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("mmmlu", "MMMLU")
 class MMMLU(Task):
     default_metric = "exact-match"
 

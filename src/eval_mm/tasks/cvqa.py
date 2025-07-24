@@ -1,5 +1,6 @@
 from datasets import Dataset, load_dataset
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 MULTI_CHOICE_PROMPT = (
@@ -30,6 +31,7 @@ def construct_prompt(question, options):
     return f"{question}\n{parsed_options}\n\n{MULTI_CHOICE_PROMPT}"
 
 
+@register_task("cvqa", "CVQA")
 class CVQA(Task):
     default_metric = "substring-match"
 

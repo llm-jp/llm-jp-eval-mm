@@ -11,6 +11,7 @@ from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
 from .cc_ocr import CCOCR
 from .cvqa import CVQA
+from .ai2d import AI2D
 from .task_registry import TaskRegistry
 from .task import TaskConfig
 
@@ -28,6 +29,7 @@ __all__ = [
     "MMMLU",
     "CCOCR",
     "CVQA",
+    "AI2D",
     "TaskRegistry",
     "TaskConfig",
 ]

@@ -1,6 +1,8 @@
 from .scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 
 
+@register_scorer("jic-vqa", "JICVQA", "JICVQAScorer")
 class JICVQAScorer(Scorer):
     @staticmethod
     def score(refs: list[str], preds: list[str]) -> list[int]:

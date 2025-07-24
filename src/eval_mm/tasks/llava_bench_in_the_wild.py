@@ -1,9 +1,11 @@
 from datasets import Dataset, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("llava-bench-in-the-wild", "LlavaBenchIntheWild", "Llava-Bench-in-the-Wild")
 class LlavaBenchIntheWild(Task):
     default_metric = "rougel"
 

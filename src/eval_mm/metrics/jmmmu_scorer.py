@@ -4,6 +4,7 @@ import re
 import numpy as np
 from datasets import Dataset
 from eval_mm.metrics.scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 
 
 DOMAIN_CAT2SUB_CAT = {
@@ -411,6 +412,7 @@ def get_score(doc: Dataset, pred: str, random_choice: bool = False) -> int:
     return score
 
 
+@register_scorer("jmmmu", "JMMMU", "JMMMUScorer")
 class JMMMUScorer(Scorer):
     def score(self, refs: list[str], preds: list[str]) -> list[int]:
         docs = self.config.docs

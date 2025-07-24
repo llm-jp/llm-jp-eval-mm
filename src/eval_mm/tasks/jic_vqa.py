@@ -2,9 +2,11 @@ from PIL import Image
 from datasets import Dataset, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 import os
 
 
+@register_task("jic-vqa", "JICVQA", "JIC-VQA")
 class JICVQA(Task):
     default_metric = "jic-vqa"
 

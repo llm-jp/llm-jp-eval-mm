@@ -8,6 +8,7 @@ from datasets import (
 )
 
 from .task import Task
+from .task_registry import register_task
 
 import ast
 import re
@@ -78,6 +79,7 @@ def jmmmu_doc_to_visual(doc):
     return visual
 
 
+@register_task("jmmmu", "JMMMU")
 class JMMMU(Task):
     default_metric = "jmmmu"
 

@@ -2,6 +2,7 @@ from eval_mm.utils.azure_client import OpenAIChatAPI
 from collections import defaultdict
 import numpy as np
 from eval_mm.metrics.scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 import re
 import json
 
@@ -110,6 +111,7 @@ def ask_gpt4_batch(
     return completions
 
 
+@register_scorer("heron-bench", "HeronBench", "HeronBenchScorer")
 class HeronBenchScorer(Scorer):
     def score(self, refs, preds: list[str]) -> list[dict[str, int]]:
         docs = self.config.docs

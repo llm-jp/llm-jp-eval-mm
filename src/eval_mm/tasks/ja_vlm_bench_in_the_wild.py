@@ -1,9 +1,11 @@
 from datasets import Dataset, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("ja-vlm-bench-in-the-wild", "JA-VLM-Bench-In-the-Wild", "JaVLMBenchIntheWild")
 class JaVLMBenchIntheWild(Task):
     default_metric = "rougel"
 

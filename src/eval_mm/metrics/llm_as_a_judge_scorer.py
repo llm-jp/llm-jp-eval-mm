@@ -1,4 +1,5 @@
 from eval_mm.metrics.scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 from tqdm import tqdm
 import re
 
@@ -24,6 +25,7 @@ Your Score:
 """
 
 
+@register_scorer("llm-as-a-judge", "LLM-as-a-Judge", "LlmAsaJudgeScorer")
 class LlmAsaJudgeScorer(Scorer):
     def score(
         self,

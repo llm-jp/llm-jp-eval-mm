@@ -8,6 +8,7 @@ from datasets import (
 )
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 import ast
@@ -75,6 +76,7 @@ def mmmu_doc_to_visual(doc):
     return visual
 
 
+@register_task("mmmu", "MMMU")
 class MMMU(Task):
     default_metric = "mmmu"
 
