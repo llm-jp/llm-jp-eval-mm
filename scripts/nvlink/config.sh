@@ -172,6 +172,8 @@ declare -a task_list=(
     "llava-bench-in-the-wild"
     "jic-vqa"
     "mecha-ja"
+    "ai2d"
+    "blink"
 )
 
 # === Metrics Mapping ===
@@ -186,6 +188,8 @@ declare -A METRIC_MAP=(
     ["llava-bench-in-the-wild"]="llm-as-a-judge"
     ["jic-vqa"]="jic-vqa"
     ["mecha-ja"]="mecha-ja"
+    ["ai2d"]="ai2d"
+    ["blink"]="blink"
 )
 
 # === Function to load .env file ===
