@@ -21,6 +21,9 @@ TASK_ALIAS = {
     "mmmu": "MMMU",
     "cc-ocr": "CC-OCR",
     "cvqa": "CVQA",
+    "ai2d": "AI2D",
+    "blink": "BLINK",
+    "docvqa": "DocVQA",
 }
 
 TASK_CLUSTER_ALIAS = {
@@ -31,11 +34,14 @@ TASK_CLUSTER_ALIAS = {
     "VG-VQA": "視覚中心",
     "Heron": "視覚中心",
     "JVB-ItW": "視覚中心",
-    "MulIm-VQA": "非日本語",
-    "MMMU": "非日本語",
-    "LLAVA": "非日本語",
+    "MulIm-VQA": "その他",
+    "MMMU": "英語",
+    "LLAVA": "英語",
     "CC-OCR": "言語・知識中心",
     "CVQA": "視覚中心",
+    "AI2D": "英語",
+    "BLINK": "英語",
+    "DocVQA": "英語",
 }
 
 METRIC_ALIAS = {
@@ -49,6 +55,10 @@ METRIC_ALIAS = {
     "mmmu": "Acc",
     "cc-ocr": "macro_f1",
     "substring-match": "Acc",
+    "cvqa": "Acc",
+    "ai2d": "Acc",
+    "blink": "Acc",
+    "docvqa": "Acc",
 }
 
 MODEL_LIST = [

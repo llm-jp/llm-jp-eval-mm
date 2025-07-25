@@ -13,6 +13,7 @@ from .cc_ocr import CCOCR
 from .cvqa import CVQA
 from .ai2d import AI2D
 from .blink import BLINK
+from .docvqa import DocVQA
 from .task_registry import TaskRegistry
 from .task import TaskConfig
 
@@ -32,6 +33,7 @@ __all__ = [
     "CVQA",
     "AI2D",
     "BLINK",
+    "DocVQA",
     "TaskRegistry",
     "TaskConfig",
 ]

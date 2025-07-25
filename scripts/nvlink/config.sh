@@ -171,9 +171,11 @@ declare -a task_list=(
     "mmmu"
     "llava-bench-in-the-wild"
     "jic-vqa"
+    "cvqa"
     "mecha-ja"
     "ai2d"
     "blink"
+    "docvqa"
 )
 
 # === Metrics Mapping ===
@@ -190,6 +192,8 @@ declare -A METRIC_MAP=(
     ["mecha-ja"]="mecha-ja"
     ["ai2d"]="ai2d"
     ["blink"]="blink"
+    ["cvqa"]="substring-match"
+    ["docvqa"]="substring-match"
 )
 
 # === Function to load .env file ===
