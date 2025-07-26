@@ -25,6 +25,9 @@ TASK_ALIAS = {
     "blink": "BLINK",
     "docvqa": "DocVQA",
     "infographicvqa": "InfoVQA",
+    "textvqa": "TextVQA",
+    "chartqa": "ChartQA",
+    "chartqapro": "ChartQAPro",
 }
 
 TASK_CLUSTER_ALIAS = {
@@ -44,6 +47,9 @@ TASK_CLUSTER_ALIAS = {
     "BLINK": "英語",
     "DocVQA": "英語",
     "InfoVQA": "英語",
+    "TextVQA": "英語",
+    "ChartQA": "英語",
+    "ChartQAPro": "英語",
 }
 
 METRIC_ALIAS = {
@@ -62,6 +68,9 @@ METRIC_ALIAS = {
     "blink": "Acc",
     "docvqa": "Acc",
     "infographicvqa": "Acc",
+    "textvqa": "Acc",
+    "chartqa": "Acc",
+    "chartqapro": "Acc",
 }
 
 MODEL_LIST = [

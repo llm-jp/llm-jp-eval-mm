@@ -15,6 +15,9 @@ from .ai2d import AI2D
 from .blink import BLINK
 from .docvqa import DocVQA
 from .infographicvqa import InfographicVQA
+from .textvqa import TextVQA
+from .chartqa import ChartQA
+from .chartqapro import ChartQAPro
 from .task_registry import TaskRegistry
 from .task import TaskConfig
 
@@ -36,6 +39,9 @@ __all__ = [
     "BLINK",
     "DocVQA",
     "InfographicVQA",
+    "TextVQA",
+    "ChartQA",
+    "ChartQAPro",
     "TaskRegistry",
     "TaskConfig",
 ]
