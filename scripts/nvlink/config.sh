@@ -176,6 +176,7 @@ declare -a task_list=(
     "ai2d"
     "blink"
     "docvqa"
+    "infographicvqa"
 )
 
 # === Metrics Mapping ===
@@ -194,6 +195,7 @@ declare -A METRIC_MAP=(
     ["blink"]="blink"
     ["cvqa"]="substring-match"
     ["docvqa"]="substring-match"
+    ["infographicvqa"]="substring-match"
 )
 
 # === Function to load .env file ===

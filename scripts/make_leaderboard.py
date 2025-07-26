@@ -24,6 +24,7 @@ TASK_ALIAS = {
     "ai2d": "AI2D",
     "blink": "BLINK",
     "docvqa": "DocVQA",
+    "infographicvqa": "InfoVQA",
 }
 
 TASK_CLUSTER_ALIAS = {
@@ -42,6 +43,7 @@ TASK_CLUSTER_ALIAS = {
     "AI2D": "英語",
     "BLINK": "英語",
     "DocVQA": "英語",
+    "InfoVQA": "英語",
 }
 
 METRIC_ALIAS = {
@@ -59,6 +61,7 @@ METRIC_ALIAS = {
     "ai2d": "Acc",
     "blink": "Acc",
     "docvqa": "Acc",
+    "infographicvqa": "Acc",
 }
 
 MODEL_LIST = [
