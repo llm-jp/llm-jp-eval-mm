@@ -5,8 +5,17 @@ from .scorer_registry import register_scorer
 @register_scorer("substring-match", "SubstringMatch", "SubstringMatchScorer")
 class SubstringMatchScorer(Scorer):
     @staticmethod
-    def score(refs: list[str], preds: list[str]) -> list[int]:
-        scores = [int(ref in pred) for ref, pred in zip(refs, preds)]
+    def score(refs: list[str | list[str]], preds: list[str]) -> list[int]:
+        scores = []
+        for ref, pred in zip(refs, preds):
+            # Handle case where ref is a list of valid answers
+            if isinstance(ref, list):
+                # Score is 1 if any of the valid answers is in the prediction
+                score = int(any(r in pred for r in ref))
+            else:
+                # Handle single answer case
+                score = int(ref in pred)
+            scores.append(score)
         return scores
 
     @staticmethod
@@ -39,3 +48,14 @@ def test_substring_match_scorer():
     output = scorer.aggregate([1, 1, 1, 0])
     assert output.overall_score == 0.75
     assert output.details == {"substring_match": 0.75}
+    
+    # Test with list of valid answers (like DocVQA)
+    refs = [["university of california", "UC"], ["0.28", "0.280"]]
+    preds = ["The university of california is great", "The value is 0.280"]
+    scores = scorer.score(refs, preds)
+    assert scores == [1, 1]  # Both should match
+    
+    refs = [["apple", "orange"], ["cat", "dog"]]
+    preds = ["I like bananas", "I have a cat"]
+    scores = scorer.score(refs, preds)
+    assert scores == [0, 1]  # First no match, second matches "cat"
