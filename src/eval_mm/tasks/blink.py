@@ -53,8 +53,12 @@ class BLINK(Task):
         BLINK already provides a formatted 'prompt' field that includes
         the question and choices in the correct format.
         """
-        return doc['prompt']
-    
+
+        pre_prompt = ""
+        post_prompt = "\nAnswer with the option's letter from the given choices directly."
+
+        return f"{pre_prompt}{doc['prompt']}{post_prompt}"
+
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
         """Extract images from document.

@@ -39,7 +39,8 @@ class AI2D(Task):
 
     @staticmethod
     def doc_to_answer(doc) -> str:
-        return doc['answer']
+        answer_idx = int(doc['answer'])
+        return chr(ord('A') + answer_idx)
 
 
 def test_task():
