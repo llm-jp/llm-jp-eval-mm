@@ -21,7 +21,7 @@ class ChartQA(Task):
         """Load ChartQA validation set."""
         # Load the ChartQA dataset from lmms-lab
         ds = load_dataset("lmms-lab/ChartQA", split="test")
-        
+        ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
         return ds
     
     @staticmethod
@@ -30,8 +30,13 @@ class ChartQA(Task):
         
         ChartQA is a QA task, so we just return the question.
         """
-        return doc['query']
-    
+        pre_prompt = ""
+        question = doc.get('question', '')
+        if not question:
+            raise ValueError("Document does not contain a valid question.")
+        post_prompt = "\nAnswer the question with a single word."
+        return f"{pre_prompt}{question}{post_prompt}"
+
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
         """Extract image from document."""
@@ -41,7 +46,7 @@ class ChartQA(Task):
     def doc_to_id(doc) -> str:
         """Return unique question ID."""
         # Use the query as ID if no specific ID field
-        return str(hash(doc['query']))
+        return str(doc['question_id'])
     
     @staticmethod
     def doc_to_answer(doc) -> list[str]:

@@ -32,8 +32,10 @@ class ChartQAPro(Task):
         
         ChartQAPro is a QA task, so we return the question.
         """
-        return doc['Question']
-    
+
+        post_prompt = "\nAnswer the question with a single word."
+        return f"{doc['Question']}{post_prompt}"
+
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
         """Extract and decode image from document.

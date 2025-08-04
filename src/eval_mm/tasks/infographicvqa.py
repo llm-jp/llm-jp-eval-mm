@@ -33,7 +33,8 @@ class InfographicVQA(Task):
         
         InfographicVQA is an extractive QA task, so we just return the question.
         """
-        return doc['question']
+        post_prompt = "\nAnswer the question using a single word or phrase."
+        return f"{doc['question']}{post_prompt}"
     
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
