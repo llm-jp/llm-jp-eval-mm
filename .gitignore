@@ -142,3 +142,4 @@ uv.lock
 
 # cache
 .cache/
+tmp*/
