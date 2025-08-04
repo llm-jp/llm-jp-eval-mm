@@ -172,6 +172,7 @@ declare -a task_list=(
     "llava-bench-in-the-wild"
     "jic-vqa"
     "cvqa"
+    "cc-ocr"
     "mecha-ja"
     "ai2d"
     "blink"
@@ -180,6 +181,8 @@ declare -a task_list=(
     "textvqa"
     "chartqa"
     "chartqapro"
+    "mathvista"
+    "okvqa"
 )
 
 # === Metrics Mapping ===
@@ -194,6 +197,8 @@ declare -A METRIC_MAP=(
     ["llava-bench-in-the-wild"]="llm-as-a-judge"
     ["jic-vqa"]="jic-vqa"
     ["mecha-ja"]="mecha-ja"
+    ["cc-ocr"]="cc-ocr"
+    ["cvqa"]="substring-match"
     ["ai2d"]="ai2d"
     ["blink"]="blink"
     ["cvqa"]="substring-match"
@@ -202,6 +207,8 @@ declare -A METRIC_MAP=(
     ["textvqa"]="substring-match"
     ["chartqa"]="substring-match"
     ["chartqapro"]="substring-match"
+    ["mathvista"]="mathvista"
+    ["okvqa"]="substring-match"
 )
 
 # === Function to load .env file ===
