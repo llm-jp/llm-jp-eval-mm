@@ -154,7 +154,7 @@ declare -A model_gpu_map=(
     ["OpenGVLab/InternVL3-38B"]=4
     
     # Large models (4 GPUs)
-    ["meta-llama/Llama-3.2-90B-Vision-Instruct"]=4
+    ["meta-llama/Llama-3.2-90B-Vision-Instruct"]=8
     ["Qwen/Qwen2-VL-72B-Instruct"]=4
     ["Qwen/Qwen2.5-VL-72B-Instruct"]=4
     ["OpenGVLab/InternVL3-78B"]=8

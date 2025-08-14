@@ -286,8 +286,8 @@ def plot_correlation(df: pd.DataFrame, filename: str, tex_columns: list[str] = N
     )
     
     # Make tick labels bold and larger
-    ax.set_xticklabels(ax.get_xmajorticklabels(), fontsize=11, fontweight='bold', rotation=45, ha='right')
-    ax.set_yticklabels(ax.get_ymajorticklabels(), fontsize=11, fontweight='bold', rotation=0)
+    ax.set_xticklabels(ax.get_xmajorticklabels(), fontsize=16, fontweight='bold', rotation=45, ha='right')
+    ax.set_yticklabels(ax.get_ymajorticklabels(), fontsize=16, fontweight='bold', rotation=0)
     
     plt.tight_layout()
     plt.savefig(filename, dpi=150, bbox_inches='tight')
@@ -432,13 +432,13 @@ def plot_task_clustering(df: pd.DataFrame, filename: str, tex_columns: list[str]
         above_threshold_color='gray'
     )
     
-    plt.title('Task Clustering based on Correlation Matrix', fontsize=16, fontweight='bold')
-    plt.xlabel('Tasks', fontsize=12, fontweight='bold')
-    plt.ylabel('Distance (1 - Spearman Correlation)', fontsize=12, fontweight='bold')
+    plt.title('Task Clustering based on Correlation Matrix', fontsize=24, fontweight='bold')
+    plt.xlabel('Tasks', fontsize=16, fontweight='bold')
+    plt.ylabel('Distance (1 - Spearman Correlation)', fontsize=16, fontweight='bold')
     
     # Make x-axis labels bold
     ax = plt.gca()
-    ax.set_xticklabels(ax.get_xmajorticklabels(), fontsize=11, fontweight='bold', rotation=45, ha='right')
+    ax.set_xticklabels(ax.get_xmajorticklabels(), fontsize=14, fontweight='bold', rotation=45, ha='right')
     
     plt.tight_layout()
     plt.savefig(filename, dpi=150, bbox_inches='tight')
@@ -453,14 +453,14 @@ def plot_task_clustering(df: pd.DataFrame, filename: str, tex_columns: list[str]
         color_threshold=0.7,
         above_threshold_color='gray'
     )
-    
-    plt.title('Task Clustering based on Correlation Matrix', fontsize=16, fontweight='bold')
-    plt.xlabel('Distance (1 - Spearman Correlation)', fontsize=12, fontweight='bold')
-    plt.ylabel('Tasks', fontsize=12, fontweight='bold')
-    
+
+    plt.title('Task Clustering based on Correlation Matrix', fontsize=24, fontweight='bold')
+    plt.xlabel('Distance (1 - Spearman Correlation)', fontsize=16, fontweight='bold')
+    plt.ylabel('Tasks', fontsize=16, fontweight='bold')
+
     # Make y-axis labels bold
     ax = plt.gca()
-    ax.set_yticklabels(ax.get_ymajorticklabels(), fontsize=11, fontweight='bold')
+    ax.set_yticklabels(ax.get_ymajorticklabels(), fontsize=14, fontweight='bold')
     
     plt.tight_layout()
     # Save horizontal version
