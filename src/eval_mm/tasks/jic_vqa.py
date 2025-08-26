@@ -40,6 +40,12 @@ class JICVQA(Task):
 
 def test_task():
     from eval_mm.tasks.task import TaskConfig
+    import os
+    import pytest
+
+    # Skip gracefully in CI if local parquet is absent
+    if not os.path.exists("dataset/jic_vqa.parquet"):
+        pytest.skip("JIC-VQA local parquet not found; skipping in CI.")
 
     task = JICVQA(TaskConfig(max_dataset_len=10))
     ds = task.dataset

@@ -18,7 +18,6 @@ from .infographicvqa import InfographicVQA
 from .textvqa import TextVQA
 from .chartqa import ChartQA
 from .chartqapro import ChartQAPro
-from .mathvista import MathVista
 from .okvqa import OKVQA
 from .task_registry import TaskRegistry
 from .task import TaskConfig
@@ -44,7 +43,6 @@ __all__ = [
     "TextVQA",
     "ChartQA",
     "ChartQAPro",
-    "MathVista",
     "OKVQA",
     "TaskRegistry",
     "TaskConfig",

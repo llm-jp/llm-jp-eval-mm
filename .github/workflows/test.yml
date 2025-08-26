@@ -7,6 +7,10 @@ jobs:
   uv-example:
     name: python
     runs-on: ubuntu-latest
+    env:
+      # HF token is required to avoid 429 rate limits on HF Hub
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HUGGINGFACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
