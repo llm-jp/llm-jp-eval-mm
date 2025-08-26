@@ -126,7 +126,9 @@ tmp/
 *verbose.jsonl
 __depr__/
 
-# examples/llava for evaluating LLM-jp-3 VILA
+# examples/vila for evaluating LLM-jp-3 VILA
+examples/vila/*
+# optional official LLaVA submodule
 examples/llava/*
 
 # experiments

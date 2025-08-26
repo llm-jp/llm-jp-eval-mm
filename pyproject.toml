@@ -53,7 +53,7 @@ exclude = [
 [tool.uv.sources]
 mantis-vl = { git = "https://github.com/TIGER-AI-Lab/Mantis" }
 s2wrapper = { git = "https://github.com/bfshi/scaling_on_scales.git" }
-llava = { path = "examples/llava", editable = true }
+vila = { git = "https://github.com/LLM-jp/llm-jp-VILA.git", branch = "dep-relax"} 
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -81,7 +81,7 @@ vilaja = [
     "s2wrapper",
     "sentencepiece>=0.2.0",
     "transformers==4.47.0",
-    "llava",
+    "vila",
 ]
 sarashina = [
     "flash-attn==2.7.3",
