@@ -1,9 +1,11 @@
 from datasets import Dataset, concatenate_datasets, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("ja-vg-vqa-500")
 class JaVGVQA500(Task):
     default_metric = "rougel"
 

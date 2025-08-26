@@ -123,7 +123,7 @@ if __name__ == "__main__":
     ]
 
     responses = client.batch_generate_chat_response(
-        messages_list, model_name="gpt-4o-mini-2024-07-18"
+        messages_list, model_name="gpt-4o-2024-05-13"
     )
     print(responses)
 
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         for i in range(0, len(dataset), batch_size):
             items = dataset[i : i + batch_size]
             responses = client.batch_generate_chat_response(
-                items, model_name="gpt-4o-mini-2024-07-18"
+                items, model_name="gpt-4o-2024-05-13"
             )
             print(responses)
             pbar.update(len(items))

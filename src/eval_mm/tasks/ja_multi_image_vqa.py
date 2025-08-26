@@ -3,11 +3,13 @@ import re
 
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 # import neologdn FIXME: fix c++12 error when installing neologdn
 
 
+@register_task("ja-multi-image-vqa")
 class JAMultiImageVQA(Task):
     default_metric = "rougel"
 
