@@ -3,5 +3,5 @@
 	url = https://github.com/haotian-liu/LLaVA.git
 [submodule "examples/vila"]
 	path = examples/vila
-	url = git@github.com:llm-jp/llm-jp-VILA.git
+	url = https://github.com/llm-jp/llm-jp-VILA.git
 	branch = dep-relax
