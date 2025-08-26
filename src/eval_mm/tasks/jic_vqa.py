@@ -21,6 +21,14 @@ class JICVQA(Task):
         )
         return dataset
 
+    def _prepare_test_dataset(self) -> Dataset:
+        # Same as prod; test harness caps length at init
+        if not os.path.exists("dataset/jic_vqa.parquet"):
+            raise FileNotFoundError(
+                "Dataset not found. Please run `scripts/prepare_jic_vqa.py` to prepare the dataset."
+            )
+        return load_dataset("parquet", data_files="dataset/jic_vqa.parquet", split="train")
+
     @staticmethod
     def doc_to_text(doc) -> str:
         return doc["input_text"]

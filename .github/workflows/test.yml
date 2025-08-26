@@ -32,10 +32,6 @@ jobs:
       - name: Run tests (metrics)
         run: uv run pytest src/eval_mm/metrics/*.py
 
-      - name: Clear HF caches before task tests
-        run: |
-          rm -rf "$HF_DATASETS_CACHE" "$HUGGINGFACE_HUB_CACHE" || true
-
       - name: Run tests (tasks)
         run: uv run pytest src/eval_mm/tasks/*.py
 
