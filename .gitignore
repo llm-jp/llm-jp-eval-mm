@@ -101,6 +101,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# Ruff
+.ruff_cache/
+
 # weights and biases
 wandb/
 outputs/
@@ -142,3 +145,37 @@ uv.lock
 
 # cache
 .cache/
+tmp*/
+
+# pytest cache
+.pytest_cache/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+
+# Streamlit local config
+.streamlit/
+
+# Local artifacts
+artifact/
+artifact/*_tmp_*/
+outputs/*_tmp_*/
+result/*_tmp_*/
+
+# Personal dev settings
+.python-version
+.uv/
+.uv
+.direnv/
+.envrc
+.devcontainer/
+*.code-workspace
+*.swp
+*.swo
+*~
+ 
+# HPC scripts (ignored per request)
+scripts/nvlink/
+scripts/tsubame/
