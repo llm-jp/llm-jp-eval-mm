@@ -35,9 +35,8 @@ def construct_prompt(question, options):
 class CVQA(Task):
     default_metric = "substring-match"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
-        ds = load_dataset("afaji/cvqa", split="test")
+    def _prepare_dataset(self) -> Dataset:
+        ds = load_dataset("afaji/cvqa", split=self._maybe_slice_split("test"))
 
         ds = ds.filter(lambda x: x["Subset"] == "('Japanese', 'Japan')")
 

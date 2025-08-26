@@ -15,11 +15,10 @@ class TextVQA(Task):
     def __init__(self, config):
         super().__init__(config)
     
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         """Load TextVQA validation set."""
         # Load the TextVQA dataset from lmms-lab
-        ds = load_dataset("lmms-lab/textvqa", split="validation")
+        ds = load_dataset("lmms-lab/textvqa", split=self._maybe_slice_split("validation"))
         
         return ds
     

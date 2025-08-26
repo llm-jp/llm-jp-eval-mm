@@ -16,11 +16,14 @@ class InfographicVQA(Task):
     def __init__(self, config):
         super().__init__(config)
     
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         """Load InfographicVQA validation set."""
         # Load the InfographicVQA config from lmms-lab/DocVQA dataset
-        ds = load_dataset("lmms-lab/DocVQA", "InfographicVQA", split="validation")
+        ds = load_dataset(
+            "lmms-lab/DocVQA",
+            "InfographicVQA",
+            split=self._maybe_slice_split("validation"),
+        )
         
         # Rename questionId to question_id for consistency
         ds = ds.rename_column("questionId", "question_id")

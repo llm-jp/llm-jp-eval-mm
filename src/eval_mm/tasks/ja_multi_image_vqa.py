@@ -13,9 +13,8 @@ from PIL import Image
 class JAMultiImageVQA(Task):
     default_metric = "rougel"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
-        ds = load_dataset("SakanaAI/JA-Multi-Image-VQA", split="test")
+    def _prepare_dataset(self) -> Dataset:
+        ds = load_dataset("SakanaAI/JA-Multi-Image-VQA", split=self._maybe_slice_split("test"))
         ds = ds.rename_column("question", "input_text")
         ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
         return ds

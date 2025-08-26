@@ -9,10 +9,11 @@ from PIL import Image
 class LlavaBenchIntheWild(Task):
     default_metric = "rougel"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         # データセットをロード
-        ds = load_dataset("lmms-lab/llava-bench-in-the-wild", split="train")
+        ds = load_dataset(
+            "lmms-lab/llava-bench-in-the-wild", split=self._maybe_slice_split("train")
+        )
         ds = ds.rename_column("question", "input_text")
         ds = ds.rename_column("gpt_answer", "answer")
         return ds

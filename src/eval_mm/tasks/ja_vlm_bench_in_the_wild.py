@@ -9,10 +9,12 @@ from PIL import Image
 class JaVLMBenchIntheWild(Task):
     default_metric = "rougel"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         # データセットをロード
-        ds = load_dataset("SakanaAI/JA-VLM-Bench-In-the-Wild", split="test")
+        ds = load_dataset(
+            "SakanaAI/JA-VLM-Bench-In-the-Wild",
+            split=self._maybe_slice_split("test"),
+        )
         ds = ds.rename_column("question", "input_text")
         ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
         return ds

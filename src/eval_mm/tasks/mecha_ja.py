@@ -109,7 +109,7 @@ class MECHAJa(Task):
     default_metric = "mecha-ja"
 
     def _prepare_dataset(self) -> Dataset:
-        ds = load_dataset("llm-jp/MECHA-ja", split="test")
+        ds = load_dataset("llm-jp/MECHA-ja", split=self._maybe_slice_split("test"))
 
         ds = ds.map(
             lambda x, idx: {

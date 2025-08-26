@@ -9,9 +9,8 @@ from PIL import Image
 class MMMLU(Task):
     default_metric = "exact-match"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
-        ds = load_dataset("openai/MMMLU", "JA_JP", split="test")
+    def _prepare_dataset(self) -> Dataset:
+        ds = load_dataset("openai/MMMLU", "JA_JP", split=self._maybe_slice_split("test"))
 
         # ['Unnamed: 0', 'Question', 'A', 'B', 'C', 'D', 'Answer', 'Subject'],
         def build_prompt(example):

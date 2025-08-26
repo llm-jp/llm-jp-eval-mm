@@ -21,9 +21,8 @@ class CCOCR(Task):
 
     default_metric = "ccocr"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
-        ds = load_dataset("wulipc/CC-OCR", "multi_lan_ocr", split="test")
+    def _prepare_dataset(self) -> Dataset:
+        ds = load_dataset("wulipc/CC-OCR", "multi_lan_ocr", split=self._maybe_slice_split("test"))
 
         ds = ds.filter(lambda example: example["l2-category"] == "Japanese")
 

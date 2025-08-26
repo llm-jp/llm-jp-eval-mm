@@ -18,11 +18,10 @@ class ChartQAPro(Task):
     def __init__(self, config):
         super().__init__(config)
     
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         """Load ChartQAPro test set."""
         # Load the ChartQAPro dataset from ahmed-masry
-        ds = load_dataset("ahmed-masry/ChartQAPro", split="test")
+        ds = load_dataset("ahmed-masry/ChartQAPro", split=self._maybe_slice_split("test"))
         
         return ds
     

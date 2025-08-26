@@ -10,11 +10,10 @@ from PIL import Image
 class JDocQA(Task):
     default_metric = "jdocqa"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         ds = load_dataset(
             "speed/JDocQA",
-            split="test",
+            split=self._maybe_slice_split("test"),
         )
         ds = ds.rename_column("question", "input_text")
         return ds

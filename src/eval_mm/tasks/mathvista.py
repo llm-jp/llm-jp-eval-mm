@@ -16,11 +16,10 @@ class MathVista(Task):
     def __init__(self, config):
         super().__init__(config)
     
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         """Load MathVista testmini set."""
         # Load the MathVista dataset from AI4Math
-        ds = load_dataset("AI4Math/MathVista", split="testmini")
+        ds = load_dataset("AI4Math/MathVista", split=self._maybe_slice_split("testmini"))
         
         return ds
     

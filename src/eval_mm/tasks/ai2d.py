@@ -9,9 +9,8 @@ class AI2D(Task):
     def __init__(self, config):
         super().__init__(config)
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
-        ds = load_dataset("lmms-lab/ai2d", split="test")
+    def _prepare_dataset(self) -> Dataset:
+        ds = load_dataset("lmms-lab/ai2d", split=self._maybe_slice_split("test"))
         ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
         return ds
 

@@ -9,9 +9,8 @@ from PIL import Image
 class JaVGVQA500(Task):
     default_metric = "rougel"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
-        ds = load_dataset("SakanaAI/JA-VG-VQA-500", split="test")
+    def _prepare_dataset(self) -> Dataset:
+        ds = load_dataset("SakanaAI/JA-VG-VQA-500", split=self._maybe_slice_split("test"))
 
         def flatten_sample(sample):
             dataset = {

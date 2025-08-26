@@ -80,11 +80,12 @@ def mmmu_doc_to_visual(doc):
 class MMMU(Task):
     default_metric = "mmmu"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         configs = get_dataset_config_names("MMMU/MMMU")
         datasets = [
-            load_dataset("MMMU/MMMU", name=subject, split="validation")
+            load_dataset(
+                "MMMU/MMMU", name=subject, split=self._maybe_slice_split("validation")
+            )
             for subject in configs
         ]
         dataset = concatenate_datasets(datasets)

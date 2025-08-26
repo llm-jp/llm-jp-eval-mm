@@ -83,11 +83,12 @@ def jmmmu_doc_to_visual(doc):
 class JMMMU(Task):
     default_metric = "jmmmu"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         configs = get_dataset_config_names("JMMMU/JMMMU")
         datasets = [
-            load_dataset("JMMMU/JMMMU", name=subject, split="test")
+            load_dataset(
+                "JMMMU/JMMMU", name=subject, split=self._maybe_slice_split("test")
+            )
             for subject in configs
         ]
         dataset = concatenate_datasets(datasets)

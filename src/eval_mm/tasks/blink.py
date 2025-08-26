@@ -35,7 +35,9 @@ class BLINK(Task):
         total = 0
 
         for config_name in BLINK.CONFIGS:
-            ds = load_dataset("BLINK-Benchmark/BLINK", config_name, split="val")
+            ds = load_dataset(
+                "BLINK-Benchmark/BLINK", config_name, split=self._maybe_slice_split("val")
+            )
             ds = ds.map(lambda x: {"config_name": config_name})
             all_datasets.append(ds)
             total += len(ds)

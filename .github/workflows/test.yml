@@ -23,7 +23,7 @@ jobs:
         run: uv sync --group dev
 
       - name: Run tests (library)
-        run: bash test.sh
+        run: uv run pytest src/eval_mm/metrics/*.py
 
       # Optional model smoke; enable when runners have resources
       # - name: Run model smoke tests

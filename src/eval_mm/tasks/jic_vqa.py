@@ -10,8 +10,7 @@ import os
 class JICVQA(Task):
     default_metric = "jic-vqa"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         if not os.path.exists("dataset/jic_vqa.parquet"):
             raise FileNotFoundError(
                 "Dataset not found. Please run `scripts/prepare_jic_vqa.py` to prepare the dataset."

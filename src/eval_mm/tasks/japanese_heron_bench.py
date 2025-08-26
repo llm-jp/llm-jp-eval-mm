@@ -9,9 +9,8 @@ from PIL import Image
 class JapaneseHeronBench(Task):
     default_metric = "heron-bench"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
-        ds = load_dataset("Silviase/Japanese-Heron-Bench", split="train")
+    def _prepare_dataset(self) -> Dataset:
+        ds = load_dataset("Silviase/Japanese-Heron-Bench", split=self._maybe_slice_split("train"))
         ds = ds.rename_column("text", "input_text")
         return ds
 
