@@ -35,9 +35,7 @@ class BLINK(Task):
         total = 0
 
         for config_name in BLINK.CONFIGS:
-            ds = load_dataset(
-                "BLINK-Benchmark/BLINK", config_name, split=self._maybe_slice_split("val")
-            )
+            ds = load_dataset("BLINK-Benchmark/BLINK", config_name, split="val")
             ds = ds.map(lambda x: {"config_name": config_name})
             all_datasets.append(ds)
             total += len(ds)
@@ -52,6 +50,11 @@ class BLINK(Task):
         )
 
         return combined_dataset
+
+    def _prepare_test_dataset(self) -> Dataset:
+        # Reuse the same incremental loading logic; Task base will apply
+        # final length cap if needed.
+        return self._prepare_dataset()
     
     @staticmethod
     def doc_to_text(doc) -> str:

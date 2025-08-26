@@ -13,7 +13,16 @@ class JDocQA(Task):
     def _prepare_dataset(self) -> Dataset:
         ds = load_dataset(
             "speed/JDocQA",
-            split=self._maybe_slice_split("test"),
+            split="test",
+        )
+        ds = ds.rename_column("question", "input_text")
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset(
+            "speed/JDocQA",
+            split=f"test[:{n}]",
         )
         ds = ds.rename_column("question", "input_text")
         return ds

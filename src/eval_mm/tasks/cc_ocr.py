@@ -23,35 +23,6 @@ class CCOCR(Task):
     default_metric = "ccocr"
 
     def _prepare_dataset(self) -> Dataset:
-        # Use streaming during tests to avoid empty slices after filtering
-        n = getattr(self.config, "max_dataset_len", None)
-        test_subset = os.getenv("PYTEST_CURRENT_TEST") or os.getenv("EVAL_MM_TEST_SUBSET") == "1"
-        if n is not None and test_subset:
-            stream = load_dataset(
-                "wulipc/CC-OCR", "multi_lan_ocr", split="test", streaming=True
-            )
-            buf = {
-                "index": [],
-                "question_id": [],
-                "question": [],
-                "answer": [],
-                "input_text": [],
-                "image": [],
-            }
-            count = 0
-            for ex in stream:
-                if ex.get("l2-category") == "Japanese":
-                    buf["index"].append(str(count))
-                    buf["question_id"].append(str(count))
-                    buf["question"].append(ex["question"])
-                    buf["answer"].append(ex["answer"])
-                    buf["input_text"].append(ex["question"])
-                    buf["image"].append(ex["image"])
-                    count += 1
-                    if count >= n:
-                        break
-            return Dataset.from_dict(buf)
-
         ds = load_dataset("wulipc/CC-OCR", "multi_lan_ocr", split="test")
         ds = ds.filter(lambda example: example["l2-category"] == "Japanese")
         ds = ds.map(
@@ -66,6 +37,32 @@ class CCOCR(Task):
             with_indices=True,
         )
         return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        # Stream to collect first N Japanese samples without downloading full split
+        n = getattr(self.config, "max_dataset_len", 10)
+        stream = load_dataset("wulipc/CC-OCR", "multi_lan_ocr", split="test", streaming=True)
+        buf = {
+            "index": [],
+            "question_id": [],
+            "question": [],
+            "answer": [],
+            "input_text": [],
+            "image": [],
+        }
+        count = 0
+        for ex in stream:
+            if ex.get("l2-category") == "Japanese":
+                buf["index"].append(str(count))
+                buf["question_id"].append(str(count))
+                buf["question"].append(ex["question"])
+                buf["answer"].append(ex["answer"])
+                buf["input_text"].append(ex["question"])
+                buf["image"].append(ex["image"])
+                count += 1
+                if count >= n:
+                    break
+        return Dataset.from_dict(buf)
 
     @staticmethod
     def doc_to_text(doc) -> str:

@@ -10,7 +10,13 @@ class JapaneseHeronBench(Task):
     default_metric = "heron-bench"
 
     def _prepare_dataset(self) -> Dataset:
-        ds = load_dataset("Silviase/Japanese-Heron-Bench", split=self._maybe_slice_split("train"))
+        ds = load_dataset("Silviase/Japanese-Heron-Bench", split="train")
+        ds = ds.rename_column("text", "input_text")
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("Silviase/Japanese-Heron-Bench", split=f"train[:{n}]")
         ds = ds.rename_column("text", "input_text")
         return ds
 

@@ -10,7 +10,7 @@ class JaVGVQA500(Task):
     default_metric = "rougel"
 
     def _prepare_dataset(self) -> Dataset:
-        ds = load_dataset("SakanaAI/JA-VG-VQA-500", split=self._maybe_slice_split("test"))
+        ds = load_dataset("SakanaAI/JA-VG-VQA-500", split="test")
 
         def flatten_sample(sample):
             dataset = {
@@ -31,6 +31,26 @@ class JaVGVQA500(Task):
         ds = ds.rename_column("question", "input_text")
         ds = ds.rename_column("qa_id", "question_id")
 
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("SakanaAI/JA-VG-VQA-500", split=f"test[:{n}]")
+        def flatten_sample(sample):
+            dataset = {
+                "image_id": [sample["image_id"] for _ in sample["qas"]],
+                "image": [sample["image"] for _ in sample["qas"]],
+                "qa_id": [qa["qa_id"] for qa in sample["qas"]],
+                "question": [qa["question"] for qa in sample["qas"]],
+                "answer": [qa["answer"] for qa in sample["qas"]],
+            }
+            return Dataset.from_dict(dataset)
+        fragments = []
+        for sample in ds:
+            fragments.append(flatten_sample(sample))
+        ds = concatenate_datasets(fragments)
+        ds = ds.rename_column("question", "input_text")
+        ds = ds.rename_column("qa_id", "question_id")
         return ds
 
     @staticmethod

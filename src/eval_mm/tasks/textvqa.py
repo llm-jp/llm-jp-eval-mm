@@ -18,8 +18,13 @@ class TextVQA(Task):
     def _prepare_dataset(self) -> Dataset:
         """Load TextVQA validation set."""
         # Load the TextVQA dataset from lmms-lab
-        ds = load_dataset("lmms-lab/textvqa", split=self._maybe_slice_split("validation"))
+        ds = load_dataset("lmms-lab/textvqa", split="validation")
         
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("lmms-lab/textvqa", split=f"validation[:{n}]")
         return ds
     
     @staticmethod

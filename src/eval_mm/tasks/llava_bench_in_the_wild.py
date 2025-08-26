@@ -12,8 +12,15 @@ class LlavaBenchIntheWild(Task):
     def _prepare_dataset(self) -> Dataset:
         # データセットをロード
         ds = load_dataset(
-            "lmms-lab/llava-bench-in-the-wild", split=self._maybe_slice_split("train")
+            "lmms-lab/llava-bench-in-the-wild", split="train"
         )
+        ds = ds.rename_column("question", "input_text")
+        ds = ds.rename_column("gpt_answer", "answer")
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("lmms-lab/llava-bench-in-the-wild", split=f"train[:{n}]")
         ds = ds.rename_column("question", "input_text")
         ds = ds.rename_column("gpt_answer", "answer")
         return ds

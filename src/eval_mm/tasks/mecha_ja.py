@@ -109,7 +109,7 @@ class MECHAJa(Task):
     default_metric = "mecha-ja"
 
     def _prepare_dataset(self) -> Dataset:
-        ds = load_dataset("llm-jp/MECHA-ja", split=self._maybe_slice_split("test"))
+        ds = load_dataset("llm-jp/MECHA-ja", split="test")
 
         ds = ds.map(
             lambda x, idx: {
@@ -134,6 +134,32 @@ class MECHAJa(Task):
                 remove_columns=ds.column_names,
             )
 
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("llm-jp/MECHA-ja", split=f"test[:{n}]")
+        ds = ds.map(
+            lambda x, idx: {
+                "question": x["question"],
+                "options": x["options"],
+                "answer": x["answer"],  # 0~3
+                "answer_type": x["answer_type"],
+                "image": x["image"],
+                "background_text": x["background_text"],
+                "question_id": str(idx),
+                "answer_text": OPTIONS_MAP[x["answer"]],
+                "input_text": construct_prompt(x["question"], x["options"]),
+            },
+            with_indices=True,
+        )
+        if self.config.rotate_choices:
+            ds = ds.map(
+                rotate_options_fn,
+                num_proc=1,
+                batched=True,
+                remove_columns=ds.column_names,
+            )
         return ds
 
     @staticmethod

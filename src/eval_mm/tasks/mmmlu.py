@@ -10,7 +10,7 @@ class MMMLU(Task):
     default_metric = "exact-match"
 
     def _prepare_dataset(self) -> Dataset:
-        ds = load_dataset("openai/MMMLU", "JA_JP", split=self._maybe_slice_split("test"))
+        ds = load_dataset("openai/MMMLU", "JA_JP", split="test")
 
         # ['Unnamed: 0', 'Question', 'A', 'B', 'C', 'D', 'Answer', 'Subject'],
         def build_prompt(example):
@@ -23,6 +23,19 @@ class MMMLU(Task):
             remove_columns=["Question", "A", "B", "C", "D", "Subject"],
         )
 
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("openai/MMMLU", "JA_JP", split=f"test[:{n}]")
+        def build_prompt(example):
+            return f"{example['Question']} A: {example['A']} B: {example['B']} C: {example['C']} D: {example['D']}. Output only the letter of the correct answer. Answer:"
+        ds = ds.rename_column("Answer", "answer")
+        ds = ds.rename_column("Unnamed: 0", "question_id")
+        ds = ds.map(
+            lambda example: {"input_text": build_prompt(example)},
+            remove_columns=["Question", "A", "B", "C", "D", "Subject"],
+        )
         return ds
 
     @staticmethod

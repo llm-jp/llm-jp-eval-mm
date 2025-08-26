@@ -19,8 +19,13 @@ class OKVQA(Task):
     def _prepare_dataset(self) -> Dataset:
         """Load OK-VQA validation set."""
         # Load the OK-VQA dataset from lmms-lab
-        ds = load_dataset("lmms-lab/OK-VQA", split=self._maybe_slice_split("val2014"))
+        ds = load_dataset("lmms-lab/OK-VQA", split="val2014")
         
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("lmms-lab/OK-VQA", split=f"val2014[:{n}]")
         return ds
     
     @staticmethod

@@ -19,11 +19,17 @@ class DocVQA(Task):
     def _prepare_dataset(self) -> Dataset:
         """Load DocVQA validation set."""
         # Load the DocVQA config from lmms-lab/DocVQA dataset
-        ds = load_dataset("lmms-lab/DocVQA", "DocVQA", split=self._maybe_slice_split("validation"))
+        ds = load_dataset("lmms-lab/DocVQA", "DocVQA", split="validation")
         
         # Rename questionId to question_id for consistency
         ds = ds.rename_column("questionId", "question_id")
         
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("lmms-lab/DocVQA", "DocVQA", split=f"validation[:{n}]")
+        ds = ds.rename_column("questionId", "question_id")
         return ds
     
     @staticmethod

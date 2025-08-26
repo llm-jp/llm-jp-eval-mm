@@ -13,7 +13,17 @@ class JaVLMBenchIntheWild(Task):
         # データセットをロード
         ds = load_dataset(
             "SakanaAI/JA-VLM-Bench-In-the-Wild",
-            split=self._maybe_slice_split("test"),
+            split="test",
+        )
+        ds = ds.rename_column("question", "input_text")
+        ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset(
+            "SakanaAI/JA-VLM-Bench-In-the-Wild",
+            split=f"test[:{n}]",
         )
         ds = ds.rename_column("question", "input_text")
         ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)

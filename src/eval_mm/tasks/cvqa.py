@@ -37,40 +37,6 @@ class CVQA(Task):
     default_metric = "substring-match"
 
     def _prepare_dataset(self) -> Dataset:
-        # Use streaming during tests to ensure we pick N Japanese samples
-        # even if they are sparse early in the split.
-        n = getattr(self.config, "max_dataset_len", None)
-        test_subset = os.getenv("PYTEST_CURRENT_TEST") or os.getenv("EVAL_MM_TEST_SUBSET") == "1"
-        if n is not None and test_subset:
-            stream = load_dataset("afaji/cvqa", split="test", streaming=True)
-            buf = {
-                "index": [],
-                "question_id": [],
-                "question": [],
-                "question_en": [],
-                "options": [],
-                "translated_options": [],
-                "answer": [],
-                "answer_text": [],
-                "image": [],
-            }
-            count = 0
-            for ex in stream:
-                if ex.get("Subset") == "('Japanese', 'Japan')":
-                    buf["index"].append(str(count))
-                    buf["question_id"].append(str(count))
-                    buf["question"].append(ex["Question"])
-                    buf["question_en"].append(ex.get("Translated Question"))
-                    buf["options"].append(ex["Options"])
-                    buf["translated_options"].append(ex.get("Translated Options"))
-                    buf["answer"].append(ex["Label"])  # 0~3
-                    buf["answer_text"].append(OPTIONS_MAP[ex["Label"]])
-                    buf["image"].append(ex["image"])  # keep original to lazily decode later
-                    count += 1
-                    if count >= n:
-                        break
-            return Dataset.from_dict(buf)
-
         ds = load_dataset("afaji/cvqa", split="test")
         ds = ds.filter(lambda x: x["Subset"] == "('Japanese', 'Japan')")
         ds = ds.map(
@@ -88,6 +54,38 @@ class CVQA(Task):
             with_indices=True,
         )
         return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        # Stream to pick the first N Japanese samples and build a tiny Dataset
+        n = getattr(self.config, "max_dataset_len", 10)
+        stream = load_dataset("afaji/cvqa", split="test", streaming=True)
+        buf = {
+            "index": [],
+            "question_id": [],
+            "question": [],
+            "question_en": [],
+            "options": [],
+            "translated_options": [],
+            "answer": [],
+            "answer_text": [],
+            "image": [],
+        }
+        count = 0
+        for ex in stream:
+            if ex.get("Subset") == "('Japanese', 'Japan')":
+                buf["index"].append(str(count))
+                buf["question_id"].append(str(count))
+                buf["question"].append(ex["Question"])
+                buf["question_en"].append(ex.get("Translated Question"))
+                buf["options"].append(ex["Options"])
+                buf["translated_options"].append(ex.get("Translated Options"))
+                buf["answer"].append(ex["Label"])  # 0~3
+                buf["answer_text"].append(OPTIONS_MAP[ex["Label"]])
+                buf["image"].append(ex["image"])  # keep original to lazily decode later
+                count += 1
+                if count >= n:
+                    break
+        return Dataset.from_dict(buf)
 
     @staticmethod
     def doc_to_text(doc) -> str:

@@ -19,7 +19,13 @@ class ChartQA(Task):
     def _prepare_dataset(self) -> Dataset:
         """Load ChartQA validation set."""
         # Load the ChartQA dataset from lmms-lab
-        ds = load_dataset("lmms-lab/ChartQA", split=self._maybe_slice_split("test"))
+        ds = load_dataset("lmms-lab/ChartQA", split="test")
+        ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("lmms-lab/ChartQA", split=f"test[:{n}]")
         ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
         return ds
     
