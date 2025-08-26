@@ -165,7 +165,7 @@ def test_task():
     assert isinstance(task.doc_to_id(ds[0]), str)
     assert isinstance(task.doc_to_answer(ds[0]), str)
 
-    task = MECHAJa(TaskConfig(rotate_choices=True))
+    task = MECHAJa(TaskConfig(max_dataset_len=10, rotate_choices=True))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)
