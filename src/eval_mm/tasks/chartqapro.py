@@ -34,7 +34,7 @@ class ChartQAPro(Task):
         """
 
         post_prompt = "\nAnswer the question with a single word."
-        return f"{doc['Question']}{post_prompt}"
+        return f"{doc['Question'][0]}{post_prompt}"
 
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
@@ -68,7 +68,7 @@ class ChartQAPro(Task):
     def doc_to_id(doc) -> str:
         """Return unique question ID."""
         # Use question and year as ID components
-        question = doc['Question']
+        question = doc['Question'][0]
         year = doc.get('Year', ['unknown'])[0] if doc.get('Year') else 'unknown'
         return f"{year}_{hash(question)}"
     
