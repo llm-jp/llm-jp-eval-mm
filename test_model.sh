@@ -4,6 +4,16 @@ set -eux  # エラーが発生したらスクリプトを停止する
 # Set CUDA devices
 export CUDA_VISIBLE_DEVICES=0
 
+# HuggingFace cache directories
+export DATA_DIR="/data/silviase/" # please rewrite!!!!
+export HF_HOME="$DATA_DIR/.hf_cache"
+export HF_DATASETS_CACHE="$DATA_DIR/datasets"
+export HF_HUB_CACHE="$DATA_DIR/models"
+export APPTAINER_CACHEDIR="$DATA_DIR/apptainer_cache"
+
+# CUDA configuration
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
 # Model name to group name mapping
 declare -A MODEL_GROUP_MAP=(
     ["stabilityai/japanese-instructblip-alpha"]="normal"
@@ -29,7 +39,7 @@ declare -A MODEL_GROUP_MAP=(
 
 for model_name in "${!MODEL_GROUP_MAP[@]}"; do
     model_group=${MODEL_GROUP_MAP[$model_name]}
-    uv sync --group $model_group
-    uv run --group $model_group  python examples/test_model.py \
-        --model_id "$model_name"
+    # uv sync --group $model_group
+    source .uv/${model_group}-env/bin/activate
+    python examples/test_model.py --model_id "$model_name"
 done

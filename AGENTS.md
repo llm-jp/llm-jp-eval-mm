@@ -26,7 +26,7 @@ This is a concise, coding‑agent–friendly guide for contributing and extendin
 - Add a scorer: implement in `src/eval_mm/metrics/<name>_scorer.py`; import in `metrics/__init__.py`; register in `scorer_registry.py`.
 - Add a model: wrap in `examples/` (see existing VLM wrappers) and map via `examples/model_table.py`.
 - Import pattern: `from eval_mm import TaskRegistry, ScorerRegistry` (avoid `src.` prefixes).
-- Tests: include `def test_*` near tasks/metrics; run `uv run pytest src/eval_mm/tasks/<file>.py -v`.
+- Tests: include `def test_*` near tasks/metrics; prefer `bash test.sh` (tasks/metrics) and `bash test_model.sh` (model smoke). For a single file, you may optionally run `uv run --group dev pytest <path> -v`, but CI expects the scripts.
 
 ## Plan-First Workflow
 - Before any change, prepare a short checklist: objective, source of truth, inventory, diff policy, implementation steps, and acceptance criteria.
