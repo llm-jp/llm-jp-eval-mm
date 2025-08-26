@@ -46,9 +46,10 @@ class AI2D(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = AI2D(TaskConfig())
+    # Limit dataset size in tests to reduce runtime
+    task = AI2D(TaskConfig(max_dataset_len=10))
     ds = task.dataset
-    print(ds[0])
+    # Avoid printing full sample to prevent unnecessary I/O
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)

@@ -478,7 +478,6 @@ def test_jmmmu_scorer():
     assert scores == [1]
     output = scorer.aggregate(scores)
     assert output.overall_score == 1.0
-    print(output)
     assert output.details == {
         "Overall-Art and Psychology": 0,
         "Overall-Business": 1.0,

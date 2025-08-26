@@ -8,6 +8,7 @@ import unicodedata
 from .scorer import Scorer, AggregateOutput
 from .scorer_registry import register_scorer
 from concurrent.futures import ProcessPoolExecutor, Future
+import multiprocessing as mp
 
 
 class MecabTokenizer:
@@ -78,7 +79,9 @@ class RougeLScorer(Scorer):
     @staticmethod
     def score(refs: list[str], preds: list[str]) -> list[float]:
         futures: list[Future[dict[str, float]]] = []
-        with ProcessPoolExecutor() as executor:
+        # Use spawn to avoid DeprecationWarning about fork() in multi-threaded process
+        ctx = mp.get_context("spawn")
+        with ProcessPoolExecutor(mp_context=ctx) as executor:
             for ref, pred in zip(refs, preds):
                 future = executor.submit(rouge_ja, [ref], [pred])
                 futures.append(future)

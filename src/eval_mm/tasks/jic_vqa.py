@@ -44,7 +44,6 @@ def test_task():
 
     task = JICVQA(TaskConfig(max_dataset_len=10))
     ds = task.dataset
-    print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)

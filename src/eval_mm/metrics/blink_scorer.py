@@ -145,5 +145,4 @@ def test_blink_scorer():
     output = scorer.aggregate([])
     assert output.overall_score == 0.0
     assert output.details["accuracy"] == 0.0
-    
-    print("All tests passed!")
+    # No prints to keep tests quiet

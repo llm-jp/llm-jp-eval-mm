@@ -477,7 +477,6 @@ def test_mmmu_score():
     assert scores == [1]
     output = scorer.aggregate(scores)
     assert output.overall_score == 1.0
-    print(output)
     assert output.details == {
         "Overall-Art and Design": 0,
         "Overall-Business": 1.0,

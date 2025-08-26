@@ -65,7 +65,6 @@ class LlmAsaJudgeScorer(Scorer):
 
         scores = []
         for i, c in enumerate(completion):
-            print(c)
             score = re.search(r"\d", c)
             if score:
                 scores.append(int(score.group()))

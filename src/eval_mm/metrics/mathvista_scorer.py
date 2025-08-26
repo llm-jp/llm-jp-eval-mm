@@ -181,7 +181,6 @@ def test_mathvista_scorer():
     scorer = MathVistaScorer(ScorerConfig())
     
     # Test answer extraction
-    print("Testing answer extraction...")
     
     # Multiple choice
     response = "Looking at the graph, I can see that the value is 5. The answer is B."
@@ -194,7 +193,6 @@ def test_mathvista_scorer():
     assert extracted == '42.5', f"Expected '42.5', got '{extracted}'"
     
     # Test scoring
-    print("Testing scoring...")
     
     # Multiple choice correct
     refs = ["5"]
@@ -217,4 +215,4 @@ def test_mathvista_scorer():
     scores = scorer.score(refs, preds, metadata)
     assert scores == [1], f"Expected [1], got {scores}"
     
-    print("All tests passed!")
+    # No prints to keep tests quiet

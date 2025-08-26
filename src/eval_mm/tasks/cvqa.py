@@ -41,18 +41,19 @@ class CVQA(Task):
 
         ds = ds.filter(lambda x: x["Subset"] == "('Japanese', 'Japan')")
 
+        # Map only lightweight textual fields; avoid touching `image` to
+        # prevent eager decoding during preprocessing.
         ds = ds.map(
             lambda x, idx: {
                 "index": str(idx),
                 "question_id": str(idx),
                 "question": x["Question"],
-                "question_en": x["Translated Question"],  # English
+                "question_en": x.get("Translated Question"),  # English (optional)
                 "options": x["Options"],
-                "translated_options": x["Translated Options"],  # English
+                "translated_options": x.get("Translated Options"),  # English (optional)
                 "answer": x["Label"],  # 0~3
                 "answer_text": OPTIONS_MAP[x["Label"]],
-                "input_text": construct_prompt(x["Question"], x["Options"]),
-                "image": x["image"],
+                # keep original `image` column as-is for lazy decode
             },
             with_indices=True,
         )
@@ -61,7 +62,8 @@ class CVQA(Task):
 
     @staticmethod
     def doc_to_text(doc) -> str:
-        return doc["input_text"]
+        # Lazily construct the prompt to reduce preprocessing cost
+        return construct_prompt(doc["question"], doc["options"])
 
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
@@ -86,7 +88,7 @@ def test_task():
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
     assert isinstance(task.doc_to_id(ds[0]), str)
     assert isinstance(task.doc_to_answer(ds[0]), str)
-    print(ds[0])
+    # Intentionally avoid printing entire example to prevent accidental image decode
 
 
 if __name__ == "__main__":

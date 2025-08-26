@@ -23,27 +23,32 @@ class BLINK(Task):
     def __init__(self, config):
         super().__init__(config)
     
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
-        """Load and concatenate all BLINK configs into a single dataset."""
+    def _prepare_dataset(self) -> Dataset:
+        """Load BLINK validation data, stopping early in fast/test settings.
+
+        To reduce test-time and dev-time overhead, if `max_dataset_len` is set,
+        we incrementally load configs and stop once the concatenated length
+        reaches that limit. Otherwise, load all configs.
+        """
         all_datasets = []
-        
+        target_len = getattr(self.config, "max_dataset_len", None)
+        total = 0
+
         for config_name in BLINK.CONFIGS:
-            # Load validation split for each config
             ds = load_dataset("BLINK-Benchmark/BLINK", config_name, split="val")
-            # Add config name to each example for tracking
             ds = ds.map(lambda x: {"config_name": config_name})
             all_datasets.append(ds)
-        
-        # Concatenate all configs
+            total += len(ds)
+            if target_len is not None and total >= target_len:
+                break
+
         combined_dataset = concatenate_datasets(all_datasets)
-        
-        # Add unique question_id
+
         combined_dataset = combined_dataset.map(
-            lambda example, idx: {"question_id": f"blink_val_{idx}"}, 
-            with_indices=True
+            lambda example, idx: {"question_id": f"blink_val_{idx}"},
+            with_indices=True,
         )
-        
+
         return combined_dataset
     
     @staticmethod
@@ -93,12 +98,13 @@ def test_blink_task():
     from eval_mm.tasks.task import TaskConfig
     
     # Create task instance
-    task = BLINK(TaskConfig())
+    # Limit dataset size in tests to reduce runtime and I/O
+    task = BLINK(TaskConfig(max_dataset_len=10))
     
     # Load dataset
     print("Loading BLINK dataset...")
     ds = task.dataset
-    print(f"Total examples: {len(ds)}")
+    print(f"Total examples (subset): {len(ds)}")
     
     # Test with first example
     example = ds[0]
