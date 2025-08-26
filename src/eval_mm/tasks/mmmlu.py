@@ -46,7 +46,7 @@ class MMMLU(Task):
 def test_task():
     from .task import TaskConfig
 
-    task = MMMLU(TaskConfig())
+    task = MMMLU(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)

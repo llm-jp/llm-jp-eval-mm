@@ -79,7 +79,7 @@ class CVQA(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = CVQA(TaskConfig())
+    task = CVQA(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)

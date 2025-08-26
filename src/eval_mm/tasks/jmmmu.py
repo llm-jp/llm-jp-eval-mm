@@ -120,7 +120,7 @@ class JMMMU(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = JMMMU(TaskConfig())
+    task = JMMMU(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)
