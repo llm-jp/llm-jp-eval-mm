@@ -22,8 +22,11 @@ jobs:
       - name: Install the project (dev deps)
         run: uv sync --group dev
 
-      - name: Run tests (library)
-        run: uv run pytest src/eval_mm/metrics/*.py
+      - name: Run tests (metrics)
+        run: bash pytest src/eval_mm/metrics/*.py
+
+      - name: Run tests (tasks)
+        run: bash pytest src/eval_mm/tasks/*.py
 
       # Optional model smoke; enable when runners have resources
       # - name: Run model smoke tests
