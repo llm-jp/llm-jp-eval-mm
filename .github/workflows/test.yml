@@ -8,12 +8,8 @@ jobs:
     name: python
     runs-on: ubuntu-latest
     env:
-      # HF token is required to avoid 429 rate limits on HF Hub
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
       HUGGINGFACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
-      HF_DATASETS_CACHE: ${{ runner.temp }}/hf-datasets
-      HUGGINGFACE_HUB_CACHE: ${{ runner.temp }}/hf-hub
-      TRANSFORMERS_CACHE: ${{ runner.temp }}/hf-transformers
 
     steps:
       - uses: actions/checkout@v4
@@ -33,8 +29,4 @@ jobs:
         run: uv run pytest src/eval_mm/metrics/*.py
 
       - name: Run tests (tasks)
-        run: uv run pytest src/eval_mm/tasks/*.py
-
-      # Optional model smoke; enable when runners have resources
-      # - name: Run model smoke tests
-      #   run: bash test_model.sh
+        run: bash test_git_workflow.sh
