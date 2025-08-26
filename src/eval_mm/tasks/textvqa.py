@@ -23,9 +23,25 @@ class TextVQA(Task):
         return ds
 
     def _prepare_test_dataset(self) -> Dataset:
+        # Stream a tiny subset to avoid heavy downloads/cache writes in CI
         n = getattr(self.config, "max_dataset_len", 10)
-        ds = load_dataset("lmms-lab/textvqa", split=f"validation[:{n}]")
-        return ds
+        stream = load_dataset("lmms-lab/textvqa", split="validation", streaming=True)
+        buf = {
+            "question_id": [],
+            "question": [],
+            "answers": [],
+            "image": [],
+        }
+        count = 0
+        for ex in stream:
+            buf["question_id"].append(str(ex["question_id"]))
+            buf["question"].append(ex["question"])
+            buf["answers"].append(ex["answers"])  # list[str]
+            buf["image"].append(ex["image"])      # keep image column for lazy decode
+            count += 1
+            if count >= n:
+                break
+        return Dataset.from_dict(buf)
     
     @staticmethod
     def doc_to_text(doc) -> str:
@@ -56,31 +72,17 @@ class TextVQA(Task):
 
 
 def test_textvqa_task():
-    """Test TextVQA task implementation."""
+    """Basic loader/type checks for TextVQA."""
     from eval_mm.tasks.task import TaskConfig
-    
-    # Create task instance
+
     task = TextVQA(TaskConfig(max_dataset_len=10))
-    
-    # Load dataset
-    print("Loading TextVQA dataset...")
     ds = task.dataset
-    print(f"Dataset size: {len(ds)}")
-    
-    # Test with first example
-    example = ds[0]
-    print(f"\nFirst example:")
-    print(f"  ID: {task.doc_to_id(example)}")
-    print(f"  Question: {task.doc_to_text(example)}")
-    print(f"  Image: {task.doc_to_visual(example)[0]}")
-    print(f"  Valid answers: {task.doc_to_answer(example)}")
-    
-    # Verify data types
-    assert isinstance(task.doc_to_text(example), str)
-    assert isinstance(task.doc_to_visual(example), list)
-    assert all(isinstance(img, Image.Image) for img in task.doc_to_visual(example))
-    assert isinstance(task.doc_to_id(example), str)
-    assert isinstance(task.doc_to_answer(example), list)
-    assert all(isinstance(ans, str) for ans in task.doc_to_answer(example))
-    
-    print("\nAll tests passed!")
+    assert len(ds) <= 10
+    ex = ds[0]
+    # Verify data shapes/types without verbose prints
+    assert isinstance(task.doc_to_text(ex), str)
+    vis = task.doc_to_visual(ex)
+    assert isinstance(vis, list) and isinstance(vis[0], Image.Image)
+    assert isinstance(task.doc_to_id(ex), str)
+    answers = task.doc_to_answer(ex)
+    assert isinstance(answers, list) and all(isinstance(a, str) for a in answers)
