@@ -3,17 +3,25 @@ import re
 
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 # import neologdn FIXME: fix c++12 error when installing neologdn
 
 
+@register_task("ja-multi-image-vqa")
 class JAMultiImageVQA(Task):
     default_metric = "rougel"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         ds = load_dataset("SakanaAI/JA-Multi-Image-VQA", split="test")
+        ds = ds.rename_column("question", "input_text")
+        ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("SakanaAI/JA-Multi-Image-VQA", split=f"test[:{n}]")
         ds = ds.rename_column("question", "input_text")
         ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
         return ds
@@ -40,7 +48,7 @@ class JAMultiImageVQA(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = JAMultiImageVQA(TaskConfig())
+    task = JAMultiImageVQA(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)

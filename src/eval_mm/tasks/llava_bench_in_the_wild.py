@@ -1,16 +1,26 @@
 from datasets import Dataset, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("llava-bench-in-the-wild")
 class LlavaBenchIntheWild(Task):
     default_metric = "rougel"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         # データセットをロード
-        ds = load_dataset("lmms-lab/llava-bench-in-the-wild", split="train")
+        ds = load_dataset(
+            "lmms-lab/llava-bench-in-the-wild", split="train"
+        )
+        ds = ds.rename_column("question", "input_text")
+        ds = ds.rename_column("gpt_answer", "answer")
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("lmms-lab/llava-bench-in-the-wild", split=f"train[:{n}]")
         ds = ds.rename_column("question", "input_text")
         ds = ds.rename_column("gpt_answer", "answer")
         return ds
@@ -35,7 +45,7 @@ class LlavaBenchIntheWild(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = LlavaBenchIntheWild(TaskConfig())
+    task = LlavaBenchIntheWild(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)

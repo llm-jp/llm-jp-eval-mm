@@ -8,6 +8,7 @@ from datasets import (
 )
 
 from .task import Task
+from .task_registry import register_task
 
 import ast
 import re
@@ -78,17 +79,40 @@ def jmmmu_doc_to_visual(doc):
     return visual
 
 
+@register_task("jmmmu")
 class JMMMU(Task):
     default_metric = "jmmmu"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         configs = get_dataset_config_names("JMMMU/JMMMU")
         datasets = [
             load_dataset("JMMMU/JMMMU", name=subject, split="test")
             for subject in configs
         ]
         dataset = concatenate_datasets(datasets)
+        dataset = dataset.map(
+            lambda x: {
+                "input_text": jmmmu_doc_to_text(x),
+                "question_id": x["id"],
+                "answer": x["answer"],
+            }
+        )
+        return dataset
+
+    def _prepare_test_dataset(self) -> Dataset:
+        configs = get_dataset_config_names("JMMMU/JMMMU")
+        remaining = getattr(self.config, "max_dataset_len", 10)
+        parts: list[Dataset] = []
+        for subject in configs:
+            split = f"test[:{remaining}]"
+            ds_sub = load_dataset("JMMMU/JMMMU", name=subject, split=split)
+            if len(ds_sub) == 0:
+                continue
+            parts.append(ds_sub)
+            remaining -= len(ds_sub)
+            if remaining <= 0:
+                break
+        dataset = concatenate_datasets(parts) if len(parts) > 1 else parts[0]
         dataset = dataset.map(
             lambda x: {
                 "input_text": jmmmu_doc_to_text(x),
@@ -118,7 +142,7 @@ class JMMMU(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = JMMMU(TaskConfig())
+    task = JMMMU(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)

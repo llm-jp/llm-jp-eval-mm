@@ -2,14 +2,15 @@ from PIL import Image
 from datasets import Dataset, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 import os
 
 
+@register_task("jic-vqa")
 class JICVQA(Task):
     default_metric = "jic-vqa"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         if not os.path.exists("dataset/jic_vqa.parquet"):
             raise FileNotFoundError(
                 "Dataset not found. Please run `scripts/prepare_jic_vqa.py` to prepare the dataset."
@@ -19,6 +20,14 @@ class JICVQA(Task):
             "parquet", data_files="dataset/jic_vqa.parquet", split="train"
         )
         return dataset
+
+    def _prepare_test_dataset(self) -> Dataset:
+        # Same as prod; test harness caps length at init
+        if not os.path.exists("dataset/jic_vqa.parquet"):
+            raise FileNotFoundError(
+                "Dataset not found. Please run `scripts/prepare_jic_vqa.py` to prepare the dataset."
+            )
+        return load_dataset("parquet", data_files="dataset/jic_vqa.parquet", split="train")
 
     @staticmethod
     def doc_to_text(doc) -> str:
@@ -39,10 +48,15 @@ class JICVQA(Task):
 
 def test_task():
     from eval_mm.tasks.task import TaskConfig
+    import os
+    import pytest
 
-    task = JICVQA(TaskConfig())
+    # Skip gracefully in CI if local parquet is absent
+    if not os.path.exists("dataset/jic_vqa.parquet"):
+        pytest.skip("JIC-VQA local parquet not found; skipping in CI.")
+
+    task = JICVQA(TaskConfig(max_dataset_len=10))
     ds = task.dataset
-    print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)

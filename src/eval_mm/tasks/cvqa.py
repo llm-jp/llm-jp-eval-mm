@@ -1,6 +1,8 @@
 from datasets import Dataset, load_dataset
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
+import os
 
 MULTI_CHOICE_PROMPT = (
     "与えられた選択肢の中から最も適切な回答のアルファベットを直接記入してください。"
@@ -30,36 +32,65 @@ def construct_prompt(question, options):
     return f"{question}\n{parsed_options}\n\n{MULTI_CHOICE_PROMPT}"
 
 
+@register_task("cvqa")
 class CVQA(Task):
     default_metric = "substring-match"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         ds = load_dataset("afaji/cvqa", split="test")
-
         ds = ds.filter(lambda x: x["Subset"] == "('Japanese', 'Japan')")
-
         ds = ds.map(
             lambda x, idx: {
                 "index": str(idx),
                 "question_id": str(idx),
                 "question": x["Question"],
-                "question_en": x["Translated Question"],  # English
+                "question_en": x.get("Translated Question"),  # English (optional)
                 "options": x["Options"],
-                "translated_options": x["Translated Options"],  # English
+                "translated_options": x.get("Translated Options"),  # English (optional)
                 "answer": x["Label"],  # 0~3
                 "answer_text": OPTIONS_MAP[x["Label"]],
-                "input_text": construct_prompt(x["Question"], x["Options"]),
-                "image": x["image"],
+                # keep original `image` column as-is for lazy decode
             },
             with_indices=True,
         )
-
         return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        # Stream to pick the first N Japanese samples and build a tiny Dataset
+        n = getattr(self.config, "max_dataset_len", 10)
+        stream = load_dataset("afaji/cvqa", split="test", streaming=True)
+        buf = {
+            "index": [],
+            "question_id": [],
+            "question": [],
+            "question_en": [],
+            "options": [],
+            "translated_options": [],
+            "answer": [],
+            "answer_text": [],
+            "image": [],
+        }
+        count = 0
+        for ex in stream:
+            if ex.get("Subset") == "('Japanese', 'Japan')":
+                buf["index"].append(str(count))
+                buf["question_id"].append(str(count))
+                buf["question"].append(ex["Question"])
+                buf["question_en"].append(ex.get("Translated Question"))
+                buf["options"].append(ex["Options"])
+                buf["translated_options"].append(ex.get("Translated Options"))
+                buf["answer"].append(ex["Label"])  # 0~3
+                buf["answer_text"].append(OPTIONS_MAP[ex["Label"]])
+                buf["image"].append(ex["image"])  # keep original to lazily decode later
+                count += 1
+                if count >= n:
+                    break
+        return Dataset.from_dict(buf)
 
     @staticmethod
     def doc_to_text(doc) -> str:
-        return doc["input_text"]
+        # Lazily construct the prompt to reduce preprocessing cost
+        return construct_prompt(doc["question"], doc["options"])
 
     @staticmethod
     def doc_to_visual(doc) -> list[Image.Image]:
@@ -77,14 +108,14 @@ class CVQA(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = CVQA(TaskConfig())
+    task = CVQA(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)
     assert isinstance(task.doc_to_visual(ds[0])[0], Image.Image)
     assert isinstance(task.doc_to_id(ds[0]), str)
     assert isinstance(task.doc_to_answer(ds[0]), str)
-    print(ds[0])
+    # Intentionally avoid printing entire example to prevent accidental image decode
 
 
 if __name__ == "__main__":

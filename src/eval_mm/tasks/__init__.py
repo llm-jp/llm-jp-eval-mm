@@ -11,6 +11,14 @@ from .mecha_ja import MECHAJa
 from .mmmlu import MMMLU
 from .cc_ocr import CCOCR
 from .cvqa import CVQA
+from .ai2d import AI2D
+from .blink import BLINK
+from .docvqa import DocVQA
+from .infographicvqa import InfographicVQA
+from .textvqa import TextVQA
+from .chartqa import ChartQA
+from .chartqapro import ChartQAPro
+from .okvqa import OKVQA
 from .task_registry import TaskRegistry
 from .task import TaskConfig
 
@@ -28,6 +36,14 @@ __all__ = [
     "MMMLU",
     "CCOCR",
     "CVQA",
+    "AI2D",
+    "BLINK",
+    "DocVQA",
+    "InfographicVQA",
+    "TextVQA",
+    "ChartQA",
+    "ChartQAPro",
+    "OKVQA",
     "TaskRegistry",
     "TaskConfig",
 ]

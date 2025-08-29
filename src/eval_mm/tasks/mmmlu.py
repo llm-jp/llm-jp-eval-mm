@@ -1,14 +1,15 @@
 from datasets import load_dataset, Dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("mmmlu")
 class MMMLU(Task):
     default_metric = "exact-match"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         ds = load_dataset("openai/MMMLU", "JA_JP", split="test")
 
         # ['Unnamed: 0', 'Question', 'A', 'B', 'C', 'D', 'Answer', 'Subject'],
@@ -22,6 +23,19 @@ class MMMLU(Task):
             remove_columns=["Question", "A", "B", "C", "D", "Subject"],
         )
 
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("openai/MMMLU", "JA_JP", split=f"test[:{n}]")
+        def build_prompt(example):
+            return f"{example['Question']} A: {example['A']} B: {example['B']} C: {example['C']} D: {example['D']}. Output only the letter of the correct answer. Answer:"
+        ds = ds.rename_column("Answer", "answer")
+        ds = ds.rename_column("Unnamed: 0", "question_id")
+        ds = ds.map(
+            lambda example: {"input_text": build_prompt(example)},
+            remove_columns=["Question", "A", "B", "C", "D", "Subject"],
+        )
         return ds
 
     @staticmethod
@@ -44,7 +58,7 @@ class MMMLU(Task):
 def test_task():
     from .task import TaskConfig
 
-    task = MMMLU(TaskConfig())
+    task = MMMLU(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     assert isinstance(task.doc_to_text(ds[0]), str)
     assert isinstance(task.doc_to_visual(ds[0]), list)
