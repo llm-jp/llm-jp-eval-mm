@@ -1,12 +1,12 @@
 import torch
-from llava.constants import IMAGE_TOKEN_INDEX
-from llava.conversation import conv_templates
-from llava.mm_utils import (
+from vila.constants import IMAGE_TOKEN_INDEX
+from vila.conversation import conv_templates
+from vila.mm_utils import (
     get_model_name_from_path,
     process_images,
     tokenizer_image_token,
 )
-from llava.model.builder import load_pretrained_model
+from vila.model.builder import load_pretrained_model
 from base_vlm import BaseVLM
 from utils import GenerationConfig
 from PIL import Image

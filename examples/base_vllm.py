@@ -7,7 +7,12 @@ import torch
 
 
 class VLLM(BaseVLM):
-    def __init__(self, model_id: str = "google/gemma-3-4b-it") -> None:
+    def __init__(self, 
+        model_id: str,
+        gpu_memory_utilization: float = 0.9,
+        max_model_len: int = None,
+        tensor_parallel_size: int = 1,
+    ) -> None:
         self.model_id = model_id
         self.registry = VLLMModelRegistry(self.model_id)
         self.processor = self.registry.processor
@@ -16,7 +21,8 @@ class VLLM(BaseVLM):
         engine_config = self.registry.get_engine_config(self.model_id)
         self.engine_args_dict = {
             "model": self.model_id,
-            "tensor_parallel_size": 2,  # number of GPUs of the machine, but 40 should be divisible by tensor_parallel_size
+            "tensor_parallel_size": tensor_parallel_size,  # number of GPUs of the machine, but 40 should be divisible by tensor_parallel_size
+            "gpu_memory_utilization": gpu_memory_utilization,
             "download_dir": "./.cache/vllm",
             **engine_config,
         }
