@@ -3,6 +3,7 @@ from collections import Counter
 from typing import List, Dict, Any, cast  # Added cast for type hinting clarity
 
 from .scorer import Scorer, AggregateOutput, ScorerConfig
+from .scorer_registry import register_scorer
 
 
 def token_normalize(
@@ -158,6 +159,7 @@ def calculate_metrics(
 
 
 # CCOCRScorer class, specialized for Japanese (character-level, no alphanum_only)
+@register_scorer("cc-ocr")
 class CCOCRScorer(Scorer):
     def __init__(self, config: ScorerConfig):
         super().__init__(config)
@@ -274,7 +276,7 @@ def test_cc_ocr_scorer():
     assert abs(agg_output1.overall_score - 1.0) < 1e-6, "Test 1 Overall Score"
     assert abs(agg_output1.details["micro_f1_score"] - 1.0) < 1e-6, "Test 1 Micro F1"
     assert abs(agg_output1.details["macro_f1_score"] - 1.0) < 1e-6, "Test 1 Macro F1"
-    print("Test 1 (Exact Match - Japanese) Passed!")
+    # No prints to keep tests quiet
 
     # Test 2: Partial match (Japanese example, character-level)
     # Sample 1:
@@ -346,7 +348,7 @@ def test_cc_ocr_scorer():
         abs(agg_output2.details["macro_f1_score"] - expected_macro_f1_2) < 1e-6
     ), f"Test 2 Macro F1: Expected {expected_macro_f1_2}, Got {agg_output2.details['macro_f1_score']}"
 
-    print("Test 2 (Partial Match - Japanese, Char Level) Passed!")
+    # No prints to keep tests quiet
 
     # Test 3: Mismatch and normalization (Japanese)
     # text_normalize_and_tokenize handles spaces and some full-width/half-width considerations implicitly by char list.
@@ -420,7 +422,7 @@ def test_cc_ocr_scorer():
     assert (
         abs(agg_output3.details["macro_f1_score"] - expected_macro_f1_3) < 1e-6
     ), f"Test 3 Macro F1: Expected {expected_macro_f1_3}, Got {agg_output3.details['macro_f1_score']}"
-    print("Test 3 (Mismatch and Normalization - Japanese) Passed!")
+    # No prints to keep tests quiet
 
     # Test 4: Empty input
     refs_empty: List[str] = []
@@ -431,10 +433,9 @@ def test_cc_ocr_scorer():
     assert agg_output_empty.overall_score == 0.0, "Test 4 Overall Score Empty"
     assert agg_output_empty.details["micro_f1_score"] == 0.0, "Test 4 Micro F1 Empty"
     assert agg_output_empty.details["macro_f1_score"] == 0.0, "Test 4 Macro F1 Empty"
-    print("Test 4 (Empty input) Passed!")
+    # No prints to keep tests quiet
 
 
 if __name__ == "__main__":
-    print("CCOCRScorer tests (Japanese specialized) starting...")
+    # Run tests quietly when executed directly
     test_cc_ocr_scorer()
-    print("All CCOCRScorer tests finished!")
