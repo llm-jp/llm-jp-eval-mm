@@ -1,4 +1,5 @@
 from eval_mm.metrics.scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 from sacrebleu import sentence_bleu
 from unicodedata import normalize
 
@@ -38,6 +39,7 @@ def bleu_ja(refs, pred):
     return bleu_score.score / 100
 
 
+@register_scorer("jdocqa")
 class JDocQAScorer(Scorer):
     def score(self, refs: list[str], preds: list[str]) -> list[int]:
         docs = self.config.docs

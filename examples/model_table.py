@@ -10,6 +10,13 @@ MODEL_ID_TO_CLASS_PATH = {
     "internlm/internlm-xcomposer2d5-7b": "xcomposer2d5.VLM",
     "OpenGVLab/InternVL2-8B": "internvl2.VLM",
     "OpenGVLab/InternVL2-26B": "internvl2.VLM",
+    "OpenGVLab/InternVL3-1B": "internvl3.VLM",
+    "OpenGVLab/InternVL3-2B": "internvl3.VLM",
+    "OpenGVLab/InternVL3-8B": "internvl3.VLM",
+    "OpenGVLab/InternVL3-9B": "internvl3.VLM",
+    "OpenGVLab/InternVL3-14B": "internvl3.VLM",
+    "OpenGVLab/InternVL3-38B": "internvl3.VLM",
+    "OpenGVLab/InternVL3-78B": "internvl3.VLM",
     "meta-llama/Llama-3.2-11B-Vision-Instruct": "llama_3_2_vision.VLM",
     "meta-llama/Llama-3.2-90B-Vision-Instruct": "llama_3_2_vision.VLM",
     "Kendamarron/Llama-3.2-11B-Vision-Instruct-Swallow-8B-Merge": "llama_3_2_vision.VLM",
@@ -41,6 +48,8 @@ MODEL_ID_TO_CLASS_PATH = {
     "turing-motors/Heron-NVILA-Lite-2B": "heron_nvila.VLM",
     "turing-motors/Heron-NVILA-Lite-15B": "heron_nvila.VLM",
     "turing-motors/Heron-NVILA-Lite-33B": "heron_nvila.VLM",
+    "CohereLabs/aya-vision-8b": "aya_vision.VLM",
+    "CohereLabs/aya-vision-32b": "aya_vision.VLM",
 }
 
 

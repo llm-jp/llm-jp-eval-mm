@@ -7,16 +7,26 @@ jobs:
   uv-example:
     name: python
     runs-on: ubuntu-latest
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HUGGINGFACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Install the project
-        run: uv sync --dev
+      - name: Prepare submodules
+        run: git submodule update --init --recursive
 
-      - name: Run tests
-        # For example, using `pytest`
+      - name: Install the project (dev deps)
+        run: uv sync --group dev
+
+      - name: Run tests (metrics)
         run: uv run pytest src/eval_mm/metrics/*.py
+
+      - name: Run tests (tasks)
+        run: bash test_git_workflow.sh

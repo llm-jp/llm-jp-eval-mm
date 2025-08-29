@@ -1,15 +1,22 @@
 from datasets import load_dataset, Dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("japanese-heron-bench")
 class JapaneseHeronBench(Task):
     default_metric = "heron-bench"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         ds = load_dataset("Silviase/Japanese-Heron-Bench", split="train")
+        ds = ds.rename_column("text", "input_text")
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("Silviase/Japanese-Heron-Bench", split=f"train[:{n}]")
         ds = ds.rename_column("text", "input_text")
         return ds
 
@@ -33,7 +40,7 @@ class JapaneseHeronBench(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = JapaneseHeronBench(TaskConfig())
+    task = JapaneseHeronBench(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)

@@ -1,3 +1,4 @@
+# -------- DEPRECATED --------
 # This file is modified from https://github.com/haotian-liu/LLaVA/
 
 # rye add protobuf
@@ -8,13 +9,13 @@ from utils import GenerationConfig
 
 import torch
 
-from llava_vila.conversation import SeparatorStyle, conv_templates
-from llava_vila.mm_utils import (
+from vila.conversation import SeparatorStyle, conv_templates
+from vila.mm_utils import (
     get_model_name_from_path,
     process_images,
     tokenizer_image_token,
 )
-from llava_vila.model.builder import load_pretrained_model
+from vila.model.builder import load_pretrained_model
 from PIL import Image
 
 

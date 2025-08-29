@@ -1,14 +1,15 @@
 from datasets import Dataset, concatenate_datasets, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("ja-vg-vqa-500")
 class JaVGVQA500(Task):
     default_metric = "rougel"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         ds = load_dataset("SakanaAI/JA-VG-VQA-500", split="test")
 
         def flatten_sample(sample):
@@ -32,6 +33,26 @@ class JaVGVQA500(Task):
 
         return ds
 
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("SakanaAI/JA-VG-VQA-500", split=f"test[:{n}]")
+        def flatten_sample(sample):
+            dataset = {
+                "image_id": [sample["image_id"] for _ in sample["qas"]],
+                "image": [sample["image"] for _ in sample["qas"]],
+                "qa_id": [qa["qa_id"] for qa in sample["qas"]],
+                "question": [qa["question"] for qa in sample["qas"]],
+                "answer": [qa["answer"] for qa in sample["qas"]],
+            }
+            return Dataset.from_dict(dataset)
+        fragments = []
+        for sample in ds:
+            fragments.append(flatten_sample(sample))
+        ds = concatenate_datasets(fragments)
+        ds = ds.rename_column("question", "input_text")
+        ds = ds.rename_column("qa_id", "question_id")
+        return ds
+
     @staticmethod
     def doc_to_text(doc) -> str:
         return doc["input_text"]
@@ -52,7 +73,7 @@ class JaVGVQA500(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = JaVGVQA500(TaskConfig())
+    task = JaVGVQA500(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)

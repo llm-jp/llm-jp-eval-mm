@@ -10,6 +10,9 @@ from .jdocqa_scorer import JDocQAScorer
 from .jic_vqa_scorer import JICVQAScorer
 from .mecha_ja_scorer import MECHAJaScorer
 from .cc_ocr_scorer import CCOCRScorer
+from .ai2d_scorer import AI2DScorer
+from .blink_scorer import BLINKScorer
+from .mathvista_scorer import MathVistaScorer
 from .scorer_registry import ScorerRegistry
 
 
@@ -26,5 +29,8 @@ __all__ = [
     "JICVQAScorer",
     "MECHAJaScorer",
     "CCOCRScorer",
+    "AI2DScorer",
+    "BLINKScorer",
+    "MathVistaScorer",
     "ScorerRegistry",
 ]

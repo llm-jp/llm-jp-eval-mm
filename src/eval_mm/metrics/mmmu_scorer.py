@@ -4,6 +4,7 @@ import re
 import numpy as np
 from datasets import Dataset
 from .scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 
 DOMAIN_CAT2SUB_CAT = {
     "Art and Design": ["Art", "Art_Theory", "Design", "Music"],
@@ -410,6 +411,7 @@ def get_score(doc: Dataset, pred: str, random_choice: bool) -> int:
     return score
 
 
+@register_scorer("mmmu")
 class MMMUScorer(Scorer):
     def score(self, refs: list[str], preds: list[str]) -> list[int]:
         docs = self.config.docs
@@ -475,7 +477,6 @@ def test_mmmu_score():
     assert scores == [1]
     output = scorer.aggregate(scores)
     assert output.overall_score == 1.0
-    print(output)
     assert output.details == {
         "Overall-Art and Design": 0,
         "Overall-Business": 1.0,

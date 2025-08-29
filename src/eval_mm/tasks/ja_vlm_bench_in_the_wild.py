@@ -1,16 +1,30 @@
 from datasets import Dataset, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 
+@register_task("ja-vlm-bench-in-the-wild")
 class JaVLMBenchIntheWild(Task):
     default_metric = "rougel"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         # データセットをロード
-        ds = load_dataset("SakanaAI/JA-VLM-Bench-In-the-Wild", split="test")
+        ds = load_dataset(
+            "SakanaAI/JA-VLM-Bench-In-the-Wild",
+            split="test",
+        )
+        ds = ds.rename_column("question", "input_text")
+        ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset(
+            "SakanaAI/JA-VLM-Bench-In-the-Wild",
+            split=f"test[:{n}]",
+        )
         ds = ds.rename_column("question", "input_text")
         ds = ds.map(lambda example, idx: {"question_id": idx}, with_indices=True)
         return ds
@@ -35,7 +49,7 @@ class JaVLMBenchIntheWild(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = JaVLMBenchIntheWild(TaskConfig())
+    task = JaVLMBenchIntheWild(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)

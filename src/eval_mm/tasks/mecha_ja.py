@@ -1,5 +1,6 @@
 from datasets import Dataset, load_dataset
 from .task import Task
+from .task_registry import register_task
 from PIL import Image
 
 MULTI_CHOICE_PROMPT = (
@@ -103,6 +104,7 @@ def rotate_options_fn(batch):
     return new_batch
 
 
+@register_task("mecha-ja")
 class MECHAJa(Task):
     default_metric = "mecha-ja"
 
@@ -134,6 +136,32 @@ class MECHAJa(Task):
 
         return ds
 
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset("llm-jp/MECHA-ja", split=f"test[:{n}]")
+        ds = ds.map(
+            lambda x, idx: {
+                "question": x["question"],
+                "options": x["options"],
+                "answer": x["answer"],  # 0~3
+                "answer_type": x["answer_type"],
+                "image": x["image"],
+                "background_text": x["background_text"],
+                "question_id": str(idx),
+                "answer_text": OPTIONS_MAP[x["answer"]],
+                "input_text": construct_prompt(x["question"], x["options"]),
+            },
+            with_indices=True,
+        )
+        if self.config.rotate_choices:
+            ds = ds.map(
+                rotate_options_fn,
+                num_proc=1,
+                batched=True,
+                remove_columns=ds.column_names,
+            )
+        return ds
+
     @staticmethod
     def doc_to_text(doc) -> str:
         return doc["input_text"]
@@ -154,7 +182,7 @@ class MECHAJa(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = MECHAJa(TaskConfig())
+    task = MECHAJa(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)
@@ -163,7 +191,7 @@ def test_task():
     assert isinstance(task.doc_to_id(ds[0]), str)
     assert isinstance(task.doc_to_answer(ds[0]), str)
 
-    task = MECHAJa(TaskConfig(rotate_choices=True))
+    task = MECHAJa(TaskConfig(max_dataset_len=10, rotate_choices=True))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)

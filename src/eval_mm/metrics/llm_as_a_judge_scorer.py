@@ -1,4 +1,5 @@
 from eval_mm.metrics.scorer import Scorer, AggregateOutput
+from .scorer_registry import register_scorer
 from tqdm import tqdm
 import re
 
@@ -24,6 +25,7 @@ Your Score:
 """
 
 
+@register_scorer("llm-as-a-judge")
 class LlmAsaJudgeScorer(Scorer):
     def score(
         self,
@@ -63,7 +65,6 @@ class LlmAsaJudgeScorer(Scorer):
 
         scores = []
         for i, c in enumerate(completion):
-            print(c)
             score = re.search(r"\d", c)
             if score:
                 scores.append(int(score.group()))
@@ -104,7 +105,7 @@ def test_llm_as_a_judge_scorer():
         questions = ["What is the capital of Japan?", "What is the capital of France?"]
         answers = ["Tokyo", "Paris"]
         preds = ["Tokyo", "Paris"]
-        model_name = "gpt-4o-mini-2024-07-18"
+        model_name = "gpt-4.1-2025-04-14"  # or any other model you want to test
         scorer = LlmAsaJudgeScorer(
             ScorerConfig(
                 docs={"input_text": questions},
@@ -131,7 +132,7 @@ def test_llm_as_a_judge_scorer():
             "",
             "日本語教師数の数は34392人、学習者の数は139613人となっています。",
         ]
-        model_name = "gpt-4o-2024-05-13"
+        model_name = "gpt-4.1-2025-04-14"
         scorer = LlmAsaJudgeScorer(
             ScorerConfig(
                 docs={"input_text": questions},

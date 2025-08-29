@@ -1,18 +1,28 @@
 from datasets import Dataset, load_dataset
 
 from .task import Task
+from .task_registry import register_task
 
 from PIL import Image
 
 
+@register_task("jdocqa")
 class JDocQA(Task):
     default_metric = "jdocqa"
 
-    @staticmethod
-    def _prepare_dataset() -> Dataset:
+    def _prepare_dataset(self) -> Dataset:
         ds = load_dataset(
             "speed/JDocQA",
             split="test",
+        )
+        ds = ds.rename_column("question", "input_text")
+        return ds
+
+    def _prepare_test_dataset(self) -> Dataset:
+        n = getattr(self.config, "max_dataset_len", 10)
+        ds = load_dataset(
+            "speed/JDocQA",
+            split=f"test[:{n}]",
         )
         ds = ds.rename_column("question", "input_text")
         return ds
@@ -41,7 +51,7 @@ class JDocQA(Task):
 def test_task():
     from eval_mm.tasks.task import TaskConfig
 
-    task = JDocQA(TaskConfig())
+    task = JDocQA(TaskConfig(max_dataset_len=10))
     ds = task.dataset
     print(ds[0])
     assert isinstance(task.doc_to_text(ds[0]), str)
