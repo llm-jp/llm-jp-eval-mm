@@ -62,12 +62,12 @@ dev = [
     "streamlit>=1.43.2",
 ]
 
-evovlm = ["flash-attn==2.7.3", "transformers==4.42.4", "mantis-vl"]
+evovlm = ["flash-attn>=2.7.3", "transformers==4.42.4", "mantis-vl"]
 
 vilaja = [
     "torch==2.6.0",
     "torchvision>=0.20.1",
-    "flash-attn==2.7.3",
+    "flash-attn>=2.7.3",
     "accelerate==0.27.2",
     "deepspeed>=0.16.3",
     "einops>=0.8.0",
@@ -81,7 +81,7 @@ vilaja = [
 sarashina = [
     "torch==2.6.0",
     "torchvision>=0.20.1",
-    "flash-attn==2.7.3",
+    "flash-attn>=2.7.3",
     "accelerate>=0.27.2",
     "pillow>=10.4.0",
     "protobuf>=5.29.3",
@@ -92,7 +92,7 @@ sarashina = [
 normal = [
     "torch==2.6.0",
     "torchvision>=0.20.1",
-    "flash-attn==2.7.3",
+    "flash-attn>=2.7.3",
     "accelerate>=1.2.1",
     "qwen-vl-utils>=0.0.8",
     "sentencepiece>=0.2.0",
@@ -104,7 +104,7 @@ normal = [
 old = [
     "torch==2.6.0",
     "torchvision>=0.20.1",
-    "flash-attn==2.7.3",
+    "flash-attn>=2.7.3",
     "accelerate>=1.2.1",
     "qwen-vl-utils>=0.0.8",
     "sentencepiece>=0.2.0",
@@ -118,7 +118,7 @@ old = [
 stablevlm = [
     "torch==2.6.0",
     "torchvision>=0.20.1",
-    "flash-attn==2.7.3",
+    "flash-attn>=2.7.3",
     "accelerate>=1.2.1",
     "qwen-vl-utils>=0.0.8",
     "sentencepiece>=0.2.0",
@@ -130,7 +130,7 @@ phi = [
     "torch==2.6.0",
     "torchvision>=0.20.1",
     "accelerate>=1.3.0",
-    "flash-attn==2.7.3",
+    "flash-attn>=2.7.3",
     "peft>=0.13.2",
     "soundfile>=0.13.1",
     "transformers==4.48.2",
@@ -139,7 +139,7 @@ phi = [
 pixtral = [
     "torch==2.6.0",
     "torchvision>=0.20.1",
-    "flash-attn==2.7.3",
+    "flash-attn>=2.7.3",
     "mistral-common>=1.5.4",
     "vllm>=0.8.1",
     "xformers",
@@ -148,7 +148,7 @@ pixtral = [
 calm = [
     "torch==2.6.0",
     "torchvision>=0.20.1",
-    "flash-attn==2.7.3",
+    "flash-attn>=2.7.3",
     "transformers==4.45.0",
 ]
 
