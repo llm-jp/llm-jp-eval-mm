@@ -1,32 +1,31 @@
-from vllm import LLM, SamplingParams
+from dataclasses import asdict
+from typing import Iterable
+
 from PIL import Image
-from utils import GenerationConfig
+from vllm import LLM, SamplingParams
+from vllm.lora.request import LoRARequest
+
 from base_vlm import BaseVLM
-from vllm_registry import VLLMModelRegistry
-import torch
+from utils import GenerationConfig
+from vllm_registry import ModelRequestData, VLLMModelRegistry
 
 
 class VLLM(BaseVLM):
-    def __init__(self, 
+    def __init__(
+        self,
         model_id: str,
-        gpu_memory_utilization: float = 0.9,
-        max_model_len: int = None,
+        gpu_memory_utilization: float = 0.8,
         tensor_parallel_size: int = 1,
     ) -> None:
-        self.model_id = model_id
-        self.registry = VLLMModelRegistry(self.model_id)
-        self.processor = self.registry.processor
-        self.vllm_loader = self.registry.loader_map[self.model_id]
+        self.registry = VLLMModelRegistry(model_id)
 
-        engine_config = self.registry.get_engine_config(self.model_id)
-        self.engine_args_dict = {
-            "model": self.model_id,
-            "tensor_parallel_size": tensor_parallel_size,  # number of GPUs of the machine, but 40 should be divisible by tensor_parallel_size
+        engine_args = asdict(self.registry.get_engine_args()) | {
+            "tensor_parallel_size": tensor_parallel_size,
             "gpu_memory_utilization": gpu_memory_utilization,
-            "download_dir": "./.cache/vllm",
-            **engine_config,
         }
-        self.model = LLM(**self.engine_args_dict)
+
+        self.model_id = model_id
+        self.model = LLM(**engine_args)
 
     def generate(
         self,
@@ -34,22 +33,28 @@ class VLLM(BaseVLM):
         text: str,
         gen_kwargs: GenerationConfig = GenerationConfig(),
     ) -> str:
-        if images is None:
-            images = []
-        req_data = self.vllm_loader(text, images)
-        sampling_params = SamplingParams(
-            temperature=gen_kwargs.temperature,
-            max_tokens=gen_kwargs.max_new_tokens,
-            stop_token_ids=req_data.stop_token_ids,
+        normalized_images = self._normalize_images(images)
+
+        request = self.registry.build_requests([text], [normalized_images])
+
+        sampling_params = self._build_sampling_params(
+            gen_kwargs, request.stop_token_ids
         )
-        outputs = self.model.generate(
-            {
-                "prompt": req_data.prompt,
-                "multi_modal_data": {"image": req_data.image_data},
+
+        payload = {
+            "prompt": request.prompts[0],
+            "multi_modal_data": {
+                self.registry.modality: self._prepare_mm_payload(normalized_images)
             },
+        }
+
+        lora_request = self._resolve_lora_request(request, 1)
+        outputs = self.model.generate(
+            payload,
             sampling_params=sampling_params,
-            lora_request=req_data.lora_requests,
+            lora_request=lora_request,
         )
+
         return outputs[0].outputs[0].text
 
     def batch_generate(
@@ -61,37 +66,86 @@ class VLLM(BaseVLM):
         if images_list is None:
             images_list = [[] for _ in range(len(text_list))]
 
-        assert len(images_list) == len(text_list)
-
-        from tqdm import tqdm
-
-        req_data_list = []
-
-        for text, images in tqdm(zip(text_list, images_list)):
-            req_data_list.append(self.vllm_loader(text, images))
-
-        sampling_params = SamplingParams(
-            temperature=gen_kwargs.temperature,
-            max_tokens=gen_kwargs.max_new_tokens,
+        normalized_list = [self._normalize_images(images) for images in images_list]
+        request = self.registry.build_requests(text_list, normalized_list)
+        sampling_params = self._build_sampling_params(
+            gen_kwargs, request.stop_token_ids
         )
 
-        print(f"Generated {len(req_data_list)} requests")
+        inputs = []
+        for idx, (prompt, images) in enumerate(zip(request.prompts, normalized_list)):
+            multi_modal_data = self._prepare_mm_payload(images)
+            request_payload = {
+                "prompt": prompt,
+                "multi_modal_data": {self.registry.modality: multi_modal_data},
+            }
+            inputs.append(request_payload)
 
+        lora_request = self._resolve_lora_request(request, len(inputs))
         outputs = self.model.generate(
-            [
-                {
-                    "prompt": req_data.prompt,
-                    "multi_modal_data": {"image": req_data.image_data},
-                }
-                for req_data in req_data_list
-            ],
+            inputs,
             sampling_params=sampling_params,
+            lora_request=lora_request,
         )
         return [output.outputs[0].text for output in outputs]
 
+    def _prepare_mm_payload(
+        self, images: list[Image.Image]
+    ) -> Image.Image | list[Image.Image] | None:
+        if not images:
+            return None
+        if len(images) == 1:
+            return images[0]
+        return images
+
+    def _normalize_images(
+        self, images: Iterable[Image.Image] | None
+    ) -> list[Image.Image]:
+        if not images:
+            return []
+
+        normalized: list[Image.Image] = []
+        for image in images:
+            if not isinstance(image, Image.Image):  # pragma: no cover - defensive
+                msg = "All images must be PIL.Image instances"
+                raise TypeError(msg)
+
+            normalized.append(image if image.mode == "RGB" else image.convert("RGB"))
+
+        return normalized
+
+    def _build_sampling_params(
+        self,
+        gen_kwargs: GenerationConfig,
+        stop_token_ids: list[int] | None,
+    ) -> SamplingParams:
+        return SamplingParams(
+            temperature=gen_kwargs.temperature,
+            top_p=gen_kwargs.top_p,
+            max_tokens=gen_kwargs.max_new_tokens,
+            stop_token_ids=stop_token_ids,
+        )
+
+    def _resolve_lora_request(
+        self,
+        request: ModelRequestData,
+        num_prompts: int,
+    ) -> list[LoRARequest] | None:
+        lora_requests = request.lora_requests
+        if not lora_requests:
+            return None
+
+        if len(lora_requests) == num_prompts:
+            return lora_requests
+
+        if len(lora_requests) == 1:
+            return lora_requests * num_prompts
+
+        msg = "Unexpected number of LoRA requests for the current batch"
+        raise ValueError(msg)
+
 
 if __name__ == "__main__":
-    print("=== Qwen/Qwen2.5-VL-3B-Instruct ===")
-    vllm = VLLM("Qwen/Qwen2.5-VL-3B-Instruct")
+    vllm = VLLM("Qwen/Qwen3-VL-30B-A3B-Instruct")
     vllm.test_vlm()
     vllm.test_vlm_batch_100()

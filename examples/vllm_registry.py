@@ -1,106 +1,90 @@
-from typing import Optional
+from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Optional
+
 from PIL import Image
+from vllm import EngineArgs
 from vllm.lora.request import LoRARequest
-from transformers import AutoProcessor
 
 
 @dataclass
 class ModelRequestData:
-    prompt: str
-    image_data: Optional[list[Image.Image]]
+    prompts: list[str]
     stop_token_ids: Optional[list[int]] = None
-    chat_template: Optional[str] = None
     lora_requests: Optional[list[LoRARequest]] = None
 
 
 class VLLMModelRegistry:
-    def __init__(self, model_name: str):
-        self.model_name = model_name
-        self.processor = AutoProcessor.from_pretrained(
-            model_name, trust_remote_code=True
-        )
-        self.loader_map = {
-            "Qwen/Qwen2.5-VL-3B-Instruct": self.load_qwen2_5_vl,
-            "Qwen/Qwen2.5-VL-7B-Instruct": self.load_qwen2_5_vl,
-            "Qwen/Qwen2.5-VL-32B-Instruct": self.load_qwen2_5_vl,
-            "Qwen/Qwen2.5-VL-72B-Instruct": self.load_qwen2_5_vl,
-            "google/gemma-3-4b-it": self.load_gemma3,
-            "google/gemma-3-12b-it": self.load_gemma3,
-            "google/gemma-3-27b-it": self.load_gemma3,
+    def __init__(self, model_id: str):
+        self.model_id = model_id
+        self.modality = "image"
+
+        registry: dict[
+            str,
+            tuple[
+                Callable[[], EngineArgs],
+                Callable[[list[str], list[list[Image.Image]]], ModelRequestData],
+            ],
+        ] = {
+            "Qwen/Qwen3-VL-30B-A3B-Instruct": (
+                self._engine_args_qwen3_vl,
+                self._load_qwen3_vl,
+            ),
         }
 
-    def get_engine_config(self, model_id: str) -> dict:
-        return {
-            "max_model_len": 32768,
-            "max_num_seqs": 5,
-            "limit_mm_per_prompt": {"image": 5},
-            "trust_remote_code": True,
-        }
-
-    def load_qwen2_5_vl(
-        self, text: str, images: list[Image.Image] | None
-    ) -> ModelRequestData:
         try:
-            from qwen_vl_utils import process_vision_info
-        except ModuleNotFoundError:
-            print(
-                "WARNING: `qwen-vl-utils` not installed, input images will not "
-                "be automatically resized. You can enable this functionality by "
-                "`pip install qwen-vl-utils`."
-            )
-            process_vision_info = None
+            self._engine_resolver, self._request_builder = registry[model_id]
+        except KeyError as exc:  # pragma: no cover - defensive programming
+            raise ValueError(
+                f"Model {model_id} is not registered for VLM inference"
+            ) from exc
 
-        if images is None:
-            images = []
+    def get_engine_args(self) -> EngineArgs:
+        """Return the EngineArgs recommended by the registry."""
 
-        placeholders = [{"type": "image", "image": image} for image in images]
-        messages = [
-            {
-                "role": "user",
-                "content": [
-                    *placeholders,
-                    {"type": "text", "text": text},
-                ],
-            }
-        ]
+        return self._engine_resolver()
 
-        prompt = self.processor.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
-        )
-
-        if process_vision_info is None:
-            image_data = images
-        else:
-            image_data, _ = process_vision_info(messages, return_video_kwargs=False)
-
-        return ModelRequestData(
-            prompt=prompt,
-            image_data=image_data,
-        )
-
-    def load_gemma3(
-        self, text: str, images: list[Image.Image] | None
+    def build_requests(
+        self, texts: list[str], images_list: list[list[Image.Image]]
     ) -> ModelRequestData:
-        if images is None:
-            images = []
+        """Create prompts and optional extras for the provided inputs."""
 
-        placeholders = [{"type": "image", "image": image} for image in images]
-        messages = [
-            {
-                "role": "user",
-                "content": [
-                    *placeholders,
-                    {"type": "text", "text": text},
-                ],
-            }
-        ]
+        return self._request_builder(texts, images_list)
 
-        prompt = self.processor.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
+    def _engine_args_qwen3_vl(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=4096,
+            max_num_seqs=5,
+            mm_processor_kwargs={
+                "min_pixels": 28 * 28,
+                "max_pixels": 1280 * 28 * 28,
+                "fps": 1,
+            },
+            limit_mm_per_prompt={self.modality: 5},
         )
 
-        return ModelRequestData(
-            prompt=prompt,
-            image_data=images,
-        )
+    def _load_qwen3_vl(
+        self, texts: list[str], images_list: list[list[Image.Image]]
+    ) -> ModelRequestData:
+        if len(texts) != len(images_list):
+            msg = "texts and images_list must have identical length"
+            raise ValueError(msg)
+
+        prompts: list[str] = []
+        for text, images in zip(texts, images_list):
+            num_images = len(images)
+            if num_images > 0:
+                placeholder = "".join("<|image_pad|>" for _ in range(num_images))
+                vision_block = f"<|vision_start|>{placeholder}<|vision_end|>"
+            else:
+                vision_block = ""
+
+            prompt = (
+                "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n"
+                f"<|im_start|>user\n{vision_block}{text}<|im_end|>\n"
+                "<|im_start|>assistant\n"
+            )
+            prompts.append(prompt)
+
+        return ModelRequestData(prompts=prompts)
