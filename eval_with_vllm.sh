@@ -5,15 +5,16 @@ export CUDA_VISIBLE_DEVICES=0,1
 
 # Model name to group name mapping
 declare -A MODEL_GROUP_MAP=(
-    ["Qwen/Qwen3-VL-30B-A3B-Instruct"]="vllm_normal"
+    # ["Qwen/Qwen3-VL-30B-A3B-Instruct"]="vllm_normal"
     # ["moonshotai/Kimi-VL-A3B-Instruct"]="vllm_normal" # 今は動かない
-    ["deepseek-ai/deepseek-vl2"]="vllm_normal"
-    ["OpenGVLab/InternVL3-1B"]="vllm_normal"
-    ["OpenGVLab/InternVL3-2B"]="vllm_normal"
-    ["OpenGVLab/InternVL3-8B"]="vllm_normal"
-    ["OpenGVLab/InternVL3-14B"]="vllm_normal"
-    ["OpenGVLab/InternVL3-38B"]="vllm_normal"
-    ["OpenGVLab/InternVL3-78B"]="vllm_normal"
+    # ["deepseek-ai/deepseek-vl2"]="vllm_normal"
+    ["openbmb/MiniCPM-o-2_6"]="vllm_normal"
+    # ["OpenGVLab/InternVL3-1B"]="vllm_normal"
+    # ["OpenGVLab/InternVL3-2B"]="vllm_normal"
+    # ["OpenGVLab/InternVL3-8B"]="vllm_normal"
+    # ["OpenGVLab/InternVL3-14B"]="vllm_normal"
+    # ["OpenGVLab/InternVL3-38B"]="vllm_normal"
+    # ["OpenGVLab/InternVL3-78B"]="vllm_normal"
 )
 
 declare -a task_list=(
