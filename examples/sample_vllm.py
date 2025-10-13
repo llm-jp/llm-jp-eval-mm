@@ -178,7 +178,7 @@ def main():
     )
     task = eval_mm.TaskRegistry.load_task(args.task_id, task_config)
 
-    output_dir = os.path.join(args.result_dir, args.task_id, args.model_id + "_vllm")
+    output_dir = os.path.join(args.result_dir, args.task_id, args.model_id)
     os.makedirs(output_dir, exist_ok=True)
 
     preds, _ = load_or_generate_predictions(args, task, gen_kwargs, output_dir)

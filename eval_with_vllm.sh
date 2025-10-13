@@ -6,30 +6,37 @@ export CUDA_VISIBLE_DEVICES=0,1
 # Model name to group name mapping
 declare -A MODEL_GROUP_MAP=(
     ["Qwen/Qwen3-VL-30B-A3B-Instruct"]="vllm_normal"
+    # ["moonshotai/Kimi-VL-A3B-Instruct"]="vllm_normal" # 今は動かない
+    ["OpenGVLab/InternVL3-1B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-2B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-8B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-14B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-38B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-78B"]="vllm_normal"
 )
 
 declare -a task_list=(
     "japanese-heron-bench"
-    # "ja-vlm-bench-in-the-wild"
-    # "ja-vg-vqa-500"
-    # "jmmmu"
-    # "ja-multi-image-vqa"
-    # "jdocqa"
-    # "mmmu"
-    # "llava-bench-in-the-wild"
-    # "jic-vqa"
-    # "cvqa"
-    # "cc-ocr"
-    # "mecha-ja"
-    # "ai2d"
+    "ja-vlm-bench-in-the-wild"
+    "ja-vg-vqa-500"
+    "jmmmu"
+    "ja-multi-image-vqa"
+    "jdocqa"
+    "mmmu"
+    "llava-bench-in-the-wild"
+    "jic-vqa"
+    "cvqa"
+    "cc-ocr"
+    "mecha-ja"
+    "ai2d"
     # "blink"
-    # "docvqa"
-    # "infographicvqa"
-    # "textvqa"
-    # "chartqa"
+    "docvqa"
+    "infographicvqa"
+    "textvqa"
+    "chartqa"
     # "chartqapro"
     # "mathvista"
-    # "okvqa"
+    "okvqa"
 )
 
 # === Metrics Mapping ===
@@ -68,8 +75,9 @@ for RESULT_DIR in "${result_dir_list[@]}"; do
         METRIC=${METRIC_MAP[$task]}
         for model_name in "${!MODEL_GROUP_MAP[@]}"; do
             model_group=${MODEL_GROUP_MAP[$model_name]}
-            source .uv/$model_group-env/bin/activate
-            uv run --active python examples/sample_vllm.py \
+            source .uv/vllm_normal-env/bin/activate
+            uv pip list
+            python examples/sample_vllm.py \
                 --model_id "$model_name" \
                 --task_id "$task" \
                 --metrics "$METRIC" \
