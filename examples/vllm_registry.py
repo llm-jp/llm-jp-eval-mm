@@ -54,6 +54,10 @@ class VLLMModelRegistry:
                 self._engine_args_minicpm_o,
                 self._load_minicpm_o,
             ),
+            "zai-org/glm-4v-9b": (
+                self._engine_args_glm4v,
+                self._load_glm4v,
+            ),
         }
 
         for internvl_model in INTERNVL_MODELS:
@@ -237,6 +241,42 @@ class VLLMModelRegistry:
 
         return ModelRequestData(prompts=prompts)
 
+    def _engine_args_glm4v(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=2048,
+            max_num_seqs=2,
+            trust_remote_code=True,
+            enforce_eager=True,
+            hf_overrides={"architectures": ["GLM4VForCausalLM"]},
+            limit_mm_per_prompt={self.modality: 5},
+        )
+
+    def _load_glm4v(
+        self, texts: list[str], images_list: list[list[Image.Image]]
+    ) -> ModelRequestData:
+        if len(texts) != len(images_list):
+            msg = "texts and images_list must have identical length"
+            raise ValueError(msg)
+
+        prompts: list[str] = []
+        for text, images in zip(texts, images_list):
+            num_images = len(images)
+            if num_images > 0:
+                image_tokens = "".join(
+                    "<|begin_of_image|><|endoftext|><|end_of_image|>"
+                    for _ in range(num_images)
+                )
+            else:
+                image_tokens = ""
+
+            prompt = "<|user|>\n" + f"{image_tokens}{text}<|assistant|>"
+            prompts.append(prompt)
+
+        stop_token_ids = [151329, 151336, 151338]
+
+        return ModelRequestData(prompts=prompts, stop_token_ids=stop_token_ids)
+
     def _engine_args_minicpm_o(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
@@ -359,6 +399,20 @@ def preview_deepseek_vl2_requests(
     return registry.build_requests(texts, images_list)
 
 
+def preview_glm4v_requests(
+    texts: list[str], image_counts: list[int]
+) -> ModelRequestData:
+    """Build prompts for GLM-4V using dummy images (testing helper)."""
+
+    if len(texts) != len(image_counts):
+        msg = "texts and image_counts must have identical length"
+        raise ValueError(msg)
+
+    images_list = [_generate_dummy_images(count) for count in image_counts]
+    registry = VLLMModelRegistry("zai-org/glm-4v-9b")
+    return registry.build_requests(texts, images_list)
+
+
 def preview_minicpm_o_requests(
     texts: list[str], image_counts: list[int]
 ) -> ModelRequestData:
@@ -384,6 +438,7 @@ def _parse_cli_args() -> argparse.Namespace:
             "Qwen/Qwen3-VL-30B-A3B-Instruct",
             "moonshotai/Kimi-VL-A3B-Instruct",
             "deepseek-ai/deepseek-vl2",
+            "zai-org/glm-4v-9b",
             "openbmb/MiniCPM-o-2_6",
             *INTERNVL_MODELS,
         ],
@@ -436,6 +491,7 @@ def _preview_cli() -> None:
         "Qwen/Qwen3-VL-30B-A3B-Instruct": preview_qwen3_vl_requests,
         "moonshotai/Kimi-VL-A3B-Instruct": preview_kimi_vl_requests,
         "deepseek-ai/deepseek-vl2": preview_deepseek_vl2_requests,
+        "zai-org/glm-4v-9b": preview_glm4v_requests,
         "openbmb/MiniCPM-o-2_6": preview_minicpm_o_requests,
     }
 
