@@ -26,6 +26,22 @@ INTERNVL_MODELS: tuple[str, ...] = (
 )
 
 
+OVIS2_MODELS: tuple[str, ...] = (
+    "AIDC-AI/Ovis2-1B",
+    "AIDC-AI/Ovis2-2B",
+    "AIDC-AI/Ovis2-4B",
+    "AIDC-AI/Ovis2-8B",
+    "AIDC-AI/Ovis2-16B",
+    "AIDC-AI/Ovis2-34B",
+)
+
+
+OVIS2_5_MODELS: tuple[str, ...] = (
+    "AIDC-AI/Ovis2.5-2B",
+    "AIDC-AI/Ovis2.5-9B",
+)
+
+
 class VLLMModelRegistry:
     def __init__(self, model_id: str):
         self.model_id = model_id
@@ -64,6 +80,18 @@ class VLLMModelRegistry:
             registry[internvl_model] = (
                 self._engine_args_internvl,
                 self._load_internvl,
+            )
+
+        for ovis_model in OVIS2_MODELS:
+            registry[ovis_model] = (
+                self._engine_args_ovis2,
+                self._load_ovis2,
+            )
+
+        for ovis_model in OVIS2_5_MODELS:
+            registry[ovis_model] = (
+                self._engine_args_ovis2_5,
+                self._load_ovis2_5,
             )
 
         try:
@@ -277,6 +305,98 @@ class VLLMModelRegistry:
 
         return ModelRequestData(prompts=prompts, stop_token_ids=stop_token_ids)
 
+    def _engine_args_ovis2(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=4096,
+            max_num_seqs=2,
+            trust_remote_code=True,
+            dtype="half",
+            limit_mm_per_prompt={self.modality: 1},
+        )
+
+    def _load_ovis2(
+        self, texts: list[str], images_list: list[list[Image.Image]]
+    ) -> ModelRequestData:
+        if len(texts) != len(images_list):
+            msg = "texts and images_list must have identical length"
+            raise ValueError(msg)
+
+        if not hasattr(self, "_ovis_tokenizer"):
+            self._ovis_tokenizer = AutoTokenizer.from_pretrained(
+                self.model_id,
+                trust_remote_code=True,
+            )
+
+        tokenizer = self._ovis_tokenizer
+        messages = []
+        for text, images in zip(texts, images_list):
+            num_images = len(images)
+            placeholder_lines = "\n".join("<image>" for _ in range(num_images))
+            if placeholder_lines and text:
+                content = f"{placeholder_lines}\n{text}"
+            elif placeholder_lines:
+                content = placeholder_lines
+            else:
+                content = text
+
+            messages.append([{"role": "user", "content": content}])
+
+        prompts = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+
+        return ModelRequestData(prompts=prompts)
+
+    def _engine_args_ovis2_5(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=4096,
+            max_num_seqs=2,
+            trust_remote_code=True,
+            dtype="half",
+            limit_mm_per_prompt={self.modality: 1},
+        )
+
+    def _load_ovis2_5(
+        self, texts: list[str], images_list: list[list[Image.Image]]
+    ) -> ModelRequestData:
+        if len(texts) != len(images_list):
+            msg = "texts and images_list must have identical length"
+            raise ValueError(msg)
+
+        placeholder_map = {
+            "image": "<image>",
+            "video": "<video>",
+        }
+        placeholder = placeholder_map.get(self.modality, "<image>")
+
+        prompts: list[str] = []
+        for text, images in zip(texts, images_list):
+            num_images = len(images)
+            lines: list[str] = []
+            if num_images > 0:
+                media_block = "\n".join(placeholder for _ in range(num_images))
+                lines.append(media_block)
+            if text:
+                lines.append(text)
+
+            content_block = "\n".join(lines)
+            if content_block:
+                content_block = f"{content_block}\n"
+
+            prompt = (
+                "<|im_start|>user\n\n"
+                f"{content_block}"
+                "<|im_end|>\n"
+                "<|im_start|>assistant\n"
+            )
+            prompts.append(prompt)
+
+        return ModelRequestData(prompts=prompts)
+
     def _engine_args_minicpm_o(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
@@ -413,6 +533,34 @@ def preview_glm4v_requests(
     return registry.build_requests(texts, images_list)
 
 
+def preview_ovis2_requests(
+    texts: list[str], image_counts: list[int]
+) -> ModelRequestData:
+    """Build prompts for Ovis2 using dummy images (testing helper)."""
+
+    if len(texts) != len(image_counts):
+        msg = "texts and image_counts must have identical length"
+        raise ValueError(msg)
+
+    images_list = [_generate_dummy_images(count) for count in image_counts]
+    registry = VLLMModelRegistry("AIDC-AI/Ovis2-8B")
+    return registry.build_requests(texts, images_list)
+
+
+def preview_ovis2_5_requests(
+    texts: list[str], image_counts: list[int]
+) -> ModelRequestData:
+    """Build prompts for Ovis2.5 using dummy images (testing helper)."""
+
+    if len(texts) != len(image_counts):
+        msg = "texts and image_counts must have identical length"
+        raise ValueError(msg)
+
+    images_list = [_generate_dummy_images(count) for count in image_counts]
+    registry = VLLMModelRegistry("AIDC-AI/Ovis2.5-9B")
+    return registry.build_requests(texts, images_list)
+
+
 def preview_minicpm_o_requests(
     texts: list[str], image_counts: list[int]
 ) -> ModelRequestData:
@@ -439,6 +587,8 @@ def _parse_cli_args() -> argparse.Namespace:
             "moonshotai/Kimi-VL-A3B-Instruct",
             "deepseek-ai/deepseek-vl2",
             "zai-org/glm-4v-9b",
+            *OVIS2_MODELS,
+            *OVIS2_5_MODELS,
             "openbmb/MiniCPM-o-2_6",
             *INTERNVL_MODELS,
         ],
@@ -497,6 +647,12 @@ def _preview_cli() -> None:
 
     for internvl_model in INTERNVL_MODELS:
         preview_dispatch[internvl_model] = preview_internvl_requests
+
+    for ovis_model in OVIS2_MODELS:
+        preview_dispatch[ovis_model] = preview_ovis2_requests
+
+    for ovis_model in OVIS2_5_MODELS:
+        preview_dispatch[ovis_model] = preview_ovis2_5_requests
 
     preview_fn = preview_dispatch[args.model_id]
     registry = VLLMModelRegistry(args.model_id)
