@@ -1,23 +1,23 @@
 # Set CUDA devices
 set -eux  # エラーが発生したらスクリプトを停止する
 
-export CUDA_VISIBLE_DEVICES=0,1
+export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5
 
 # Model name to group name mapping
 declare -A MODEL_GROUP_MAP=(
     # ["Qwen/Qwen3-VL-30B-A3B-Instruct"]="vllm_normal"
     # ["moonshotai/Kimi-VL-A3B-Instruct"]="vllm_normal" # 今は動かない
     # ["deepseek-ai/deepseek-vl2"]="vllm_normal"
-    ["openbmb/MiniCPM-o-2_6"]="vllm_normal"
-    ["zai-org/glm-4v-9b"]="vllm_normal"
+    # ["openbmb/MiniCPM-o-2_6"]="vllm_normal"
+    ["zai-org/GLM-4.5V"]="vllm_normal"
     # ["AIDC-AI/Ovis2-1B"]="vllm_normal"
     # ["AIDC-AI/Ovis2-2B"]="vllm_normal"
     # ["AIDC-AI/Ovis2-4B"]="vllm_normal"
-    ["AIDC-AI/Ovis2-8B"]="vllm_normal"
+    # ["AIDC-AI/Ovis2-8B"]="vllm_normal"
     # ["AIDC-AI/Ovis2-16B"]="vllm_normal"
     # ["AIDC-AI/Ovis2-34B"]="vllm_normal"
     # ["AIDC-AI/Ovis2.5-2B"]="vllm_normal"
-    ["AIDC-AI/Ovis2.5-9B"]="vllm_normal"
+    # ["AIDC-AI/Ovis2.5-9B"]="vllm_normal"
     # ["OpenGVLab/InternVL3-1B"]="vllm_normal"
     # ["OpenGVLab/InternVL3-2B"]="vllm_normal"
     # ["OpenGVLab/InternVL3-8B"]="vllm_normal"
@@ -28,26 +28,26 @@ declare -A MODEL_GROUP_MAP=(
 
 declare -a task_list=(
     "japanese-heron-bench"
-    # "ja-vlm-bench-in-the-wild"
-    # "ja-vg-vqa-500"
-    # "jmmmu"
-    # "ja-multi-image-vqa"
-    # "jdocqa"
-    # "mmmu"
-    # "llava-bench-in-the-wild"
-    # "jic-vqa"
-    # "cvqa"
-    # "cc-ocr"
-    # "mecha-ja"
-    # "ai2d"
-    # # "blink"
-    # "docvqa"
-    # "infographicvqa"
-    # "textvqa"
-    # "chartqa"
-    # # "chartqapro"
-    # # "mathvista"
-    # "okvqa"
+    "ja-vlm-bench-in-the-wild"
+    "ja-vg-vqa-500"
+    "jmmmu"
+    "ja-multi-image-vqa"
+    "jdocqa"
+    "mmmu"
+    "llava-bench-in-the-wild"
+    "jic-vqa"
+    "cvqa"
+    "cc-ocr"
+    "mecha-ja"
+    "ai2d"
+    # "blink"
+    "docvqa"
+    "infographicvqa"
+    "textvqa"
+    "chartqa"
+    # "chartqapro"
+    # "mathvista"
+    "okvqa"
 )
 
 # === Metrics Mapping ===
@@ -94,8 +94,8 @@ for RESULT_DIR in "${result_dir_list[@]}"; do
                 --metrics "$METRIC" \
                 --judge_model "gpt-4.1-2025-04-14" \
                 --result_dir "$RESULT_DIR" \
-                --tensor_parallel_size 2 \
-                # --inference_only
+                --tensor_parallel_size 4 \
+                --inference_only
         done
     done
 done

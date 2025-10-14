@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from PIL import Image
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoProcessor
 from vllm import EngineArgs
 from vllm.lora.request import LoRARequest
 
@@ -70,9 +70,9 @@ class VLLMModelRegistry:
                 self._engine_args_minicpm_o,
                 self._load_minicpm_o,
             ),
-            "zai-org/glm-4v-9b": (
-                self._engine_args_glm4v,
-                self._load_glm4v,
+            "zai-org/GLM-4.5V": (
+                self._engine_args_glm4_5v,
+                self._load_glm4_5v,
             ),
         }
 
@@ -116,7 +116,7 @@ class VLLMModelRegistry:
     def _engine_args_qwen3_vl(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
-            max_model_len=4096,
+            max_model_len=32768,
             max_num_seqs=5,
             mm_processor_kwargs={
                 "min_pixels": 28 * 28,
@@ -154,7 +154,7 @@ class VLLMModelRegistry:
     def _engine_args_kimi_vl(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
-            max_model_len=4096,
+            max_model_len=32768,
             trust_remote_code=True,
             limit_mm_per_prompt={self.modality: 5},
         )
@@ -191,7 +191,7 @@ class VLLMModelRegistry:
         return EngineArgs(
             model=self.model_id,
             trust_remote_code=True,
-            max_model_len=8192,
+            max_model_len=32768,
             limit_mm_per_prompt={self.modality: 5},
         )
 
@@ -269,18 +269,17 @@ class VLLMModelRegistry:
 
         return ModelRequestData(prompts=prompts)
 
-    def _engine_args_glm4v(self) -> EngineArgs:
+    def _engine_args_glm4_5v(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
-            max_model_len=2048,
+            max_model_len=32768,
             max_num_seqs=2,
             trust_remote_code=True,
             enforce_eager=True,
-            hf_overrides={"architectures": ["GLM4VForCausalLM"]},
             limit_mm_per_prompt={self.modality: 5},
         )
 
-    def _load_glm4v(
+    def _load_glm4_5v(
         self, texts: list[str], images_list: list[list[Image.Image]]
     ) -> ModelRequestData:
         if len(texts) != len(images_list):
@@ -288,31 +287,38 @@ class VLLMModelRegistry:
             raise ValueError(msg)
 
         prompts: list[str] = []
+        processor = AutoProcessor.from_pretrained(
+            self.model_id,
+            trust_remote_code=True,
+        )
         for text, images in zip(texts, images_list):
-            num_images = len(images)
-            if num_images > 0:
-                image_tokens = "".join(
-                    "<|begin_of_image|><|endoftext|><|end_of_image|>"
-                    for _ in range(num_images)
-                )
-            else:
-                image_tokens = ""
-
-            prompt = "<|user|>\n" + f"{image_tokens}{text}<|assistant|>"
+            placeholders = [{"type": "image", "image": image} for image in images]
+            messages = [
+                {
+                    "role": "user",
+                    "content": [
+                        *placeholders,
+                        {"type": "text", "text": text},
+                    ],
+                }
+            ]
+            prompt = processor.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
             prompts.append(prompt)
 
-        stop_token_ids = [151329, 151336, 151338]
-
-        return ModelRequestData(prompts=prompts, stop_token_ids=stop_token_ids)
+        return ModelRequestData(prompts=prompts)
 
     def _engine_args_ovis2(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
-            max_model_len=4096,
+            max_model_len=8192,
             max_num_seqs=2,
             trust_remote_code=True,
             dtype="half",
-            limit_mm_per_prompt={self.modality: 1},
+            limit_mm_per_prompt={self.modality: 5},
         )
 
     def _load_ovis2(
@@ -357,7 +363,7 @@ class VLLMModelRegistry:
             max_num_seqs=2,
             trust_remote_code=True,
             dtype="half",
-            limit_mm_per_prompt={self.modality: 1},
+            limit_mm_per_prompt={self.modality: 5},
         )
 
     def _load_ovis2_5(
@@ -519,7 +525,7 @@ def preview_deepseek_vl2_requests(
     return registry.build_requests(texts, images_list)
 
 
-def preview_glm4v_requests(
+def preview_glm4_5v_requests(
     texts: list[str], image_counts: list[int]
 ) -> ModelRequestData:
     """Build prompts for GLM-4V using dummy images (testing helper)."""
@@ -529,7 +535,7 @@ def preview_glm4v_requests(
         raise ValueError(msg)
 
     images_list = [_generate_dummy_images(count) for count in image_counts]
-    registry = VLLMModelRegistry("zai-org/glm-4v-9b")
+    registry = VLLMModelRegistry("zai-org/GLM-4.5V")
     return registry.build_requests(texts, images_list)
 
 
@@ -586,7 +592,7 @@ def _parse_cli_args() -> argparse.Namespace:
             "Qwen/Qwen3-VL-30B-A3B-Instruct",
             "moonshotai/Kimi-VL-A3B-Instruct",
             "deepseek-ai/deepseek-vl2",
-            "zai-org/glm-4v-9b",
+            "zai-org/GLM-4.5V",
             *OVIS2_MODELS,
             *OVIS2_5_MODELS,
             "openbmb/MiniCPM-o-2_6",
@@ -641,7 +647,7 @@ def _preview_cli() -> None:
         "Qwen/Qwen3-VL-30B-A3B-Instruct": preview_qwen3_vl_requests,
         "moonshotai/Kimi-VL-A3B-Instruct": preview_kimi_vl_requests,
         "deepseek-ai/deepseek-vl2": preview_deepseek_vl2_requests,
-        "zai-org/glm-4v-9b": preview_glm4v_requests,
+        "zai-org/GLM-4.5V": preview_glm4_5v_requests,
         "openbmb/MiniCPM-o-2_6": preview_minicpm_o_requests,
     }
 
