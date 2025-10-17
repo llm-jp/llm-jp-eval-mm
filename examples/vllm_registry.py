@@ -154,7 +154,7 @@ class VLLMModelRegistry:
     def _engine_args_kimi_vl(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
-            max_model_len=32768,
+            max_model_len=8192,
             trust_remote_code=True,
             limit_mm_per_prompt={self.modality: 5},
         )
@@ -272,11 +272,11 @@ class VLLMModelRegistry:
     def _engine_args_glm4_5v(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
-            max_model_len=32768,
+            max_model_len=8192,
             max_num_seqs=2,
             trust_remote_code=True,
             enforce_eager=True,
-            limit_mm_per_prompt={self.modality: 5},
+            limit_mm_per_prompt={"image": 5, "video": 0},
         )
 
     def _load_glm4_5v(
@@ -359,7 +359,7 @@ class VLLMModelRegistry:
     def _engine_args_ovis2_5(self) -> EngineArgs:
         return EngineArgs(
             model=self.model_id,
-            max_model_len=4096,
+            max_model_len=8192,
             max_num_seqs=2,
             trust_remote_code=True,
             dtype="half",
