@@ -45,26 +45,26 @@ def parse_args():
         action="store_true",
         help="If set, randomly choose the answer from the candidates when parse error occurs in JMMMU and MMMU tasks",
     )
-    
+
     parser.add_argument(
-        "--gpu_memory_utilization", 
-        type=float, 
+        "--gpu_memory_utilization",
+        type=float,
         default=0.95,
-        help="GPU memory utilization for vLLM (default: 0.95)"
+        help="GPU memory utilization for vLLM (default: 0.85)",
     )
     parser.add_argument(
-        "--max_model_len", 
-        type=int, 
+        "--max_model_len",
+        type=int,
         default=None,
-        help="Maximum model context length. If not specified, will use model's default"
+        help="Maximum model context length. If not specified, will use model's default",
     )
     parser.add_argument(
-        "--tensor_parallel_size", 
-        type=int, 
+        "--tensor_parallel_size",
+        type=int,
         default=1,
-        help="Number of GPUs to use for tensor parallelism (default: 1)"
+        help="Number of GPUs to use for tensor parallelism (default: 1)",
     )
-    
+
     return parser.parse_args()
 
 
@@ -84,14 +84,14 @@ def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
     logger.info(f"Using tensor parallel size: {args.tensor_parallel_size}")
     if args.max_model_len:
         logger.info(f"Using max model length: {args.max_model_len}")
-    
+
     model = VLLM(
         model_id=args.model_id,
         gpu_memory_utilization=args.gpu_memory_utilization,
-        max_model_len=args.max_model_len,
-        tensor_parallel_size=args.tensor_parallel_size
+        # max_model_len=args.max_model_len,
+        tensor_parallel_size=args.tensor_parallel_size,
     )
-    
+
     preds = []
 
     qids = [task.doc_to_id(doc) for doc in task.dataset]
@@ -178,7 +178,7 @@ def main():
     )
     task = eval_mm.TaskRegistry.load_task(args.task_id, task_config)
 
-    output_dir = os.path.join(args.result_dir, args.task_id, args.model_id + "_vllm")
+    output_dir = os.path.join(args.result_dir, args.task_id, args.model_id)
     os.makedirs(output_dir, exist_ok=True)
 
     preds, _ = load_or_generate_predictions(args, task, gen_kwargs, output_dir)
