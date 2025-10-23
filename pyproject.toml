@@ -62,7 +62,13 @@ dev = [
     "streamlit>=1.43.2",
 ]
 
-evovlm = ["flash-attn>=2.7.3", "transformers==4.42.4", "mantis-vl"]
+evovlm = [
+    "torch==2.6.0",
+    "torchvision>=0.20.1",
+    "flash-attn>=2.7.3",
+    "transformers==4.42.4",
+    "mantis-vl",
+]
 
 vilaja = [
     "torch==2.6.0",
@@ -181,6 +187,19 @@ vllm_normal = [
     "vllm>=0.11.0",
 ]
 
+vllm_085 = [
+    "torch==2.6.0",
+    "torchvision>=0.20.1",
+    "flash-attn>=2.7.3",
+    "accelerate>=1.2.1",
+    "transformers>=4.51.1",
+    "tokenizers>=0.21.1",
+    "einops",
+    "addict",
+    "easydict",
+    "vllm==0.8.5",
+]
+
 [tool.uv]
 conflicts = [
     [
@@ -197,6 +216,7 @@ conflicts = [
         { group = "stablevlm" },
         { group = "heron_nvila" },
         { group = "vllm_normal" },
+        { group = "vllm_085" },
     ],
 ]
 no-build-isolation-package = ["flash-attn"]

@@ -7,8 +7,8 @@ from loguru import logger
 
 import eval_mm
 import eval_mm.metrics
-from utils import GenerationConfig
-from model_table import get_class_from_model_id
+from examples.runtimes.config import GenerationConfig
+from examples.model_table import get_class_from_model_id, get_model_spec
 
 
 def parse_args():
@@ -61,7 +61,13 @@ def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
         return preds, []
 
     logger.info("Generating predictions...")
-    model = get_class_from_model_id(args.model_id)(args.model_id)
+    spec = get_model_spec(args.model_id)
+    if spec.default_runtime == "vllm":
+        msg = f"{args.model_id} は vLLM 実行専用です。examples/sample_vllm.py を利用してください。"
+        raise SystemExit(msg)
+    runtime = spec.default_runtime
+    model_cls = get_class_from_model_id(args.model_id, runtime=runtime)
+    model = model_cls(args.model_id)
     preds, errors = [], []
     error_count = 0
 

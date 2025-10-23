@@ -6,8 +6,8 @@ from loguru import logger
 
 import eval_mm
 import eval_mm.metrics
-from utils import GenerationConfig
-from base_vllm import VLLM
+from examples.runtimes.config import GenerationConfig
+from examples.model_table import get_class_from_model_id, get_model_spec
 
 
 def parse_args():
@@ -84,13 +84,20 @@ def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
     logger.info(f"Using tensor parallel size: {args.tensor_parallel_size}")
     if args.max_model_len:
         logger.info(f"Using max model length: {args.max_model_len}")
-
-    model = VLLM(
-        model_id=args.model_id,
-        gpu_memory_utilization=args.gpu_memory_utilization,
-        # max_model_len=args.max_model_len,
-        tensor_parallel_size=args.tensor_parallel_size,
-    )
+    spec = get_model_spec(args.model_id)
+    if not spec.has_runtime("vllm"):
+        msg = f"{args.model_id} は vLLM をサポートしていません。examples/sample.py を利用してください。"
+        raise SystemExit(msg)
+    runtime_config = spec.get_runtime_config("vllm")
+    model_cls = get_class_from_model_id(args.model_id, runtime="vllm")
+    if runtime_config.module_path == "examples.runtimes.vllm.base.VLLM":
+        model = model_cls(
+            model_id=args.model_id,
+            gpu_memory_utilization=args.gpu_memory_utilization,
+            tensor_parallel_size=args.tensor_parallel_size,
+        )
+    else:
+        model = model_cls(args.model_id)
 
     preds = []
 
