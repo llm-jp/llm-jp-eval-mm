@@ -5,6 +5,11 @@ llm-jp-eval-mm is a lightweight framework for evaluating visual-language models 
 
 ![Overview of llm-jp-eval-mm](https://github.com/llm-jp/llm-jp-eval-mm/blob/master/assets/teaser.png)
 
+## Updates
+
+:tada:[2026.01.16] Our paper introducing `llm-jp-eval-mm`, "_Cross-Task Evaluation and Empirical Analysis of Japanese Visual Language Models_", was **accepted for publication in the Journal of Natural Language Processing** (Japan)!
+
+
 ## Getting Started
 
 You can install llm-jp-eval-mm from GitHub or via PyPI.
@@ -207,3 +212,24 @@ python scripts/make_leaderboard.py --update_pages
 - [lmms-eval](https://github.com/EvolvingLMMs-Lab/lmms-eval): We refer to the lmms-eval code for the evaluation of the JMMMU and MMMU tasks.
 
 We also thank the developers of the evaluation datasets for their hard work.
+
+## Citation
+
+```bibtex
+@article{maeda-etal-2026-evalmm,
+  title = {日本語視覚言語モデルのタスク横断評価と実証的分析},
+  author = {前田 航希 and 
+    杉浦 一瑳 and 
+    小田 悠介 and 
+    栗田 修平 and 
+    岡崎 直観},
+  journal={自然言語処理},
+  volume={33},
+  number={2},
+  pages={TBD},
+  year={2026},
+  note = {local.ja},
+  month = {January}
+}
+```
+
