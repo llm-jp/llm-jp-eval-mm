@@ -18,6 +18,9 @@ from eval_mm.metadata import (
     get_metric_alias,
     get_tasks_by_language,
     LEADERBOARD_MODELS,
+    MODEL_DISPLAY_NAMES,
+    DOMESTIC_MODEL_ORDER,
+    FOREIGN_MODEL_ORDER,
     write_github_pages_json,
 )
 
@@ -30,10 +33,19 @@ ENGLISH_TASKS_SET = set(ENGLISH_TASKS)
 JAPANESE_TASKS_SET = set(JAPANESE_TASKS)
 
 
-def load_evaluation_data(result_dir: str, model: str, task_dirs: list[str]) -> dict:
+def _rename_columns_to_task_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Rename columns from 'TaskName/Metric' to just 'TaskName'."""
+    rename_dict = {}
+    for col in df.columns:
+        task_name = col.split('/')[0] if '/' in col else col
+        rename_dict[col] = task_name
+    return df.rename(columns=rename_dict)
+
+
+def load_evaluation_data(result_dir: str, model: str, task_id_list: list[str]) -> dict:
     """Load evaluation results for a given model across multiple tasks."""
     model_results = {"Model": model}
-    for task_dir in task_dirs:
+    for task_dir in task_id_list:
         output_dir = os.path.join(result_dir, task_dir, model)
         eval_path = os.path.join(output_dir, "evaluation.jsonl")
         if not os.path.exists(eval_path):
@@ -72,16 +84,14 @@ def process_results(
     task_id_list: list[str] | None = None,
 ) -> pd.DataFrame:
     """Process all evaluation results into a structured DataFrame."""
-    if task_id_list:
-        task_dirs = task_id_list
-    else:
-        task_dirs = [d for d in os.listdir(result_dir) if not d.startswith(".")]
+    if not task_id_list:
+        task_id_list = [d for d in os.listdir(result_dir) if not d.startswith(".")]
 
     df = pd.DataFrame()
 
     for model in model_list:
         logger.info(f"Processing results for {model}")
-        model_results = load_evaluation_data(result_dir, model, task_dirs)
+        model_results = load_evaluation_data(result_dir, model, task_id_list)
         if len(model_results) == 1:
             continue
         df = df._append(model_results, ignore_index=True)
@@ -142,12 +152,8 @@ def plot_correlation(df: pd.DataFrame, filename: str, tex_columns: list[str] = N
         df = df[tex_columns]
     
     # Rename columns to show only task names
-    rename_dict = {}
-    for col in df.columns:
-        task_name = col.split('/')[0] if '/' in col else col
-        rename_dict[col] = task_name
-    df = df.rename(columns=rename_dict)
-    
+    df = _rename_columns_to_task_names(df)
+
     # Define task order as in TeX output: English tasks → Japanese tasks
     task_order = ENGLISH_TASKS + JAPANESE_TASKS
 
@@ -240,12 +246,8 @@ def calculate_average_correlations(df: pd.DataFrame, tex_columns: list[str] = No
         df = df[tex_columns]
     
     # Rename columns to show only task names
-    rename_dict = {}
-    for col in df.columns:
-        task_name = col.split('/')[0] if '/' in col else col
-        rename_dict[col] = task_name
-    df = df.rename(columns=rename_dict)
-    
+    df = _rename_columns_to_task_names(df)
+
     # Define English and Japanese tasks
     english_tasks = ENGLISH_TASKS
     japanese_tasks = JAPANESE_TASKS
@@ -309,12 +311,8 @@ def plot_task_clustering(df: pd.DataFrame, filename: str, tex_columns: list[str]
         df = df[tex_columns]
     
     # Rename columns to show only task names
-    rename_dict = {}
-    for col in df.columns:
-        task_name = col.split('/')[0] if '/' in col else col
-        rename_dict[col] = task_name
-    df = df.rename(columns=rename_dict)
-    
+    df = _rename_columns_to_task_names(df)
+
     # Define task order as in TeX output: English tasks -> Japanese tasks
     task_order = ENGLISH_TASKS + JAPANESE_TASKS
 
@@ -564,33 +562,8 @@ def export_single_tex(df: pd.DataFrame, output_path: str, task_type: str, task_o
     tex_content.append("\\midrule")
     
     # Group models by origin with specific ordering
-    # Define model groups and their display names
-    domestic_model_mapping = {
-        "cyberagent/llava-calm2-siglip": "Llava-calm2-siglip",
-        "SakanaAI/Llama-3-EvoVLM-JP-v2": "Llama-3-EvoVLM-JP-v2",
-        "MIL-UT/Asagi-14B": "Asagi-14B",
-        "sbintuitions/sarashina2-vision-8b": "Sarashina2-Vision-8b",
-        "sbintuitions/sarashina2-vision-14b": "Sarashina2-Vision-14b",
-        "turing-motors/Heron-NVILA-Lite-1B": "Heron-NVILA-Lite-1B",
-        "turing-motors/Heron-NVILA-Lite-2B": "Heron-NVILA-Lite-2B",
-        "turing-motors/Heron-NVILA-Lite-15B": "Heron-NVILA-Lite-15B",
-        "turing-motors/Heron-NVILA-Lite-33B": "Heron-NVILA-Lite-33B",
-        "llm-jp/llm-jp-3-vila-14b": "llm-jp-3-vila-14b"
-    }
-    
-    # Desired order for domestic models
-    domestic_order = [
-        "cyberagent/llava-calm2-siglip", 
-        "SakanaAI/Llama-3-EvoVLM-JP-v2",
-        "MIL-UT/Asagi-14B",
-        "sbintuitions/sarashina2-vision-8b",
-        "sbintuitions/sarashina2-vision-14b",
-        "turing-motors/Heron-NVILA-Lite-1B",
-        "turing-motors/Heron-NVILA-Lite-2B",
-        "turing-motors/Heron-NVILA-Lite-15B",
-        "turing-motors/Heron-NVILA-Lite-33B",
-        "llm-jp/llm-jp-3-vila-14b"
-    ]
+    domestic_model_mapping = {k: v for k, v in MODEL_DISPLAY_NAMES.items() if k in DOMESTIC_MODEL_ORDER}
+    domestic_order = DOMESTIC_MODEL_ORDER
     
     # Use multicolumn spanning with proper column count
     num_cols = len(df.columns) + 1  # +1 for model name column
@@ -620,60 +593,9 @@ def export_single_tex(df: pd.DataFrame, output_path: str, task_type: str, task_o
     # Sort foreign models alphabetically by their display name
     foreign_models.sort(key=lambda x: x.split('/')[-1])
     
-    # Define specific foreign model display names
-    foreign_model_mapping = {
-        "llava-hf/llava-1.5-7b-hf": "Llava-1.5-7b",
-        "llava-hf/llava-v1.6-mistral-7b-hf": "Llava-v1.6-mistral-7b",
-        "CohereLabs/aya-vision-8b": "Aya-Vision-8b",
-        "CohereLabs/aya-vision-32b": "Aya-Vision-32b",
-        "neulab/Pangea-7B-hf": "Pangea-7B",
-        "microsoft/Phi-4-multimodal-instruct": "Phi-4-multimodal-instruct",
-        "meta-llama/Llama-3.2-11B-Vision-Instruct": "Llama-3.2-11B-Vision-Instruct",
-        "meta-llama/Llama-3.2-90B-Vision-Instruct": "Llama-3.2-90B-Vision-Instruct",
-        "google/gemma-3-4b-it": "Gemma-3-4b-it",
-        "google/gemma-3-12b-it": "Gemma-3-12b-it",
-        "google/gemma-3-27b-it": "Gemma-3-27b-it",
-        "OpenGVLab/InternVL3-1B": "InternVL3-1B",
-        "OpenGVLab/InternVL3-2B": "InternVL3-2B",
-        "OpenGVLab/InternVL3-8B": "InternVL3-8B",
-        "OpenGVLab/InternVL3-14B": "InternVL3-14B",
-        "OpenGVLab/InternVL3-38B": "InternVL3-38B",
-        "OpenGVLab/InternVL3-78B": "InternVL3-78B",
-        "Qwen/Qwen2-VL-7B-Instruct": "Qwen2-VL-7B-Instruct",
-        "Qwen/Qwen2-VL-72B-Instruct": "Qwen2-VL-72B-Instruct",
-        "Qwen/Qwen2.5-VL-3B-Instruct": "Qwen2.5-VL-3B-Instruct",
-        "Qwen/Qwen2.5-VL-7B-Instruct": "Qwen2.5-VL-7B-Instruct",
-        "Qwen/Qwen2.5-VL-32B-Instruct": "Qwen2.5-VL-32B-Instruct",
-        "Qwen/Qwen2.5-VL-72B-Instruct": "Qwen2.5-VL-72B-Instruct",
-    }
-    
-    # Define desired foreign model order
-    foreign_model_order = [
-        "llava-hf/llava-1.5-7b-hf",
-        "llava-hf/llava-v1.6-mistral-7b-hf",
-        "CohereLabs/aya-vision-8b",
-        "CohereLabs/aya-vision-32b",
-        "neulab/Pangea-7B-hf",
-        "microsoft/Phi-4-multimodal-instruct",
-        "meta-llama/Llama-3.2-11B-Vision-Instruct",
-        "meta-llama/Llama-3.2-90B-Vision-Instruct",
-        "google/gemma-3-4b-it",
-        "google/gemma-3-12b-it",
-        "google/gemma-3-27b-it",
-        "OpenGVLab/InternVL3-1B",
-        "OpenGVLab/InternVL3-2B",
-        "OpenGVLab/InternVL3-8B",
-        "OpenGVLab/InternVL3-14B",
-        "OpenGVLab/InternVL3-38B",
-        "OpenGVLab/InternVL3-78B",
-        "Qwen/Qwen2-VL-7B-Instruct",
-        "Qwen/Qwen2-VL-72B-Instruct",
-        "Qwen/Qwen2.5-VL-3B-Instruct",
-        "Qwen/Qwen2.5-VL-7B-Instruct",
-        "Qwen/Qwen2.5-VL-32B-Instruct",
-        "Qwen/Qwen2.5-VL-72B-Instruct",
-    ]
-    
+    foreign_model_mapping = {k: v for k, v in MODEL_DISPLAY_NAMES.items() if k in FOREIGN_MODEL_ORDER}
+    foreign_model_order = FOREIGN_MODEL_ORDER
+
     # Use the specified order for foreign models
     for model in foreign_model_order:
         if model in df.index:
