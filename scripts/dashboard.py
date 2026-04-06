@@ -12,7 +12,6 @@ Provides:
 
 from __future__ import annotations
 
-import json
 import os
 import subprocess
 import sys
@@ -28,6 +27,7 @@ sys.path.insert(0, str(_repo_root / "examples"))
 
 import eval_mm
 import eval_mm.metrics
+from eval_mm import load_evaluation
 from eval_mm.metadata import TASKS, METRICS, LEADERBOARD_MODELS
 
 # ---------------------------------------------------------------------------
@@ -128,13 +128,12 @@ def scan_results(result_dir: str) -> dict[tuple[str, str], list[str]]:
 
 
 def load_evaluation_score(result_dir: str, task_id: str, model_id: str) -> dict | None:
-    """Load evaluation.jsonl for a (task, model) pair."""
-    eval_path = os.path.join(result_dir, task_id, model_id, "evaluation.jsonl")
-    if not os.path.isfile(eval_path):
+    """Load evaluation.jsonl for a (task, model) pair via result_schema API."""
+    output_dir = os.path.join(result_dir, task_id, model_id)
+    if not os.path.isfile(os.path.join(output_dir, "evaluation.jsonl")):
         return None
     try:
-        with open(eval_path) as f:
-            return json.loads(f.readline())
+        return load_evaluation(output_dir)
     except Exception:
         return None
 
