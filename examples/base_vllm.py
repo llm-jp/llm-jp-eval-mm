@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from typing import Iterable
 
 from PIL import Image
@@ -20,10 +19,21 @@ class VLLM(BaseVLM):
     ) -> None:
         self.registry = VLLMModelRegistry(model_id)
 
-        engine_args = asdict(self.registry.get_engine_args()) | {
+        ea = self.registry.get_engine_args()
+        engine_args = {
+            "model": ea.model,
+            "trust_remote_code": ea.trust_remote_code,
+            "max_model_len": ea.max_model_len,
+            "max_num_seqs": ea.max_num_seqs,
             "tensor_parallel_size": tensor_parallel_size,
             "gpu_memory_utilization": gpu_memory_utilization,
         }
+        if ea.enable_lora:
+            engine_args["enable_lora"] = True
+            if ea.max_lora_rank:
+                engine_args["max_lora_rank"] = ea.max_lora_rank
+        if ea.hf_overrides:
+            engine_args["hf_overrides"] = ea.hf_overrides
         if max_model_len is not None:
             engine_args["max_model_len"] = max_model_len
 
