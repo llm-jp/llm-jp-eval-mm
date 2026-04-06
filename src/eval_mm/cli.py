@@ -143,6 +143,7 @@ def cmd_run(args: argparse.Namespace) -> None:
     vllm_kwargs = {
         "gpu_memory_utilization": args.gpu_memory_utilization,
         "tensor_parallel_size": args.tensor_parallel_size,
+        "max_model_len": args.max_model_len,
     }
 
     model = _load_model(args.model_id, args.backend, vllm_kwargs)
