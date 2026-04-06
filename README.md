@@ -181,6 +181,14 @@ bash test.sh
 bash test_model.sh
 ```
 
+`bash test_model.sh` now runs the portable offline smoke test path with local fixture images and `uv run --group ...`.
+You can limit the run to specific models by passing model IDs, and opt into remote-image integration checks only when needed:
+
+```bash
+bash test_model.sh llava-hf/llava-1.5-7b-hf
+SMOKE_TEST_MODE=online bash test_model.sh llava-hf/llava-1.5-7b-hf
+```
+
 ### Formatting and Linting
 
 Ensure code consistency with:

@@ -1,18 +1,20 @@
 #!/bin/bash
-set -eux  # エラーが発生したらスクリプトを停止する
+set -euo pipefail
 
 # Set CUDA devices
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 
-# HuggingFace cache directories
-export DATA_DIR="/data/silviase/" # please rewrite!!!!
-export HF_HOME="$DATA_DIR/.hf_cache"
-export HF_DATASETS_CACHE="$DATA_DIR/datasets"
-export HF_HUB_CACHE="$DATA_DIR/models"
-export APPTAINER_CACHEDIR="$DATA_DIR/apptainer_cache"
+# Portable cache directories for smoke tests
+export DATA_DIR="${DATA_DIR:-artifact/model_smoke_tmp_cache}"
+mkdir -p "$DATA_DIR"
+export HF_HOME="${HF_HOME:-$DATA_DIR/.hf_cache}"
+export HF_DATASETS_CACHE="${HF_DATASETS_CACHE:-$DATA_DIR/datasets}"
+export HF_HUB_CACHE="${HF_HUB_CACHE:-$DATA_DIR/models}"
+export APPTAINER_CACHEDIR="${APPTAINER_CACHEDIR:-$DATA_DIR/apptainer_cache}"
 
 # CUDA configuration
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
+SMOKE_TEST_MODE="${SMOKE_TEST_MODE:-offline}"
 
 # Model name to group name mapping
 declare -A MODEL_GROUP_MAP=(
@@ -37,9 +39,18 @@ declare -A MODEL_GROUP_MAP=(
     ["MIL-UT/Asagi-14B"]="normal"
 )
 
-for model_name in "${!MODEL_GROUP_MAP[@]}"; do
+models=("$@")
+if [ ${#models[@]} -eq 0 ]; then
+    mapfile -t models < <(printf '%s\n' "${!MODEL_GROUP_MAP[@]}" | sort)
+fi
+
+for model_name in "${models[@]}"; do
+    if [ -z "${MODEL_GROUP_MAP[$model_name]+x}" ]; then
+        echo "Unknown model_id: $model_name" >&2
+        exit 1
+    fi
     model_group=${MODEL_GROUP_MAP[$model_name]}
-    # uv sync --group $model_group
-    source .uv/${model_group}-env/bin/activate
-    python examples/test_model.py --model_id "$model_name"
+    uv run --group "$model_group" python examples/test_model.py \
+        --model_id "$model_name" \
+        --smoke-test-mode "$SMOKE_TEST_MODE"
 done
