@@ -63,14 +63,14 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument(
         "--task_id",
         default="japanese-heron-bench",
-        help=f"Available: {eval_mm.TaskRegistry().get_task_list()}",
+        help=f"Available: {eval_mm.TaskRegistry.get_task_list()}",
     )
     run_parser.add_argument(
         "--metrics",
         type=str,
         nargs="+",
         default=["heron-bench"],
-        help=f"Available: {eval_mm.ScorerRegistry().get_metric_list()}",
+        help=f"Available: {eval_mm.ScorerRegistry.get_metric_list()}",
     )
     run_parser.add_argument("--judge_model", default="gpt-4o-2024-11-20")
     run_parser.add_argument("--batch_size_for_evaluation", type=int, default=10)
@@ -183,12 +183,12 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
 
 def cmd_list(args: argparse.Namespace) -> None:
     if args.what == "tasks":
-        tasks = eval_mm.TaskRegistry().get_task_list()
+        tasks = eval_mm.TaskRegistry.get_task_list()
         print("Available tasks:")
         for t in sorted(tasks):
             print(f"  - {t}")
     elif args.what == "metrics":
-        metrics = eval_mm.ScorerRegistry().get_metric_list()
+        metrics = eval_mm.ScorerRegistry.get_metric_list()
         print("Available metrics:")
         for m in sorted(metrics):
             print(f"  - {m}")

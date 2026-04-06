@@ -68,8 +68,8 @@ def test_generation_config_custom():
 # ── BaseVLM tests ───────────────────────────────────────────────────
 
 
-def test_base_vlm_raises_not_implemented():
-    with pytest.raises(NotImplementedError):
+def test_base_vlm_is_abstract():
+    with pytest.raises(TypeError, match="Can't instantiate abstract class"):
         BaseVLM()
 
 

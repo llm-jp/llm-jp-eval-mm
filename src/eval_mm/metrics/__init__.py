@@ -3,7 +3,7 @@ from .exact_match_scorer import ExactMatchScorer
 from .llm_as_a_judge_scorer import LlmAsaJudgeScorer
 from .rougel_scorer import RougeLScorer
 from .substring_match_scorer import SubstringMatchScorer
-from .scorer import Scorer
+from .scorer import Scorer, ScorerConfig
 from .jmmmu_scorer import JMMMUScorer
 from .mmmu_scorer import MMMUScorer
 from .jdocqa_scorer import JDocQAScorer
@@ -23,6 +23,7 @@ __all__ = [
     "RougeLScorer",
     "SubstringMatchScorer",
     "Scorer",
+    "ScorerConfig",
     "JMMMUScorer",
     "MMMUScorer",
     "JDocQAScorer",

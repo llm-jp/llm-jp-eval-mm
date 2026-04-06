@@ -19,6 +19,7 @@ from .textvqa import TextVQA
 from .chartqa import ChartQA
 from .chartqapro import ChartQAPro
 from .okvqa import OKVQA
+from .mnist import MNIST
 from .task_registry import TaskRegistry
 from .task import TaskConfig
 
@@ -44,6 +45,7 @@ __all__ = [
     "ChartQA",
     "ChartQAPro",
     "OKVQA",
+    "MNIST",
     "TaskRegistry",
     "TaskConfig",
 ]

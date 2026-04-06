@@ -25,9 +25,9 @@ class Scorer(ABC):
         self.config = config
 
     @abstractmethod
-    def score(self, refs: list[str], preds: list[str]) -> list:
-        raise NotImplementedError
+    def score(self, refs: list[str], preds: list[str]) -> list[int | float | dict]:
+        ...
 
     @abstractmethod
-    def aggregate(self, scores: list) -> AggregateOutput:
-        raise NotImplementedError
+    def aggregate(self, scores: list[int | float | dict]) -> AggregateOutput:
+        ...

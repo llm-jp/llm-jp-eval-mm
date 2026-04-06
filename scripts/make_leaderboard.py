@@ -26,6 +26,8 @@ TASK_CLUSTER_ALIAS = get_task_cluster_alias()
 METRIC_ALIAS = get_metric_alias()
 MODEL_LIST = LEADERBOARD_MODELS
 ENGLISH_TASKS, JAPANESE_TASKS = get_tasks_by_language()
+ENGLISH_TASKS_SET = set(ENGLISH_TASKS)
+JAPANESE_TASKS_SET = set(JAPANESE_TASKS)
 
 
 def load_evaluation_data(result_dir: str, model: str, task_dirs: list[str]) -> dict:
@@ -148,22 +150,20 @@ def plot_correlation(df: pd.DataFrame, filename: str, tex_columns: list[str] = N
     
     # Define task order as in TeX output: English tasks → Japanese tasks
     task_order = ENGLISH_TASKS + JAPANESE_TASKS
-    english_tasks = set(ENGLISH_TASKS)
-    japanese_tasks = set(JAPANESE_TASKS)
-    
+
     # Filter and reorder dataframe columns based on task_order
     available_tasks = [task for task in task_order if task in df.columns]
     df = df[available_tasks]
-    
+
     corr = df.corr(method="spearman")
-    
+
     # Create a mask for the upper triangle
     mask = np.zeros_like(corr, dtype=bool)
     mask[np.triu_indices_from(mask, k=1)] = True
-    
+
     # Create figure
     fig, ax = plt.subplots(figsize=(12, 10))
-    
+
     # Plot heatmap with lower triangle only
     hm = sns.heatmap(
         corr,
@@ -179,7 +179,7 @@ def plot_correlation(df: pd.DataFrame, filename: str, tex_columns: list[str] = N
         vmin=0,  # Set minimum to 0
         vmax=1,
     )
-    
+
     # Make tick labels bold and larger
     ax.set_xticklabels(ax.get_xmajorticklabels(), fontsize=20, fontweight='bold', rotation=45, ha='right')
     ax.set_yticklabels(ax.get_ymajorticklabels(), fontsize=20, fontweight='bold', rotation=0)
@@ -195,14 +195,14 @@ def plot_correlation(df: pd.DataFrame, filename: str, tex_columns: list[str] = N
 
     # Color Japanese task labels red on both axes
     for tick in ax.get_xticklabels():
-        if tick.get_text() in japanese_tasks:
+        if tick.get_text() in JAPANESE_TASKS_SET:
             tick.set_color('red')
     for tick in ax.get_yticklabels():
-        if tick.get_text() in japanese_tasks:
+        if tick.get_text() in JAPANESE_TASKS_SET:
             tick.set_color('red')
 
     # Add dotted divider between English and Japanese blocks (if both exist)
-    en_count = sum(1 for t in corr.columns if t in english_tasks)
+    en_count = sum(1 for t in corr.columns if t in ENGLISH_TASKS_SET)
     if 0 < en_count < len(corr.columns):
         # Place divider exactly between LLAVA (last EN) and CVQA (first JA) at integer boundary n
         boundary = en_count
@@ -315,30 +315,29 @@ def plot_task_clustering(df: pd.DataFrame, filename: str, tex_columns: list[str]
         rename_dict[col] = task_name
     df = df.rename(columns=rename_dict)
     
-    # Define task order as in TeX output: English tasks → Japanese tasks
+    # Define task order as in TeX output: English tasks -> Japanese tasks
     task_order = ENGLISH_TASKS + JAPANESE_TASKS
-    japanese_tasks = set(JAPANESE_TASKS)
-    
+
     # Filter and reorder dataframe columns based on task_order
     available_tasks = [task for task in task_order if task in df.columns]
     df = df[available_tasks]
-    
+
     # Calculate correlation matrix
     corr = df.corr(method="spearman")
-    
+
     # Convert correlation to distance (1 - correlation)
     # This ensures high correlation = small distance
     distance_matrix = 1 - corr
-    
+
     # Convert to condensed distance matrix
     condensed_distance = squareform(distance_matrix)
-    
+
     # Perform hierarchical clustering
     linkage = sch.linkage(condensed_distance, method='average')
-    
+
     # Create figure
     plt.figure(figsize=(12, 8))
-    
+
     # Plot dendrogram
     dendrogram = sch.dendrogram(
         linkage,
@@ -349,24 +348,24 @@ def plot_task_clustering(df: pd.DataFrame, filename: str, tex_columns: list[str]
         # Increase leaf font size by 4pt
         leaf_font_size=24,
     )
-    
+
     # Increase title/xlabel/ylabel font sizes by 4pt
     plt.title('相関行列に基づくタスク階層クラスタリング', fontsize=32, fontweight='bold')
     plt.xlabel('タスク', fontsize=24, fontweight='bold')
     plt.ylabel('距離（1 - スピアマン相関）', fontsize=24, fontweight='bold')
-    
+
     # Make x-axis labels bold and color Japanese tasks red
     ax = plt.gca()
     # Increase tick label font size by 4pt
     ax.set_xticklabels(ax.get_xmajorticklabels(), fontsize=24, fontweight='bold', rotation=45, ha='right')
     for tick in ax.get_xticklabels():
-        if tick.get_text() in japanese_tasks:
+        if tick.get_text() in JAPANESE_TASKS_SET:
             tick.set_color('red')
-    
+
     plt.tight_layout()
     plt.savefig(filename, dpi=150, bbox_inches='tight')
     plt.close()
-    
+
     # Also create a horizontal dendrogram for better readability
     plt.figure(figsize=(10, 12))
     dendrogram_h = sch.dendrogram(
@@ -386,7 +385,7 @@ def plot_task_clustering(df: pd.DataFrame, filename: str, tex_columns: list[str]
     ax = plt.gca()
     ax.set_yticklabels(ax.get_ymajorticklabels(), fontsize=20, fontweight='bold')
     for tick in ax.get_yticklabels():
-        if tick.get_text() in japanese_tasks:
+        if tick.get_text() in JAPANESE_TASKS_SET:
             tick.set_color('red')
     
     plt.tight_layout()

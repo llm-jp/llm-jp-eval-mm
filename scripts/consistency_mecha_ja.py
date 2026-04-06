@@ -11,13 +11,13 @@ import numpy as np
 vis_dir = "logs/mecha-ja/visualize/"
 root_dir = "logs/mecha-ja/prediction/"
 files = os.listdir(root_dir)
-model_names = [
+model_ids = [
     os.path.basename(f).replace(".jsonl", "") for f in files if f.endswith(".jsonl")
 ]
 
 model_files = {
-    model_name: os.path.join(root_dir, f"{model_name}.jsonl")
-    for model_name in model_names
+    model_id: os.path.join(root_dir, f"{model_id}.jsonl")
+    for model_id in model_ids
 }
 
 model_dfs = {}
@@ -46,10 +46,10 @@ def check_abcd(text):
     return found[0] if len(found) == 1 else "F"
 
 
-for model_name, file_path in model_files.items():
+for model_id, file_path in model_files.items():
     df = load_jsonl_to_df(file_path)
     df["pred"] = df["text"].apply(check_abcd)
-    model_dfs[model_name] = df
+    model_dfs[model_id] = df
 
 rotate_map = {
     "A": ["A", "D", "C", "B"],
@@ -67,7 +67,7 @@ fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(10, 10), sharex=True, sharey
 # axesを1次元にする
 axes = axes.flatten()
 
-for ax, (model_name, df) in zip(axes, model_dfs.items()):
+for ax, (model_id, df) in zip(axes, model_dfs.items()):
     # 予測回答の分布（相対頻度）をカウント
     pred_counts = (
         df["pred"].value_counts().reindex(["A", "B", "C", "D", "F"], fill_value=0)
@@ -83,7 +83,7 @@ for ax, (model_name, df) in zip(axes, model_dfs.items()):
     # 0.25 に赤い線を引く
     ax.axhline(y=0.25, color="r", linestyle="--", linewidth=1)
 
-    ax.set_title(f"{model_name}")
+    ax.set_title(f"{model_id}")
     ax.set_xlabel("選択肢")
     ax.set_ylabel("選択頻度")
 
@@ -100,7 +100,7 @@ plt.close()
 # ======================================
 results = []
 
-for model_name, df in model_dfs.items():
+for model_id, df in model_dfs.items():
     # soft accuracy
     soft_accuracy = df["mecha-ja"].mean()  # 1と0の平均 = 正解率
 
@@ -140,7 +140,7 @@ for model_name, df in model_dfs.items():
 
     results.append(
         {
-            "model": model_name,
+            "model": model_id,
             "soft_accuracy": soft_accuracy,
             "strict_accuracy": strict_accuracy,
             "consistency": consistency,
