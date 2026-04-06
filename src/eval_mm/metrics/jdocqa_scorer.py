@@ -1,4 +1,4 @@
-from eval_mm.metrics.scorer import Scorer, AggregateOutput
+from .scorer import Scorer, AggregateOutput
 from .scorer_registry import register_scorer
 from sacrebleu import sentence_bleu
 from unicodedata import normalize

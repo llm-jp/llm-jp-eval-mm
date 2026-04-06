@@ -3,7 +3,7 @@ import ast
 import re
 import numpy as np
 from datasets import Dataset
-from eval_mm.metrics.scorer import Scorer, AggregateOutput
+from .scorer import Scorer, AggregateOutput
 from .scorer_registry import register_scorer
 
 
