@@ -48,9 +48,14 @@ class LlmAsaJudgeScorer(Scorer):
             ]
             return message
 
+        # Track indices of empty predictions so we can skip them in the LLM call
+        # and directly assign a score of 0.
+        empty_indices: set[int] = {i for i, pred in enumerate(preds) if pred == ""}
+
         messages = [
             build_message(question, answer, pred)
-            for question, answer, pred in zip(questions, refs, preds)
+            for i, (question, answer, pred) in enumerate(zip(questions, refs, preds))
+            if i not in empty_indices
         ]
         messages_list = [
             messages[i : i + batch_size] for i in range(0, len(messages), batch_size)
@@ -63,17 +68,16 @@ class LlmAsaJudgeScorer(Scorer):
                 )
             )
 
-        scores = []
-        for i, c in enumerate(completion):
-            score = re.search(r"\d", c)
-            if score:
-                scores.append(int(score.group()))
-            else:
+        # Merge LLM scores with 0s for empty predictions
+        scores: list[int] = []
+        comp_iter = iter(completion)
+        for i in range(len(preds)):
+            if i in empty_indices:
                 scores.append(0)
-        # if preds is empty, return 0 (TODO: this process should be done before calling llm)
-        # for i, pred in enumerate(preds):
-        #     if pred == "":
-        #         scores[i] = 0
+            else:
+                c = next(comp_iter)
+                match = re.search(r"\d", c)
+                scores.append(int(match.group()) if match else 0)
         return scores
 
     @staticmethod

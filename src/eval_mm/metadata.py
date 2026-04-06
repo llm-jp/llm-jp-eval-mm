@@ -141,6 +141,88 @@ LEADERBOARD_MODELS: list[str] = [
 ]
 
 
+# ── Model display names (for TeX / leaderboard rendering) ────────
+
+MODEL_DISPLAY_NAMES: dict[str, str] = {
+    # Domestic (Japanese) models
+    "cyberagent/llava-calm2-siglip": "Llava-calm2-siglip",
+    "SakanaAI/Llama-3-EvoVLM-JP-v2": "Llama-3-EvoVLM-JP-v2",
+    "MIL-UT/Asagi-14B": "Asagi-14B",
+    "sbintuitions/sarashina2-vision-8b": "Sarashina2-Vision-8b",
+    "sbintuitions/sarashina2-vision-14b": "Sarashina2-Vision-14b",
+    "turing-motors/Heron-NVILA-Lite-1B": "Heron-NVILA-Lite-1B",
+    "turing-motors/Heron-NVILA-Lite-2B": "Heron-NVILA-Lite-2B",
+    "turing-motors/Heron-NVILA-Lite-15B": "Heron-NVILA-Lite-15B",
+    "turing-motors/Heron-NVILA-Lite-33B": "Heron-NVILA-Lite-33B",
+    "llm-jp/llm-jp-3-vila-14b": "llm-jp-3-vila-14b",
+    # Foreign models
+    "llava-hf/llava-1.5-7b-hf": "Llava-1.5-7b",
+    "llava-hf/llava-v1.6-mistral-7b-hf": "Llava-v1.6-mistral-7b",
+    "CohereLabs/aya-vision-8b": "Aya-Vision-8b",
+    "CohereLabs/aya-vision-32b": "Aya-Vision-32b",
+    "neulab/Pangea-7B-hf": "Pangea-7B",
+    "microsoft/Phi-4-multimodal-instruct": "Phi-4-multimodal-instruct",
+    "meta-llama/Llama-3.2-11B-Vision-Instruct": "Llama-3.2-11B-Vision-Instruct",
+    "meta-llama/Llama-3.2-90B-Vision-Instruct": "Llama-3.2-90B-Vision-Instruct",
+    "google/gemma-3-4b-it": "Gemma-3-4b-it",
+    "google/gemma-3-12b-it": "Gemma-3-12b-it",
+    "google/gemma-3-27b-it": "Gemma-3-27b-it",
+    "OpenGVLab/InternVL3-1B": "InternVL3-1B",
+    "OpenGVLab/InternVL3-2B": "InternVL3-2B",
+    "OpenGVLab/InternVL3-8B": "InternVL3-8B",
+    "OpenGVLab/InternVL3-14B": "InternVL3-14B",
+    "OpenGVLab/InternVL3-38B": "InternVL3-38B",
+    "OpenGVLab/InternVL3-78B": "InternVL3-78B",
+    "Qwen/Qwen2-VL-7B-Instruct": "Qwen2-VL-7B-Instruct",
+    "Qwen/Qwen2-VL-72B-Instruct": "Qwen2-VL-72B-Instruct",
+    "Qwen/Qwen2.5-VL-3B-Instruct": "Qwen2.5-VL-3B-Instruct",
+    "Qwen/Qwen2.5-VL-7B-Instruct": "Qwen2.5-VL-7B-Instruct",
+    "Qwen/Qwen2.5-VL-32B-Instruct": "Qwen2.5-VL-32B-Instruct",
+    "Qwen/Qwen2.5-VL-72B-Instruct": "Qwen2.5-VL-72B-Instruct",
+}
+
+# Domestic model IDs in display order for TeX tables.
+DOMESTIC_MODEL_ORDER: list[str] = [
+    "cyberagent/llava-calm2-siglip",
+    "SakanaAI/Llama-3-EvoVLM-JP-v2",
+    "MIL-UT/Asagi-14B",
+    "sbintuitions/sarashina2-vision-8b",
+    "sbintuitions/sarashina2-vision-14b",
+    "turing-motors/Heron-NVILA-Lite-1B",
+    "turing-motors/Heron-NVILA-Lite-2B",
+    "turing-motors/Heron-NVILA-Lite-15B",
+    "turing-motors/Heron-NVILA-Lite-33B",
+    "llm-jp/llm-jp-3-vila-14b",
+]
+
+# Foreign model IDs in display order for TeX tables.
+FOREIGN_MODEL_ORDER: list[str] = [
+    "llava-hf/llava-1.5-7b-hf",
+    "llava-hf/llava-v1.6-mistral-7b-hf",
+    "CohereLabs/aya-vision-8b",
+    "CohereLabs/aya-vision-32b",
+    "neulab/Pangea-7B-hf",
+    "microsoft/Phi-4-multimodal-instruct",
+    "meta-llama/Llama-3.2-11B-Vision-Instruct",
+    "meta-llama/Llama-3.2-90B-Vision-Instruct",
+    "google/gemma-3-4b-it",
+    "google/gemma-3-12b-it",
+    "google/gemma-3-27b-it",
+    "OpenGVLab/InternVL3-1B",
+    "OpenGVLab/InternVL3-2B",
+    "OpenGVLab/InternVL3-8B",
+    "OpenGVLab/InternVL3-14B",
+    "OpenGVLab/InternVL3-38B",
+    "OpenGVLab/InternVL3-78B",
+    "Qwen/Qwen2-VL-7B-Instruct",
+    "Qwen/Qwen2-VL-72B-Instruct",
+    "Qwen/Qwen2.5-VL-3B-Instruct",
+    "Qwen/Qwen2.5-VL-7B-Instruct",
+    "Qwen/Qwen2.5-VL-32B-Instruct",
+    "Qwen/Qwen2.5-VL-72B-Instruct",
+]
+
+
 # ── Convenience accessors ─────────────────────────────────────────
 
 def get_task_alias() -> dict[str, str]:

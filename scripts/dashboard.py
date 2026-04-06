@@ -103,8 +103,8 @@ def scan_results(result_dir: str) -> dict[tuple[str, str], list[str]]:
     results: dict[tuple[str, str], list[str]] = {}
     if not os.path.isdir(result_dir):
         return results
-    for task_dir in sorted(os.listdir(result_dir)):
-        task_path = os.path.join(result_dir, task_dir)
+    for task_id in sorted(os.listdir(result_dir)):
+        task_path = os.path.join(result_dir, task_id)
         if not os.path.isdir(task_path):
             continue
         for model_dir_root in sorted(os.listdir(task_path)):
@@ -117,12 +117,12 @@ def scan_results(result_dir: str) -> dict[tuple[str, str], list[str]]:
                 if os.path.isdir(sub_path):
                     model_id = f"{model_dir_root}/{sub}"
                     files = os.listdir(sub_path)
-                    results[(task_dir, model_id)] = files
+                    results[(task_id, model_id)] = files
                 elif sub == "prediction.jsonl":
                     # Direct model dir (no nesting)
                     model_id = model_dir_root
                     files = os.listdir(model_root_path)
-                    results[(task_dir, model_id)] = files
+                    results[(task_id, model_id)] = files
                     break
     return results
 
