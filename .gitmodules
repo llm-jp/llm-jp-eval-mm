@@ -1,7 +1,3 @@
-[submodule "examples/llava"]
-	path = examples/llava
-	url = https://github.com/haotian-liu/LLaVA.git
-[submodule "examples/vila"]
-	path = examples/vila
-	url = https://github.com/llm-jp/llm-jp-VILA.git
-	branch = dep-relax
+[submodule "docs/design-references"]
+	path = docs/design-references
+	url = https://github.com/VoltAgent/awesome-design-md.git
