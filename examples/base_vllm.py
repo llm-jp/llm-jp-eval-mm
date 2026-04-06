@@ -16,6 +16,7 @@ class VLLM(BaseVLM):
         model_id: str,
         gpu_memory_utilization: float = 0.8,
         tensor_parallel_size: int = 1,
+        max_model_len: int | None = None,
     ) -> None:
         self.registry = VLLMModelRegistry(model_id)
 
@@ -23,6 +24,8 @@ class VLLM(BaseVLM):
             "tensor_parallel_size": tensor_parallel_size,
             "gpu_memory_utilization": gpu_memory_utilization,
         }
+        if max_model_len is not None:
+            engine_args["max_model_len"] = max_model_len
 
         self.model_id = model_id
         self.model = LLM(**engine_args)

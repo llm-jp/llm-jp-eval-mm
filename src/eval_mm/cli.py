@@ -43,6 +43,7 @@ def _load_model(model_id: str, backend: str, vllm_kwargs: dict):
             model_id=model_id,
             gpu_memory_utilization=vllm_kwargs.get("gpu_memory_utilization", 0.95),
             tensor_parallel_size=vllm_kwargs.get("tensor_parallel_size", 1),
+            max_model_len=vllm_kwargs.get("max_model_len"),
         )
     else:
         model_table = importlib.import_module("model_table")
