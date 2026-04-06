@@ -181,3 +181,7 @@ result/*_tmp_*/
 # HPC scripts (ignored per request)
 scripts/nvlink/
 scripts/tsubame/
+.worktrees/
+data/shared/**
+!data/shared/.gitkeep
+data/local/

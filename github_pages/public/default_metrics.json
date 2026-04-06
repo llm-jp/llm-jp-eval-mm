@@ -2,11 +2,25 @@
     "default_metrics": {
         "Heron": "overall",
         "JVB-ItW": "rouge",
-        "VGVQA": "rouge",
-        "MulIm-VQA": "rouge",
-        "JDocQA": "Acc",
+        "VG-VQA": "rouge",
+        "JIC": "Acc",
+        "CVQA": "Acc",
         "JMMMU": "Acc",
+        "JDocQA": "Acc",
+        "MECHA": "Acc",
+        "CC-OCR": "macro_f1",
+        "MulIm-VQA": "rouge",
         "MMMU": "Acc",
-        "LlavaB-ItW": "rouge"
+        "LLAVA": "rouge",
+        "AI2D": "Acc",
+        "BLINK": "Acc",
+        "DocVQA": "Acc",
+        "InfoVQA": "Acc",
+        "TextVQA": "Acc",
+        "ChartQA": "Acc",
+        "ChartQAPro": "Acc",
+        "MathVista": "Acc",
+        "OK-VQA": "Acc",
+        "MMMLU": "EM"
     }
 }

@@ -11,124 +11,18 @@ import japanize_matplotlib  # noqa: F401  # enable Japanese fonts in Matplotlib
 import numpy as np
 import re
 
-TASK_ALIAS = {
-    "japanese-heron-bench": "Heron",
-    "ja-vlm-bench-in-the-wild": "JVB-ItW",
-    "ja-vg-vqa-500": "VG-VQA",
-    "jdocqa": "JDocQA",
-    "ja-multi-image-vqa": "MulIm-VQA",
-    "jmmmu": "JMMMU",
-    "jic-vqa": "JIC",
-    "mecha-ja": "MECHA",
-    "llava-bench-in-the-wild": "LLAVA",
-    "mmmu": "MMMU",
-    "cc-ocr": "CC-OCR",
-    "cvqa": "CVQA",
-    "ai2d": "AI2D",
-    "blink": "BLINK",
-    "docvqa": "DocVQA",
-    "infographicvqa": "InfoVQA",
-    "textvqa": "TextVQA",
-    "chartqa": "ChartQA",
-    "chartqapro": "ChartQAPro",
-    "mathvista": "MathVista",
-    "okvqa": "OK-VQA",
-}
+from eval_mm.metadata import (
+    get_task_alias,
+    get_task_cluster_alias,
+    get_metric_alias,
+    LEADERBOARD_MODELS,
+    write_github_pages_json,
+)
 
-TASK_CLUSTER_ALIAS = {
-    "JMMMU": "言語・知識中心",
-    "JDocQA": "言語・知識中心",
-    "MECHA": "言語・知識中心",
-    "JIC": "視覚中心",
-    "VG-VQA": "視覚中心",
-    "Heron": "視覚中心",
-    "JVB-ItW": "視覚中心",
-    "MulIm-VQA": "その他",
-    "MMMU": "英語",
-    "LLAVA": "英語",
-    "CC-OCR": "言語・知識中心",
-    "CVQA": "視覚中心",
-    "AI2D": "英語",
-    "BLINK": "英語",
-    "DocVQA": "英語",
-    "InfoVQA": "英語",
-    "TextVQA": "英語",
-    "ChartQA": "英語",
-    "ChartQAPro": "英語",
-    "MathVista": "英語",
-    "OK-VQA": "英語",
-}
-
-METRIC_ALIAS = {
-    "heron-bench": "LLM",
-    "llm-as-a-judge": "LLM",
-    "rougel": "Rouge",
-    "jdocqa": "Acc",
-    "jmmmu": "Acc",
-    "jic-vqa": "Acc",
-    "mecha-ja": "Acc",
-    "mmmu": "Acc",
-    "cc-ocr": "macro_f1",
-    "substring-match": "Acc",
-    "cvqa": "Acc",
-    "ai2d": "Acc",
-    "blink": "Acc",
-    "docvqa": "Acc",
-    "infographicvqa": "Acc",
-    "textvqa": "Acc",
-    "chartqa": "Acc",
-    "chartqapro": "Acc",
-    "mathvista": "Acc",
-    "okvqa": "Acc",
-}
-
-MODEL_LIST = [
-    # "stabilityai/japanese-instructblip-alpha",
-    "stabilityai/japanese-stable-vlm",
-    "cyberagent/llava-calm2-siglip",
-    "llava-hf/llava-1.5-7b-hf",
-    "llava-hf/llava-v1.6-mistral-7b-hf",
-    "neulab/Pangea-7B-hf",
-    "meta-llama/Llama-3.2-11B-Vision-Instruct",
-    "meta-llama/Llama-3.2-90B-Vision-Instruct",
-    # "OpenGVLab/InternVL2-8B",
-    # "OpenGVLab/InternVL2-26B",
-    "OpenGVLab/InternVL3-1B",
-    "OpenGVLab/InternVL3-2B",
-    "OpenGVLab/InternVL3-8B",
-    "OpenGVLab/InternVL3-9B",
-    "OpenGVLab/InternVL3-14B",
-    "OpenGVLab/InternVL3-38B",
-    "OpenGVLab/InternVL3-78B",
-    "Qwen/Qwen2-VL-7B-Instruct",
-    "Qwen/Qwen2-VL-72B-Instruct",
-    "Qwen/Qwen2.5-VL-3B-Instruct",
-    "Qwen/Qwen2.5-VL-7B-Instruct",
-    "Qwen/Qwen2.5-VL-32B-Instruct",
-    "Qwen/Qwen2.5-VL-72B-Instruct",
-    "gpt-4o-2024-11-20",
-    # "mistralai/Pixtral-12B-2409",
-    "llm-jp/llm-jp-3-vila-14b",
-    # "Efficient-Large-Model/VILA1.5-13b",
-    "SakanaAI/Llama-3-EvoVLM-JP-v2",
-    "google/gemma-3-4b-it",
-    "google/gemma-3-12b-it",
-    "google/gemma-3-27b-it",
-    "google/gemma-3-4b-pt",
-    "google/gemma-3-12b-pt",
-    "google/gemma-3-27b-pt",
-    # "tokyotech-llm/gemma3_4b_exp8-checkpoint-50000",
-    "sbintuitions/sarashina2-vision-8b",
-    "sbintuitions/sarashina2-vision-14b",
-    "microsoft/Phi-4-multimodal-instruct",
-    "MIL-UT/Asagi-14B",
-    "turing-motors/Heron-NVILA-Lite-1B",
-    "turing-motors/Heron-NVILA-Lite-2B",
-    "turing-motors/Heron-NVILA-Lite-15B",
-    "turing-motors/Heron-NVILA-Lite-33B",
-    "CohereLabs/aya-vision-8b",
-    "CohereLabs/aya-vision-32b",
-]
+TASK_ALIAS = get_task_alias()
+TASK_CLUSTER_ALIAS = get_task_cluster_alias()
+METRIC_ALIAS = get_metric_alias()
+MODEL_LIST = LEADERBOARD_MODELS
 
 
 def load_evaluation_data(result_dir: str, model: str, task_dirs: list[str]) -> dict:
@@ -881,6 +775,8 @@ def main(
         # sort by task
         df = df.sort_index(axis=1)
         generate_json_path(df.copy(), "github_pages/public/leaderboard.json")
+        # Regenerate metadata JSON from single source (eval_mm.metadata)
+        write_github_pages_json("github_pages/public")
     
     tex_columns = None
     if export_tex:
