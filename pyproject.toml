@@ -52,6 +52,7 @@ exclude = ["result", "scripts"]
 mantis-vl = { git = "https://github.com/TIGER-AI-Lab/Mantis" }
 s2wrapper = { git = "https://github.com/bfshi/scaling_on_scales.git" }
 vila = { git = "https://github.com/LLM-jp/llm-jp-VILA.git", branch = "dep-relax" }
+flash-attn = { url = "https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.3/flash_attn-2.7.3%2Bcu12torch2.6cxx11abiFALSE-cp312-cp312-linux_x86_64.whl" }
 
 [tool.hatch.metadata]
 allow-direct-references = true
