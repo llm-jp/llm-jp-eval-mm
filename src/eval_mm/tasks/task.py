@@ -57,6 +57,6 @@ class Task(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def doc_to_answer(self, doc) -> str:
+    def doc_to_answer(self, doc) -> str | list[str]:
         """Converts a document to answer."""
         pass
