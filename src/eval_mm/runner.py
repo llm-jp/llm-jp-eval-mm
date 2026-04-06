@@ -14,7 +14,7 @@ from .metrics.scorer import ScorerConfig
 from .metrics.scorer_registry import ScorerRegistry
 from .tasks.task import TaskConfig
 from .tasks.task_registry import TaskRegistry
-from .result_schema import write_manifest
+from .result_schema import load_predictions, write_manifest
 from .utils.azure_client import OpenAIChatAPI
 
 if TYPE_CHECKING:
@@ -26,11 +26,6 @@ def save_jsonl(path: str, data: list[dict]) -> None:
     with open(path, "w", encoding="utf-8") as f:
         for item in data:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
-
-
-def load_predictions(prediction_path: str) -> list[dict]:
-    with open(prediction_path, encoding="utf-8") as f:
-        return [json.loads(line) for line in f]
 
 
 def generate_predictions_sequential(
@@ -224,7 +219,7 @@ def run_evaluation(
     errors: list[dict] = []
     if os.path.exists(prediction_path) and not overwrite:
         logger.info(f"Loading predictions from {prediction_path}")
-        preds = load_predictions(prediction_path)
+        preds = load_predictions(output_dir)
         assert len(preds) == len(task.dataset), "Prediction length mismatch with dataset"
     elif model is not None:
         logger.info("Generating predictions...")
