@@ -5,8 +5,8 @@ from PIL import Image
 from vllm import LLM, SamplingParams
 from vllm.lora.request import LoRARequest
 
-from base_vlm import BaseVLM
-from utils import GenerationConfig
+from eval_mm.models.base_vlm import BaseVLM
+from eval_mm.models.generation_config import GenerationConfig
 from vllm_registry import ModelRequestData, VLLMModelRegistry
 
 

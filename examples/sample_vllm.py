@@ -1,12 +1,14 @@
-import os
-import json
+"""Evaluate a VLM using the vLLM backend.
+
+This is a thin wrapper around ``eval_mm.run_evaluation``.
+For the canonical CLI, use: ``python -m eval_mm run --backend vllm ...``
+"""
+
 import argparse
-from dataclasses import asdict
-from loguru import logger
 
 import eval_mm
 import eval_mm.metrics
-from utils import GenerationConfig
+from eval_mm import GenerationConfig, TaskConfig, run_evaluation
 from base_vllm import VLLM
 
 
@@ -37,133 +39,18 @@ def parse_args():
         default=["heron-bench"],
         help=f"Metrics to evaluate. Available: {eval_mm.ScorerRegistry().get_metric_list()}",
     )
-    parser.add_argument(
-        "--rotate_choices", action="store_true", help="This option is used in MECHA-ja"
-    )
-    parser.add_argument(
-        "--random_choice",
-        action="store_true",
-        help="If set, randomly choose the answer from the candidates when parse error occurs in JMMMU and MMMU tasks",
-    )
-
-    parser.add_argument(
-        "--gpu_memory_utilization",
-        type=float,
-        default=0.95,
-        help="GPU memory utilization for vLLM (default: 0.85)",
-    )
-    parser.add_argument(
-        "--max_model_len",
-        type=int,
-        default=None,
-        help="Maximum model context length. If not specified, will use model's default",
-    )
-    parser.add_argument(
-        "--tensor_parallel_size",
-        type=int,
-        default=1,
-        help="Number of GPUs to use for tensor parallelism (default: 1)",
-    )
-
+    parser.add_argument("--rotate_choices", action="store_true")
+    parser.add_argument("--random_choice", action="store_true")
+    parser.add_argument("--gpu_memory_utilization", type=float, default=0.95)
+    parser.add_argument("--max_model_len", type=int, default=None)
+    parser.add_argument("--tensor_parallel_size", type=int, default=1)
     return parser.parse_args()
-
-
-def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
-    prediction_path = os.path.join(output_dir, "prediction.jsonl")
-    if os.path.exists(prediction_path) and not args.overwrite:
-        logger.info(f"Loading predictions from {prediction_path}")
-        with open(prediction_path) as f:
-            preds = [json.loads(line) for line in f]
-        assert len(preds) == len(
-            task.dataset
-        ), "Prediction length mismatch with dataset"
-        return preds, []
-
-    logger.info("Generating predictions...")
-    logger.info(f"Using GPU memory utilization: {args.gpu_memory_utilization}")
-    logger.info(f"Using tensor parallel size: {args.tensor_parallel_size}")
-    if args.max_model_len:
-        logger.info(f"Using max model length: {args.max_model_len}")
-
-    model = VLLM(
-        model_id=args.model_id,
-        gpu_memory_utilization=args.gpu_memory_utilization,
-        # max_model_len=args.max_model_len,
-        tensor_parallel_size=args.tensor_parallel_size,
-    )
-
-    preds = []
-
-    qids = [task.doc_to_id(doc) for doc in task.dataset]
-    images = [task.doc_to_visual(doc) for doc in task.dataset]
-    texts = [task.doc_to_text(doc).replace("<image>", "") for doc in task.dataset]
-
-    preds = model.batch_generate(images, texts, gen_kwargs)
-    preds = [{"question_id": qid, "text": pred} for qid, pred in zip(qids, preds)]
-
-    save_jsonl(prediction_path, preds)
-    logger.info(f"Predictions saved to {prediction_path}")
-    return preds, []
-
-
-def save_jsonl(path, data):
-    with open(path, "w") as f:
-        for item in data:
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
-
-
-def evaluate(args, task, preds, metrics):
-    logger.info("Starting evaluation...")
-    scores_by_metric = {}
-    aggregated_metrics = {}
-
-    for metric in metrics:
-        scorer = eval_mm.ScorerRegistry.load_scorer(
-            metric,
-            eval_mm.ScorerConfig(
-                docs=task.dataset,
-                judge_model=args.judge_model,
-                batch_size=args.batch_size_for_evaluation,
-                client=eval_mm.OpenAIChatAPI(),
-                random_choice=args.random_choice,
-            ),
-        )
-        scores = scorer.score(
-            [task.doc_to_answer(doc) for doc in task.dataset],
-            [pred["text"] for pred in preds],
-        )
-        scores_by_metric[metric] = scores
-        aggregate = scorer.aggregate(scores)
-        aggregated_metrics[metric] = asdict(aggregate)
-
-        logger.info(f"Scores for {metric}: {scores}")
-        logger.info(f"Aggregate for {metric}: {aggregate}")
-
-    return scores_by_metric, aggregated_metrics
-
-
-def save_final_results(preds, task, metrics, scores_by_metric, output_path):
-    final_results = []
-    for i, pred in enumerate(preds):
-        doc = task.dataset[i]
-        result = {
-            "question_id": pred["question_id"],
-            "text": pred["text"],
-            "answer": task.doc_to_answer(doc),
-            "input_text": task.doc_to_text(doc),
-        }
-        for metric in metrics:
-            result[metric] = scores_by_metric[metric][i]
-        final_results.append(result)
-
-    save_jsonl(output_path, final_results)
-    logger.info(f"Final prediction with scores saved to {output_path}")
 
 
 def main():
     args = parse_args()
 
-    gen_kwargs = GenerationConfig(
+    gen_config = GenerationConfig(
         max_new_tokens=args.max_new_tokens,
         temperature=args.temperature,
         top_p=args.top_p,
@@ -171,31 +58,32 @@ def main():
         do_sample=args.do_sample,
         use_cache=args.use_cache,
     )
-
-    task_config = eval_mm.TaskConfig(
+    task_config = TaskConfig(
         max_dataset_len=args.max_dataset_len,
         rotate_choices=args.rotate_choices,
     )
-    task = eval_mm.TaskRegistry.load_task(args.task_id, task_config)
 
-    output_dir = os.path.join(args.result_dir, args.task_id, args.model_id)
-    os.makedirs(output_dir, exist_ok=True)
+    model = VLLM(
+        model_id=args.model_id,
+        gpu_memory_utilization=args.gpu_memory_utilization,
+        tensor_parallel_size=args.tensor_parallel_size,
+    )
 
-    preds, _ = load_or_generate_predictions(args, task, gen_kwargs, output_dir)
-
-    if args.inference_only:
-        logger.info("Inference only mode. Skipping evaluation.")
-        return
-
-    scores_by_metric, aggregated_metrics = evaluate(args, task, preds, args.metrics)
-
-    prediction_path = os.path.join(output_dir, "prediction.jsonl")
-    save_final_results(preds, task, args.metrics, scores_by_metric, prediction_path)
-
-    evaluation_path = os.path.join(output_dir, "evaluation.jsonl")
-    with open(evaluation_path, "w") as f:
-        f.write(json.dumps(aggregated_metrics, ensure_ascii=False) + "\n")
-    logger.info(f"Evaluation result saved to {evaluation_path}")
+    run_evaluation(
+        model=model,
+        model_id=args.model_id,
+        task_id=args.task_id,
+        metrics=args.metrics,
+        gen_config=gen_config,
+        task_config=task_config,
+        result_dir=args.result_dir,
+        judge_model=args.judge_model,
+        batch_size_for_evaluation=args.batch_size_for_evaluation,
+        overwrite=args.overwrite,
+        inference_only=args.inference_only,
+        random_choice=args.random_choice,
+        batch_mode=True,
+    )
 
 
 if __name__ == "__main__":

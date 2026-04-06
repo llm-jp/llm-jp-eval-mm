@@ -32,6 +32,9 @@ requires-python = ">= 3.12.1"
 
 dynamic = ["version"]
 
+[project.scripts]
+eval-mm = "eval_mm.cli:main"
+
 [project.urls]
 Repository = "https://github.com/llm-jp/llm-jp-eval-mm"
 
@@ -203,6 +206,7 @@ no-build-isolation-package = ["flash-attn"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/eval_mm"]
+artifacts = ["*.png"]
 
 [tool.uv.extra-build-dependencies]
 flash-attn = [{ requirement = "torch", match-runtime = true }]

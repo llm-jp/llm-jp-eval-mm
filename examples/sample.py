@@ -1,13 +1,14 @@
-import os
-import json
+"""Evaluate a VLM using the transformers backend.
+
+This is a thin wrapper around ``eval_mm.run_evaluation``.
+For the canonical CLI, use: ``python -m eval_mm run --backend transformers ...``
+"""
+
 import argparse
-from dataclasses import asdict
-from tqdm import tqdm
-from loguru import logger
 
 import eval_mm
 import eval_mm.metrics
-from utils import GenerationConfig
+from eval_mm import GenerationConfig, TaskConfig, run_evaluation
 from model_table import get_class_from_model_id
 
 
@@ -38,117 +39,15 @@ def parse_args():
         default=["heron-bench"],
         help=f"Metrics to evaluate. Available: {eval_mm.ScorerRegistry().get_metric_list()}",
     )
-    parser.add_argument(
-        "--rotate_choices", action="store_true", help="This option is used in MECHA-ja"
-    )
-    parser.add_argument(
-        "--random_choice",
-        action="store_true",
-        help="If set, randomly choose the answer from the candidates when parse error occurs in JMMMU and MMMU tasks",
-    )
+    parser.add_argument("--rotate_choices", action="store_true")
+    parser.add_argument("--random_choice", action="store_true")
     return parser.parse_args()
-
-
-def load_or_generate_predictions(args, task, gen_kwargs, output_dir):
-    prediction_path = os.path.join(output_dir, "prediction.jsonl")
-    if os.path.exists(prediction_path) and not args.overwrite:
-        logger.info(f"Loading predictions from {prediction_path}")
-        with open(prediction_path, "r", encoding="utf-8") as f:
-            preds = [json.loads(line) for line in f]
-        assert len(preds) == len(
-            task.dataset
-        ), "Prediction length mismatch with dataset"
-        return preds, []
-
-    logger.info("Generating predictions...")
-    model = get_class_from_model_id(args.model_id)(args.model_id)
-    preds, errors = [], []
-    error_count = 0
-
-    for doc in tqdm(task.dataset):
-        qid = task.doc_to_id(doc)
-        images = task.doc_to_visual(doc)
-        text = task.doc_to_text(doc).replace("<image>", "")
-
-        try:
-            generated_text = model.generate(images, text, gen_kwargs)
-        except Exception as e:
-            logger.error(f"Error on {qid}: {e}")
-            generated_text, error_count = "", error_count + 1
-            errors.append({"question_id": qid, "error": str(e)})
-
-        preds.append({"question_id": qid, "text": generated_text})
-
-        if error_count > len(task.dataset) * 0.1:
-            logger.error("Error count exceeded 10%. Terminating.")
-            save_jsonl(os.path.join(output_dir, "error_message.jsonl"), errors)
-            exit()
-
-    save_jsonl(prediction_path, preds)
-    if errors:
-        save_jsonl(os.path.join(output_dir, "error_message.jsonl"), errors)
-    logger.info(f"Predictions saved to {prediction_path}")
-    return preds, errors
-
-
-def save_jsonl(path, data):
-    with open(path, "w", encoding="utf-8") as f:
-        for item in data:
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
-
-
-def evaluate(args, task, preds, metrics):
-    logger.info("Starting evaluation...")
-    scores_by_metric = {}
-    aggregated_metrics = {}
-
-    for metric in metrics:
-        scorer = eval_mm.ScorerRegistry.load_scorer(
-            metric,
-            eval_mm.ScorerConfig(
-                docs=task.dataset,
-                judge_model=args.judge_model,
-                batch_size=args.batch_size_for_evaluation,
-                client=eval_mm.OpenAIChatAPI(),
-                random_choice=args.random_choice,
-            ),
-        )
-        scores = scorer.score(
-            [task.doc_to_answer(doc) for doc in task.dataset],
-            [pred["text"] for pred in preds],
-        )
-        scores_by_metric[metric] = scores
-        aggregate = scorer.aggregate(scores)
-        aggregated_metrics[metric] = asdict(aggregate)
-
-        logger.info(f"Scores for {metric}: {scores}")
-        logger.info(f"Aggregate for {metric}: {aggregate}")
-
-    return scores_by_metric, aggregated_metrics
-
-
-def save_final_results(preds, task, metrics, scores_by_metric, output_path):
-    final_results = []
-    for i, pred in enumerate(preds):
-        doc = task.dataset[i]
-        result = {
-            "question_id": pred["question_id"],
-            "text": pred["text"],
-            "answer": task.doc_to_answer(doc),
-            "input_text": task.doc_to_text(doc),
-        }
-        for metric in metrics:
-            result[metric] = scores_by_metric[metric][i]
-        final_results.append(result)
-
-    save_jsonl(output_path, final_results)
-    logger.info(f"Final prediction with scores saved to {output_path}")
 
 
 def main():
     args = parse_args()
 
-    gen_kwargs = GenerationConfig(
+    gen_config = GenerationConfig(
         max_new_tokens=args.max_new_tokens,
         temperature=args.temperature,
         top_p=args.top_p,
@@ -156,31 +55,28 @@ def main():
         do_sample=args.do_sample,
         use_cache=args.use_cache,
     )
-
-    task_config = eval_mm.TaskConfig(
+    task_config = TaskConfig(
         max_dataset_len=args.max_dataset_len,
         rotate_choices=args.rotate_choices,
     )
-    task = eval_mm.TaskRegistry.load_task(args.task_id, task_config)
 
-    output_dir = os.path.join(args.result_dir, args.task_id, args.model_id)
-    os.makedirs(output_dir, exist_ok=True)
+    model = get_class_from_model_id(args.model_id)(args.model_id)
 
-    preds, errors = load_or_generate_predictions(args, task, gen_kwargs, output_dir)
-
-    if args.inference_only:
-        logger.info("Inference only mode. Skipping evaluation.")
-        return
-
-    scores_by_metric, aggregated_metrics = evaluate(args, task, preds, args.metrics)
-
-    prediction_path = os.path.join(output_dir, "prediction.jsonl")
-    save_final_results(preds, task, args.metrics, scores_by_metric, prediction_path)
-
-    evaluation_path = os.path.join(output_dir, "evaluation.jsonl")
-    with open(evaluation_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(aggregated_metrics, ensure_ascii=False) + "\n")
-    logger.info(f"Evaluation result saved to {evaluation_path}")
+    run_evaluation(
+        model=model,
+        model_id=args.model_id,
+        task_id=args.task_id,
+        metrics=args.metrics,
+        gen_config=gen_config,
+        task_config=task_config,
+        result_dir=args.result_dir,
+        judge_model=args.judge_model,
+        batch_size_for_evaluation=args.batch_size_for_evaluation,
+        overwrite=args.overwrite,
+        inference_only=args.inference_only,
+        random_choice=args.random_choice,
+        batch_mode=False,
+    )
 
 
 if __name__ == "__main__":
