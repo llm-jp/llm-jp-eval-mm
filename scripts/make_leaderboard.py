@@ -15,6 +15,7 @@ from eval_mm.metadata import (
     get_task_alias,
     get_task_cluster_alias,
     get_metric_alias,
+    get_tasks_by_language,
     LEADERBOARD_MODELS,
     write_github_pages_json,
 )
@@ -23,6 +24,7 @@ TASK_ALIAS = get_task_alias()
 TASK_CLUSTER_ALIAS = get_task_cluster_alias()
 METRIC_ALIAS = get_metric_alias()
 MODEL_LIST = LEADERBOARD_MODELS
+ENGLISH_TASKS, JAPANESE_TASKS = get_tasks_by_language()
 
 
 def load_evaluation_data(result_dir: str, model: str, task_dirs: list[str]) -> dict:
@@ -144,14 +146,9 @@ def plot_correlation(df: pd.DataFrame, filename: str, tex_columns: list[str] = N
     df = df.rename(columns=rename_dict)
     
     # Define task order as in TeX output: English tasks → Japanese tasks
-    task_order = [
-        # English tasks (from en_task_order)
-        "OK-VQA", "TextVQA", "AI2D", "ChartQA", "DocVQA", "BLINK", "InfoVQA", "MMMU", "LLAVA",
-        # Japanese tasks (from ja_task_order)
-        "CVQA", "CC-OCR", "JIC", "MulIm-VQA", "JMMMU", "JDocQA", "JVB-ItW", "VG-VQA", "Heron", "MECHA"
-    ]
-    english_tasks = {"OK-VQA", "TextVQA", "AI2D", "ChartQA", "DocVQA", "BLINK", "InfoVQA", "MMMU", "LLAVA"}
-    japanese_tasks = {"CVQA", "CC-OCR", "JIC", "MulIm-VQA", "JMMMU", "JDocQA", "JVB-ItW", "VG-VQA", "Heron", "MECHA"}
+    task_order = ENGLISH_TASKS + JAPANESE_TASKS
+    english_tasks = set(ENGLISH_TASKS)
+    japanese_tasks = set(JAPANESE_TASKS)
     
     # Filter and reorder dataframe columns based on task_order
     available_tasks = [task for task in task_order if task in df.columns]
@@ -249,8 +246,8 @@ def calculate_average_correlations(df: pd.DataFrame, tex_columns: list[str] = No
     df = df.rename(columns=rename_dict)
     
     # Define English and Japanese tasks
-    english_tasks = ["OK-VQA", "TextVQA", "AI2D", "ChartQA", "DocVQA", "BLINK", "InfoVQA", "MMMU", "LLAVA"]
-    japanese_tasks = ["CVQA", "CC-OCR", "JIC", "MulIm-VQA", "JMMMU", "JDocQA", "JVB-ItW", "VG-VQA", "Heron", "MECHA"]
+    english_tasks = ENGLISH_TASKS
+    japanese_tasks = JAPANESE_TASKS
     
     # Filter available tasks
     available_english = [task for task in english_tasks if task in df.columns]
@@ -318,13 +315,8 @@ def plot_task_clustering(df: pd.DataFrame, filename: str, tex_columns: list[str]
     df = df.rename(columns=rename_dict)
     
     # Define task order as in TeX output: English tasks → Japanese tasks
-    task_order = [
-        # English tasks
-        "OK-VQA", "TextVQA", "AI2D", "ChartQA", "DocVQA", "BLINK", "InfoVQA", "MMMU", "LLAVA",
-        # Japanese tasks
-        "CVQA", "CC-OCR", "JIC", "MulIm-VQA", "JMMMU", "JDocQA", "JVB-ItW", "VG-VQA", "Heron", "MECHA"
-    ]
-    japanese_tasks = {"CVQA", "CC-OCR", "JIC", "MulIm-VQA", "JMMMU", "JDocQA", "JVB-ItW", "VG-VQA", "Heron", "MECHA"}
+    task_order = ENGLISH_TASKS + JAPANESE_TASKS
+    japanese_tasks = set(JAPANESE_TASKS)
     
     # Filter and reorder dataframe columns based on task_order
     available_tasks = [task for task in task_order if task in df.columns]
@@ -471,11 +463,9 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
 def export_to_tex_files(df: pd.DataFrame, ja_tasks: list[str], en_tasks: list[str]):
     """Export leaderboard results to LaTeX table files like artifact/result_*.tex."""
     
-    # Define desired task order for Japanese tasks
-    ja_task_order = ["CVQA", "CC-OCR", "JIC", "MulIm-VQA", "JMMMU", "JDocQA", "JVB-ItW", "VG-VQA", "Heron", "MECHA"]
-    
-    # Define desired task order for English tasks
-    en_task_order = ["OK-VQA", "TextVQA", "AI2D", "ChartQA", "DocVQA", "BLINK", "InfoVQA", "MMMU", "LLAVA"]
+    # Task orders derived from metadata
+    ja_task_order = JAPANESE_TASKS
+    en_task_order = ENGLISH_TASKS
     
     # Prepare data for Japanese tasks with specific ordering
     ja_columns_ordered = []

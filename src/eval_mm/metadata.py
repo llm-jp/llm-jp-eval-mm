@@ -29,52 +29,50 @@ class MetricMeta:
 # ── Task metadata ──────────────────────────────────────────────────
 
 TASKS: dict[str, TaskMeta] = {t.task_id: t for t in [
-    # Japanese — visual-centric
-    TaskMeta("japanese-heron-bench", "Heron", "視覚中心",
-             ["heron-bench"], "https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench"),
-    TaskMeta("ja-vlm-bench-in-the-wild", "JVB-ItW", "視覚中心",
-             ["llm-as-a-judge", "rougel"], "https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild"),
-    TaskMeta("ja-vg-vqa-500", "VG-VQA", "視覚中心",
-             ["llm-as-a-judge", "rougel"], "https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500"),
-    TaskMeta("jic-vqa", "JIC", "視覚中心",
-             ["jic-vqa"], "https://huggingface.co/datasets/line-corporation/JIC-VQA"),
-    TaskMeta("cvqa", "CVQA", "視覚中心",
-             ["substring-match"], "https://huggingface.co/datasets/afaji/cvqa"),
-    # Japanese — knowledge-centric
-    TaskMeta("jmmmu", "JMMMU", "言語・知識中心",
-             ["jmmmu"], "https://huggingface.co/datasets/JMMMU/JMMMU"),
-    TaskMeta("jdocqa", "JDocQA", "言語・知識中心",
-             ["jdocqa"], "https://github.com/mizuumi/JDocQA"),
-    TaskMeta("mecha-ja", "MECHA", "言語・知識中心",
-             ["mecha-ja"], "https://huggingface.co/datasets/llm-jp/MECHA-ja"),
-    TaskMeta("cc-ocr", "CC-OCR", "言語・知識中心",
-             ["cc-ocr"], "https://huggingface.co/datasets/wulipc/CC-OCR"),
-    # Japanese — other
-    TaskMeta("ja-multi-image-vqa", "MulIm-VQA", "その他",
-             ["llm-as-a-judge", "rougel"], "https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA"),
-    # English
+    # English (leaderboard display order)
+    TaskMeta("okvqa", "OK-VQA", "英語",
+             ["substring-match"], ""),
+    TaskMeta("textvqa", "TextVQA", "英語",
+             ["substring-match"], "https://huggingface.co/datasets/lmms-lab/textvqa"),
+    TaskMeta("ai2d", "AI2D", "英語",
+             ["ai2d"], "https://huggingface.co/datasets/lmms-lab/ai2d"),
+    TaskMeta("chartqa", "ChartQA", "英語",
+             ["substring-match"], "https://huggingface.co/datasets/lmms-lab/ChartQA"),
+    TaskMeta("docvqa", "DocVQA", "英語",
+             ["substring-match"], "https://huggingface.co/datasets/lmms-lab/DocVQA"),
+    TaskMeta("blink", "BLINK", "英語",
+             ["blink"], "https://huggingface.co/datasets/BLINK-Benchmark/BLINK"),
+    TaskMeta("infographicvqa", "InfoVQA", "英語",
+             ["substring-match"], "https://huggingface.co/datasets/lmms-lab/infographicvqa"),
     TaskMeta("mmmu", "MMMU", "英語",
              ["mmmu"], "https://huggingface.co/datasets/MMMU/MMMU"),
     TaskMeta("llava-bench-in-the-wild", "LLAVA", "英語",
              ["llm-as-a-judge", "rougel"], "https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild"),
-    TaskMeta("ai2d", "AI2D", "英語",
-             ["ai2d"], "https://huggingface.co/datasets/lmms-lab/ai2d"),
-    TaskMeta("blink", "BLINK", "英語",
-             ["blink"], "https://huggingface.co/datasets/BLINK-Benchmark/BLINK"),
-    TaskMeta("docvqa", "DocVQA", "英語",
-             ["substring-match"], "https://huggingface.co/datasets/lmms-lab/DocVQA"),
-    TaskMeta("infographicvqa", "InfoVQA", "英語",
-             ["substring-match"], "https://huggingface.co/datasets/lmms-lab/infographicvqa"),
-    TaskMeta("textvqa", "TextVQA", "英語",
-             ["substring-match"], "https://huggingface.co/datasets/lmms-lab/textvqa"),
-    TaskMeta("chartqa", "ChartQA", "英語",
-             ["substring-match"], "https://huggingface.co/datasets/lmms-lab/ChartQA"),
     TaskMeta("chartqapro", "ChartQAPro", "英語",
-             ["substring-match"], ""),
-    TaskMeta("okvqa", "OK-VQA", "英語",
              ["substring-match"], ""),
     TaskMeta("mmmlu", "MMMLU", "英語",
              ["exact-match"], ""),
+    # Japanese (leaderboard display order)
+    TaskMeta("cvqa", "CVQA", "視覚中心",
+             ["substring-match"], "https://huggingface.co/datasets/afaji/cvqa"),
+    TaskMeta("cc-ocr", "CC-OCR", "言語・知識中心",
+             ["cc-ocr"], "https://huggingface.co/datasets/wulipc/CC-OCR"),
+    TaskMeta("jic-vqa", "JIC", "視覚中心",
+             ["jic-vqa"], "https://huggingface.co/datasets/line-corporation/JIC-VQA"),
+    TaskMeta("ja-multi-image-vqa", "MulIm-VQA", "その他",
+             ["llm-as-a-judge", "rougel"], "https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA"),
+    TaskMeta("jmmmu", "JMMMU", "言語・知識中心",
+             ["jmmmu"], "https://huggingface.co/datasets/JMMMU/JMMMU"),
+    TaskMeta("jdocqa", "JDocQA", "言語・知識中心",
+             ["jdocqa"], "https://github.com/mizuumi/JDocQA"),
+    TaskMeta("ja-vlm-bench-in-the-wild", "JVB-ItW", "視覚中心",
+             ["llm-as-a-judge", "rougel"], "https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild"),
+    TaskMeta("ja-vg-vqa-500", "VG-VQA", "視覚中心",
+             ["llm-as-a-judge", "rougel"], "https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500"),
+    TaskMeta("japanese-heron-bench", "Heron", "視覚中心",
+             ["heron-bench"], "https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench"),
+    TaskMeta("mecha-ja", "MECHA", "言語・知識中心",
+             ["mecha-ja"], "https://huggingface.co/datasets/llm-jp/MECHA-ja"),
 ]}
 
 
@@ -153,6 +151,13 @@ def get_task_alias() -> dict[str, str]:
 def get_task_cluster_alias() -> dict[str, str]:
     """Return {display_name: cluster} mapping."""
     return {t.display_name: t.cluster for t in TASKS.values()}
+
+
+def get_tasks_by_language() -> tuple[list[str], list[str]]:
+    """Return (english_display_names, japanese_display_names) derived from cluster field."""
+    english = [t.display_name for t in TASKS.values() if t.cluster == "英語"]
+    japanese = [t.display_name for t in TASKS.values() if t.cluster != "英語"]
+    return english, japanese
 
 
 def get_metric_alias() -> dict[str, str]:
