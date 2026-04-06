@@ -47,24 +47,6 @@ class RunManifest:
             return cls.from_json(f.read())
 
 
-@dataclass
-class PredictionRecord:
-    """A single prediction row in prediction.jsonl."""
-
-    question_id: str
-    text: str
-    answer: str = ""
-    input_text: str = ""
-    scores: dict[str, object] = field(default_factory=dict)
-
-
-@dataclass
-class AggregatedResult:
-    """The content of evaluation.jsonl."""
-
-    metrics: dict[str, dict] = field(default_factory=dict)
-
-
 # ── IO helpers ─────────────────────────────────────────────────────
 
 def write_manifest(
@@ -106,30 +88,3 @@ def load_evaluation(output_dir: str) -> dict:
         return json.loads(f.readline())
 
 
-def find_result_dirs(
-    result_root: str,
-    task_id: str | None = None,
-    model_id: str | None = None,
-) -> list[str]:
-    """Discover result directories under the given root.
-
-    Returns a list of paths matching result_root/<task>/<model>/ that
-    contain at least a prediction.jsonl file.
-    """
-    dirs: list[str] = []
-    if not os.path.isdir(result_root):
-        return dirs
-
-    for task_dir in sorted(os.listdir(result_root)):
-        if task_id and task_dir != task_id:
-            continue
-        task_path = os.path.join(result_root, task_dir)
-        if not os.path.isdir(task_path):
-            continue
-        for model_dir in sorted(os.listdir(task_path)):
-            if model_id and not task_path.endswith(model_id):
-                continue
-            model_path = os.path.join(task_path, model_dir)
-            if os.path.isfile(os.path.join(model_path, "prediction.jsonl")):
-                dirs.append(model_path)
-    return dirs
