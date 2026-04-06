@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 from loguru import logger
 import eval_mm
 import eval_mm.metrics
+from eval_mm import load_evaluation
 import seaborn as sns
 import matplotlib.pyplot as plt
 import japanize_matplotlib  # noqa: F401  # enable Japanese fonts in Matplotlib
@@ -29,13 +30,13 @@ def load_evaluation_data(result_dir: str, model: str, task_dirs: list[str]) -> d
     """Load evaluation results for a given model across multiple tasks."""
     model_results = {"Model": model}
     for task_dir in task_dirs:
-        eval_path = os.path.join(result_dir, task_dir, model, "evaluation.jsonl")
+        output_dir = os.path.join(result_dir, task_dir, model)
+        eval_path = os.path.join(output_dir, "evaluation.jsonl")
         if not os.path.exists(eval_path):
             logger.warning(f"{eval_path} not found. Skipping...")
             continue
 
-        with open(eval_path, "r") as f:
-            evaluation = json.load(f)
+        evaluation = load_evaluation(output_dir)
 
         for metric, aggregate_output in evaluation.items():
             if metric not in eval_mm.ScorerRegistry.get_metric_list():

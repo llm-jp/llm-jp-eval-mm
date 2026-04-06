@@ -13,7 +13,6 @@ Displays per-sample predictions with:
 - Paging and random jump navigation
 """
 
-import json
 import os
 import random
 from argparse import ArgumentParser
@@ -21,6 +20,7 @@ from argparse import ArgumentParser
 import streamlit as st
 
 import eval_mm
+from eval_mm import load_predictions
 from eval_mm.metadata import TASKS
 
 
@@ -61,14 +61,11 @@ if __name__ == "__main__":
     # Load model predictions
     predictions_per_model = {}
     for model_id in args.model_list:
-        prediction_path = os.path.join(
-            args.result_dir, args.task_id, model_id, "prediction.jsonl"
-        )
-        if not os.path.exists(prediction_path):
+        output_dir = os.path.join(args.result_dir, args.task_id, model_id)
+        if not os.path.isfile(os.path.join(output_dir, "prediction.jsonl")):
             st.warning(f"Predictions not found for {model_id}")
             continue
-        with open(prediction_path, "r") as f:
-            predictions_per_model[model_id] = [json.loads(line) for line in f]
+        predictions_per_model[model_id] = load_predictions(output_dir)
 
     active_models = list(predictions_per_model.keys())
 
