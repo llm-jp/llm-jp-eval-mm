@@ -13,11 +13,25 @@ const NAV_ITEMS = [
 
 export function Nav() {
   const pathname = usePathname();
+  const isRunnerPage = pathname.startsWith("/runner");
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b backdrop-blur",
+        isRunnerPage
+          ? "border-[#362d59] bg-[#150f23]/95 supports-[backdrop-filter]:bg-[#150f23]/80"
+          : "bg-background/95 supports-[backdrop-filter]:bg-background/60"
+      )}
+    >
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
+        <Link
+          href="/"
+          className={cn(
+            "text-lg font-semibold tracking-tight",
+            isRunnerPage && "text-white"
+          )}
+        >
           eval_mm
         </Link>
 
@@ -31,9 +45,13 @@ export function Nav() {
                 href={href}
                 className={cn(
                   "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                  isRunnerPage
+                    ? isActive
+                      ? "bg-[#6a5fc1]/30 text-white"
+                      : "text-[#e5e7eb]/70 hover:bg-[#362d59]/50 hover:text-white"
+                    : isActive
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 )}
               >
                 {label}
