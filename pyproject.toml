@@ -32,6 +32,9 @@ requires-python = ">= 3.12.1"
 
 dynamic = ["version"]
 
+[project.scripts]
+eval-mm = "eval_mm.cli:main"
+
 [project.urls]
 Repository = "https://github.com/llm-jp/llm-jp-eval-mm"
 
@@ -49,6 +52,7 @@ exclude = ["result", "scripts"]
 mantis-vl = { git = "https://github.com/TIGER-AI-Lab/Mantis" }
 s2wrapper = { git = "https://github.com/bfshi/scaling_on_scales.git" }
 vila = { git = "https://github.com/LLM-jp/llm-jp-VILA.git", branch = "dep-relax" }
+flash-attn = { url = "https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.3/flash_attn-2.7.3%2Bcu12torch2.6cxx11abiFALSE-cp312-cp312-linux_x86_64.whl" }
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -203,6 +207,7 @@ no-build-isolation-package = ["flash-attn"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/eval_mm"]
+artifacts = ["*.png"]
 
 [tool.uv.extra-build-dependencies]
 flash-attn = [{ requirement = "torch", match-runtime = true }]

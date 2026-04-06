@@ -34,16 +34,39 @@ If you are not using LLM-as-a-Judge, you can assign any value in the `.env` file
 
 ## Usage
 
-To evaluate a model on a task, run the following command:
+To evaluate a model on a task, use the `eval-mm` CLI:
 ```bash
 uv sync --group normal
-uv run --group normal python examples/sample.py \
+uv run --group normal eval-mm run \
   --model_id llava-hf/llava-1.5-7b-hf \
   --task_id japanese-heron-bench  \
   --result_dir result  \
   --metrics heron-bench \
   --judge_model gpt-4o-2024-11-20 \
   --overwrite
+```
+
+You can also use `python -m eval_mm run ...` or the legacy `python examples/sample.py ...` wrapper.
+
+To evaluate using vLLM for faster batch inference:
+```bash
+uv sync --group vllm_normal
+uv run --group vllm_normal eval-mm run \
+  --backend vllm \
+  --model_id Qwen/Qwen2.5-VL-3B-Instruct \
+  --task_id japanese-heron-bench \
+  --metrics heron-bench
+```
+
+To score existing predictions without running inference:
+```bash
+eval-mm evaluate --model_id llava-hf/llava-1.5-7b-hf --task_id japanese-heron-bench --metrics heron-bench
+```
+
+To list available tasks and metrics:
+```bash
+eval-mm list tasks
+eval-mm list metrics
 ```
 
 The evaluation results will be saved in the result directory:
@@ -162,7 +185,13 @@ To add a new metric, implement the Scorer class in `src/eval_mm/metrics/scorer.p
 
 ### Adding a new model
 
-To add a new model, implement the VLM class in `examples/base_vlm.py`
+To add a new model, create a VLM adapter class that inherits from `eval_mm.BaseVLM` and place it in `examples/`.
+Register it in `examples/model_table.py` so the CLI can discover it.
+
+> **Note**: `examples/` contains *model adapter implementations* and *usage examples*.
+> The evaluation engine, CLI, base classes, and scoring live in `src/eval_mm/` (the published package).
+> Model adapters in `examples/` are not part of the PyPI distribution — they are reference implementations
+> for users to copy, adapt, or extend
 
 ### Adding a new dependency
 
@@ -175,10 +204,16 @@ uv add --group <group_name> <package_name>
 
 ### Testing
 
-Run the following commands to test tasks, metrics, and models::
+Portable offline tests (no GPU, no network):
 ```bash
 bash test.sh
-bash test_model.sh
+```
+
+Model smoke tests (requires GPU + model weights):
+```bash
+bash test_model.sh                  # all models
+bash test_model.sh "Qwen"          # filter by name
+CUDA_VISIBLE_DEVICES=0,1 bash test_model.sh  # custom GPU selection
 ```
 
 ### Formatting and Linting

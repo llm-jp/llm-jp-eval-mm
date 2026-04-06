@@ -1,20 +1,13 @@
 #!/bin/bash
-set -eux  # エラーが発生したらスクリプトを停止する
+set -eux
 
-# Set CUDA devices
-export CUDA_VISIBLE_DEVICES=0
+# ── Configuration ─────────────────────────────────────────────────
+# Override these via environment variables if needed:
+#   CUDA_VISIBLE_DEVICES=0,1 bash test_model.sh
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 
-# HuggingFace cache directories
-export DATA_DIR="/data/silviase/" # please rewrite!!!!
-export HF_HOME="$DATA_DIR/.hf_cache"
-export HF_DATASETS_CACHE="$DATA_DIR/datasets"
-export HF_HUB_CACHE="$DATA_DIR/models"
-export APPTAINER_CACHEDIR="$DATA_DIR/apptainer_cache"
-
-# CUDA configuration
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-
-# Model name to group name mapping
+# Model name → dependency group mapping
 declare -A MODEL_GROUP_MAP=(
     ["stabilityai/japanese-instructblip-alpha"]="normal"
     ["stabilityai/japanese-stable-vlm"]="calm"
@@ -37,9 +30,16 @@ declare -A MODEL_GROUP_MAP=(
     ["MIL-UT/Asagi-14B"]="normal"
 )
 
+# ── Run tests ─────────────────────────────────────────────────────
+
+# Allow filtering via CLI: bash test_model.sh "model_id_substring"
+FILTER="${1:-}"
+
 for model_name in "${!MODEL_GROUP_MAP[@]}"; do
+    if [[ -n "$FILTER" && "$model_name" != *"$FILTER"* ]]; then
+        continue
+    fi
     model_group=${MODEL_GROUP_MAP[$model_name]}
-    # uv sync --group $model_group
-    source .uv/${model_group}-env/bin/activate
-    python examples/test_model.py --model_id "$model_name"
+    echo "=== Testing $model_name (group: $model_group) ==="
+    uv run --group "$model_group" python examples/test_model.py --model_id "$model_name"
 done
