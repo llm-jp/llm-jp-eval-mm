@@ -112,9 +112,60 @@ print(result)
 ```
 
 
-## Leaderboard
+## Web Dashboard
 
-To generate a leaderboard from your evaluation results, run:
+A Next.js web frontend provides three interactive views for browsing evaluation results. It connects to a lightweight FastAPI backend that serves data from your `result/` directory.
+
+### Quick Start
+
+```bash
+# Terminal 1: Start the API server
+uv pip install fastapi uvicorn
+uvicorn eval_mm.api:app --reload
+
+# Terminal 2: Start the web frontend
+cd web
+pnpm install
+pnpm dev
+```
+
+Then open http://localhost:3000.
+
+### Pages
+
+| Page | URL | Description |
+|------|-----|-------------|
+| **Runner Dashboard** | `/runner` | GPU monitoring, task configuration, progress tracking (Sentry-inspired dark UI) |
+| **Leaderboard** | `/leaderboard` | Sortable model comparison table with scores across all tasks (Stripe-inspired design) |
+| **Prediction Browser** | `/browser` | Browse individual predictions, compare models side-by-side, navigate samples (Claude-inspired editorial UI) |
+
+### API Endpoints
+
+The FastAPI backend (`uvicorn eval_mm.api:app`) exposes:
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/tasks` | List available evaluation tasks |
+| `GET /api/models` | List leaderboard models |
+| `GET /api/results` | Discover all task/model result pairs |
+| `GET /api/predictions/{task_id}/{model_id}` | Paginated predictions (supports `offset`, `limit`) |
+| `GET /api/scores/{task_id}` | Aggregate scores for all models on a task |
+
+Set `EVAL_MM_RESULT_DIR` to point to your result directory (default: `result/`).
+
+> **Note**: The web frontend works without the API server — pages fall back to mock data for static builds and development.
+
+### Static Build
+
+```bash
+cd web && pnpm build
+```
+
+This generates static pages that can be deployed to GitHub Pages or any static host.
+
+## Leaderboard (CLI)
+
+To generate a leaderboard from your evaluation results via CLI:
 ```bash
 python scripts/make_leaderboard.py --result_dir result
 ```
@@ -128,8 +179,6 @@ This will create a `leaderboard.md` file with your model performance:
 | google/gemma-3-27b-it                    | 69.15     | 4.36        | 30.89         |
 | microsoft/Phi-4-multimodal-instruct      | 45.52     | 3.2         | 26.8          |
 | gpt-4o-2024-11-20                        | **93.7**  | **4.44**    | 32.2          |
-
-
 
 The official leaderboard is available [here](https://llm-jp.github.io/llm-jp-eval-mm/)
 
@@ -165,7 +214,12 @@ See `eval_all.sh` for the complete list of model dependencies.
 
 When adding a new group, remember to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
 
-## Browse Predictions with Streamlit
+## Browse Predictions
+
+### Web UI (Recommended)
+Start the web dashboard (see [Web Dashboard](#web-dashboard) above) and open the **Prediction Browser** at http://localhost:3000/browser.
+
+### Streamlit (Legacy)
 ```bash
 uv run streamlit run scripts/browse_prediction.py -- --task_id japanese-heron-bench --result_dir result --model_list llava-hf/llava-1.5-7b-hf
 ```
@@ -235,9 +289,12 @@ git push origin --tags
 
 ### Updating the Website
 
-For website updates, see [github_pages/README.md](./github_pages/README.md).
+The web dashboard is built with Next.js in the `web/` directory. For development:
+```bash
+cd web && pnpm dev
+```
 
-To update leaderboard data:
+The legacy GitHub Pages leaderboard is in `github_pages/`. To update its data:
 ```bash
 python scripts/make_leaderboard.py --update_pages
 ```
