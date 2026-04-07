@@ -42,6 +42,28 @@ declare -A MODEL_GROUP_MAP=(
     ["CohereLabs/aya-vision-32b"]="vllm_normal"
     # GLM-4.5V
     ["zai-org/GLM-4.5V"]="vllm_normal"
+    # ── Successor models ──
+    # Qwen3-VL (Dense)
+    ["Qwen/Qwen3-VL-2B-Instruct"]="vllm_normal"
+    ["Qwen/Qwen3-VL-4B-Instruct"]="vllm_normal"
+    ["Qwen/Qwen3-VL-8B-Instruct"]="vllm_normal"
+    ["Qwen/Qwen3-VL-30B-A3B-Instruct"]="vllm_normal"
+    ["Qwen/Qwen3-VL-32B-Instruct"]="vllm_normal"
+    # Qwen3.5 (natively multimodal)
+    ["Qwen/Qwen3.5-2B"]="vllm_normal"
+    ["Qwen/Qwen3.5-4B"]="vllm_normal"
+    ["Qwen/Qwen3.5-9B"]="vllm_normal"
+    ["Qwen/Qwen3.5-27B"]="vllm_normal"
+    ["Qwen/Qwen3.5-35B-A3B"]="vllm_normal"
+    # InternVL3.5
+    ["OpenGVLab/InternVL3_5-1B"]="vllm_normal"
+    ["OpenGVLab/InternVL3_5-2B"]="vllm_normal"
+    ["OpenGVLab/InternVL3_5-4B"]="vllm_normal"
+    ["OpenGVLab/InternVL3_5-8B"]="vllm_normal"
+    ["OpenGVLab/InternVL3_5-38B"]="vllm_normal"
+    # Molmo2
+    ["allenai/Molmo2-4B"]="vllm_normal"
+    ["allenai/Molmo2-8B"]="vllm_normal"
 )
 
 declare -a task_list=(

@@ -87,6 +87,44 @@ OVIS2_5_MODELS: tuple[str, ...] = (
     "AIDC-AI/Ovis2.5-9B",
 )
 
+# ── Successor / new models ────────────────────────────────────────
+
+QWEN3_VL_MODELS: tuple[str, ...] = (
+    "Qwen/Qwen3-VL-2B-Instruct",
+    "Qwen/Qwen3-VL-4B-Instruct",
+    "Qwen/Qwen3-VL-8B-Instruct",
+    "Qwen/Qwen3-VL-30B-A3B-Instruct",
+    "Qwen/Qwen3-VL-32B-Instruct",
+)
+
+QWEN3_5_MODELS: tuple[str, ...] = (
+    "Qwen/Qwen3.5-2B",
+    "Qwen/Qwen3.5-4B",
+    "Qwen/Qwen3.5-9B",
+    "Qwen/Qwen3.5-27B",
+    "Qwen/Qwen3.5-35B-A3B",
+)
+
+INTERNVL3_5_MODELS: tuple[str, ...] = (
+    "OpenGVLab/InternVL3_5-1B",
+    "OpenGVLab/InternVL3_5-2B",
+    "OpenGVLab/InternVL3_5-4B",
+    "OpenGVLab/InternVL3_5-8B",
+    "OpenGVLab/InternVL3_5-38B",
+)
+
+GEMMA4_MODELS: tuple[str, ...] = (
+    "google/gemma-4-E2B-it",
+    "google/gemma-4-E4B-it",
+    "google/gemma-4-26B-A4B-it",
+    "google/gemma-4-31B-it",
+)
+
+MOLMO2_MODELS: tuple[str, ...] = (
+    "allenai/Molmo2-4B",
+    "allenai/Molmo2-8B",
+)
+
 
 class VLLMModelRegistry:
     def __init__(self, model_id: str):
@@ -101,10 +139,7 @@ class VLLMModelRegistry:
             ],
         ] = {
             # ── Standalone models ─────────────────────────────
-            "Qwen/Qwen3-VL-30B-A3B-Instruct": (
-                self._engine_args_qwen3_vl,
-                self._load_qwen_vl,
-            ),
+            # Standalone models
             "moonshotai/Kimi-VL-A3B-Instruct": (
                 self._engine_args_kimi_vl,
                 self._load_kimi_vl,
@@ -160,6 +195,24 @@ class VLLMModelRegistry:
 
         for m in OVIS2_5_MODELS:
             registry[m] = (self._engine_args_ovis2_5, self._load_ovis2_5)
+
+        # ── Successor / new model registrations ───────────────
+        for m in QWEN3_VL_MODELS:
+            registry[m] = (self._engine_args_qwen3_vl, self._load_qwen_vl)
+
+        for m in QWEN3_5_MODELS:
+            registry[m] = (self._engine_args_qwen3_5, self._load_qwen_vl)
+
+        for m in INTERNVL3_5_MODELS:
+            registry[m] = (self._engine_args_internvl, self._load_internvl3)
+
+        # GEMMA4_MODELS: requires transformers >= 4.58 (gemma4 architecture)
+        # Uncomment when transformers is updated:
+        # for m in GEMMA4_MODELS:
+        #     registry[m] = (self._engine_args_gemma4, self._load_gemma3)
+
+        for m in MOLMO2_MODELS:
+            registry[m] = (self._engine_args_molmo2, self._load_generic_chat)
 
         try:
             self._engine_resolver, self._request_builder = registry[model_id]
@@ -750,6 +803,125 @@ class VLLMModelRegistry:
             prompts.append(prompt)
 
         return ModelRequestData(prompts=prompts, stop_token_ids=stop_token_ids)
+
+    # ── Qwen3.5 (natively multimodal, early fusion) ──────────────
+
+    def _engine_args_qwen3_5(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=32768,
+            max_num_seqs=5,
+            mm_processor_kwargs={
+                "min_pixels": 28 * 28,
+                "max_pixels": 1280 * 28 * 28,
+            },
+            limit_mm_per_prompt={self.modality: 5},
+        )
+
+    # ── Gemma 4 ───────────────────────────────────────────────────
+
+    def _engine_args_gemma4(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=8192,
+            limit_mm_per_prompt={self.modality: 5},
+        )
+
+    # ── Llama 4 (Scout) ──────────────────────────────────────────
+
+    def _engine_args_llama4(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=8192,
+            max_num_seqs=4,
+            limit_mm_per_prompt={self.modality: 5},
+        )
+
+    def _load_llama4(
+        self, texts: list[str], images_list: list[list[Image.Image]]
+    ) -> ModelRequestData:
+        self._validate_lengths(texts, images_list)
+
+        if not hasattr(self, "_llama4_processor"):
+            self._llama4_processor = AutoProcessor.from_pretrained(self.model_id)
+
+        processor = self._llama4_processor
+        prompts: list[str] = []
+        for text, images in zip(texts, images_list):
+            content: list[dict] = [{"type": "image"} for _ in images]
+            content.append({"type": "text", "text": text})
+            messages = [{"role": "user", "content": content}]
+            prompt = processor.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
+            prompts.append(prompt)
+        return ModelRequestData(prompts=prompts)
+
+    # ── Phi-4-reasoning-vision ────────────────────────────────────
+
+    def _engine_args_phi4_reasoning(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            trust_remote_code=True,
+            max_model_len=8192,
+            limit_mm_per_prompt={self.modality: 5},
+        )
+
+    # ── Mistral Small 3.1 ────────────────────────────────────────
+
+    def _engine_args_mistral_small(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=8192,
+            limit_mm_per_prompt={self.modality: 5},
+        )
+
+    # ── GLM-4.6V ─────────────────────────────────────────────────
+
+    def _engine_args_glm4_6v(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            max_model_len=8192,
+            max_num_seqs=2,
+            trust_remote_code=True,
+            enforce_eager=True,
+            limit_mm_per_prompt={"image": 5, "video": 0},
+        )
+
+    # ── Molmo2 ────────────────────────────────────────────────────
+
+    def _engine_args_molmo2(self) -> EngineArgs:
+        return EngineArgs(
+            model=self.model_id,
+            trust_remote_code=True,
+            max_model_len=8192,
+            limit_mm_per_prompt={self.modality: 5},
+        )
+
+    # ── Generic processor-based chat template ─────────────────────
+
+    def _load_generic_chat(
+        self, texts: list[str], images_list: list[list[Image.Image]]
+    ) -> ModelRequestData:
+        """Generic prompt builder using the model's processor chat template."""
+        self._validate_lengths(texts, images_list)
+
+        if not hasattr(self, "_generic_processor"):
+            self._generic_processor = AutoProcessor.from_pretrained(
+                self.model_id, trust_remote_code=True
+            )
+
+        processor = self._generic_processor
+        prompts: list[str] = []
+        for text, images in zip(texts, images_list):
+            content: list[dict] = [{"type": "image"} for _ in images]
+            content.append({"type": "text", "text": text})
+            messages = [{"role": "user", "content": content}]
+            prompt = processor.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
+            prompts.append(prompt)
+        return ModelRequestData(prompts=prompts)
 
 
 # ── Test helpers ──────────────────────────────────────────────────
