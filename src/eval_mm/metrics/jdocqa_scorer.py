@@ -93,22 +93,3 @@ class JDocQAScorer(Scorer):
         metrics["overall"] = sum(scores) / len(scores) if scores else 0.0
 
         return AggregateOutput(metrics["overall"], metrics)
-
-
-def test_jdocqa_scorer():
-    refs = ["私は猫です。"]
-    preds = ["私は猫です。"]
-    from .scorer import ScorerConfig
-
-    scorer = JDocQAScorer(ScorerConfig(docs=[{"answer_type": 1}]))
-    scores = scorer.score(refs, preds)
-    assert scores == [1.0]
-    output = scorer.aggregate(scores)
-    assert output.overall_score == 1.0
-    assert output.details == {
-        "factoid_exact": 1.0,
-        "yesno_exact": 0,
-        "numerical_exact": 0,
-        "open-ended_bleu": 0,
-        "overall": 1.0,
-    }

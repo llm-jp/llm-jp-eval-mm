@@ -26,9 +26,14 @@ async def call_openai(
 class OpenAIChatAPI:
     def __init__(self) -> None:
         if os.getenv("AZURE_OPENAI_KEY") and os.getenv("AZURE_OPENAI_ENDPOINT"):
+            # Azure API version can be overridden via the AZURE_API_VERSION
+            # environment variable.  The default ("2023-05-15") is the GA
+            # release that supports Chat Completions; bump this when a newer
+            # stable version is needed.
+            api_version = os.getenv("AZURE_API_VERSION", "2023-05-15")
             self.client = AsyncAzureOpenAI(
                 api_key=os.getenv("AZURE_OPENAI_KEY"),
-                api_version="2023-05-15",
+                api_version=api_version,
                 azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
             )
         elif os.getenv("OPENAI_API_KEY"):

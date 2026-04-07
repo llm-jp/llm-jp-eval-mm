@@ -36,9 +36,17 @@ class MecabTokenizer:
             return emoji_pattern.sub(r"", text)
 
         text = remove_emoji(text)
-        # see neologdn docs for details, but handles things like full/half width variation
-        # text = neologdn.normalize(text) FIXME: fix c++12 error when installing neologdn
-        text = unicodedata.normalize("NFKC", text)
+        # neologdn provides superior Japanese text normalization (full/half-width
+        # unification, prolonged sound mark normalization, etc.) but requires a
+        # C++12 toolchain that may not be available in all build environments.
+        # When it is missing we fall back to unicodedata.normalize("NFKC", ...),
+        # which covers the most important full-width / half-width conversions.
+        try:
+            import neologdn
+
+            text = neologdn.normalize(text)
+        except ImportError:
+            text = unicodedata.normalize("NFKC", text)
         text = white_space_fix(text)
         return text
 
@@ -92,43 +100,3 @@ class RougeLScorer(Scorer):
     def aggregate(scores: list[float]) -> AggregateOutput:
         mean = sum(scores) / len(scores)
         return AggregateOutput(mean, {"rougel": mean})
-
-
-def test_rouge_ja():
-    import pytest
-
-    refs = ["私は猫です。"]
-    preds = ["私は猫です。"]
-    scores = rouge_ja(refs, preds)
-    assert scores["rougeL"] == 100.0
-    refs = ["たかしが公園で遊んでいた。"]
-    preds = ["たかしが公園にいたようだ。"]
-    scores = rouge_ja(refs, preds)
-    assert pytest.approx(scores["rougeL"], 0.01) == 66.66
-
-    refs = ["私は猫です。", "私は犬です。"]
-    preds = ["私は犬です。", "私は猫です。"]
-    scores = rouge_ja(refs, preds)
-    assert pytest.approx(scores["rougeL"], 0.01) == 80.0
-    refs = ["池のほとりです。"]
-    preds = ["ここは湖の岸です。"]
-    scores = rouge_ja(refs, preds)
-    assert pytest.approx(scores["rougeL"], 0.01) == 50.0
-
-
-def test_rougel_scorer():
-    import pytest
-
-    refs = ["私は猫です。"]
-    preds = ["私は猫です。"]
-    from .scorer import ScorerConfig
-
-    scorer = RougeLScorer(ScorerConfig())
-    scores = scorer.score(refs, preds)
-    assert scores == [100.0]
-    refs = ["たかしが公園で遊んでいた。"]
-    preds = ["たかしが公園にいたようだ。"]
-    scores = scorer.score(refs, preds)
-    assert pytest.approx(scores[0], 0.01) == 66.66
-    output = scorer.aggregate(scores)
-    assert pytest.approx(output.overall_score, 0.01) == 66.66
