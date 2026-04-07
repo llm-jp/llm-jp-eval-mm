@@ -6,7 +6,15 @@ from .task import Task
 from .task_registry import register_task
 from PIL import Image
 
-# import neologdn FIXME: fix c++12 error when installing neologdn
+# neologdn provides superior Japanese text normalization (e.g. full/half-width
+# unification, prolonged sound mark normalization) but requires a C++12 toolchain
+# that may not be available in all build environments.  When it is missing we fall
+# back to unicodedata.normalize("NFKC", ...), which covers the most important
+# full-width / half-width conversions.
+try:
+    import neologdn  # noqa: F401
+except ImportError:
+    neologdn = None
 
 
 @register_task("ja-multi-image-vqa")

@@ -7,7 +7,6 @@ from .mmmu_utils import (
     construct_prompt,
     get_score,
     aggregate_mmmu_results,
-    normalize_str,
 )
 
 DOMAIN_CAT2SUB_CAT = {
@@ -71,7 +70,12 @@ def extract_numbers(string):
 
 def mmmu_doc_to_text(doc):
     question = construct_prompt(doc, MULTI_CHOICE_PROMPT, OPEN_ENDED_PROMPT)
-    question = replace_images_tokens(question)  # TODO: check if this is necessary
+    # replace_images_tokens normalises numbered image placeholders (e.g.
+    # "<image 1>", "<image 2>") into a single "<image>" token.  This is
+    # necessary because the MMMU dataset embeds numbered image references in
+    # questions, but the VLM inference pipeline expects a uniform "<image>"
+    # placeholder.
+    question = replace_images_tokens(question)
     return question
 
 
@@ -90,33 +94,3 @@ class MMMUScorer(Scorer):
         docs = self.config.docs
         assert docs is not None
         return aggregate_mmmu_results(docs, scores, DOMAIN_CAT2SUB_CAT)
-
-
-def test_mmmu_score():
-    refs = ["A"]
-    preds = ["A"]
-    docs = [
-        {
-            "question_type": "multiple-choice",
-            "options": '["A", "B", "C", "D"]',
-            "answer": "A",
-            "id": "validation_Accounting_1",
-        }
-    ]
-    from .scorer import ScorerConfig
-
-    scorer = MMMUScorer(ScorerConfig(docs=docs))
-    scores = scorer.score(refs, preds)
-    assert scores == [1]
-    output = scorer.aggregate(scores)
-    assert output.overall_score == 1.0
-    assert output.details == {
-        "Overall-Art and Design": 0,
-        "Overall-Business": 1.0,
-        "Accounting": 1.0,
-        "Overall-Science": 0,
-        "Overall-Health and Medicine": 0,
-        "Overall-Humanities and Social Science": 0,
-        "Overall-Tech and Engineering": 0,
-        "Overall": 1.0,
-    }

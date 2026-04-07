@@ -53,7 +53,12 @@ def construct_prompt(doc):
 
 def mmmu_doc_to_text(doc):
     question = construct_prompt(doc)
-    question = replace_images_tokens(question)  # TODO: check if this is necessary
+    # replace_images_tokens normalises numbered image placeholders (e.g.
+    # "<image 1>", "<image 2>") into a single "<image>" token.  This is
+    # necessary because the MMMU dataset embeds numbered image references in
+    # questions, but the VLM inference pipeline expects a uniform "<image>"
+    # placeholder.
+    question = replace_images_tokens(question)
     return question
 
 
