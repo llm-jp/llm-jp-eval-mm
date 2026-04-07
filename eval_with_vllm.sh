@@ -1,29 +1,47 @@
 # Set CUDA devices
 set -eux  # エラーが発生したらスクリプトを停止する
 
-export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5
+export CUDA_VISIBLE_DEVICES=0,1,2,3
 
 # Model name to group name mapping
+# All models here use the vllm_normal group with the VLLM wrapper (base_vllm.py + vllm_registry.py)
 declare -A MODEL_GROUP_MAP=(
-    # ["Qwen/Qwen3-VL-30B-A3B-Instruct"]="vllm_normal"
-    # ["moonshotai/Kimi-VL-A3B-Instruct"]="vllm_normal" # 今は動かない
-    # ["deepseek-ai/deepseek-vl2"]="vllm_normal"
-    # ["openbmb/MiniCPM-o-2_6"]="vllm_normal"
+    # LLaVA 1.5
+    ["llava-hf/llava-1.5-7b-hf"]="vllm_normal"
+    ["llava-hf/llava-1.5-13b-hf"]="vllm_normal"
+    # LLaVA-NeXT
+    ["llava-hf/llava-v1.6-mistral-7b-hf"]="vllm_normal"
+    # Pangea (LLaVA-NeXT based)
+    ["neulab/Pangea-7B-hf"]="vllm_normal"
+    # InternVL2
+    ["OpenGVLab/InternVL2-8B"]="vllm_normal"
+    ["OpenGVLab/InternVL2-26B"]="vllm_normal"
+    # InternVL3
+    ["OpenGVLab/InternVL3-1B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-2B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-8B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-14B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-38B"]="vllm_normal"
+    ["OpenGVLab/InternVL3-78B"]="vllm_normal"
+    # Qwen2-VL
+    ["Qwen/Qwen2-VL-7B-Instruct"]="vllm_normal"
+    ["Qwen/Qwen2-VL-72B-Instruct"]="vllm_normal"
+    # Qwen2.5-VL
+    ["Qwen/Qwen2.5-VL-3B-Instruct"]="vllm_normal"
+    ["Qwen/Qwen2.5-VL-7B-Instruct"]="vllm_normal"
+    ["Qwen/Qwen2.5-VL-32B-Instruct"]="vllm_normal"
+    ["Qwen/Qwen2.5-VL-72B-Instruct"]="vllm_normal"
+    # Gemma-3
+    ["google/gemma-3-4b-it"]="vllm_normal"
+    ["google/gemma-3-12b-it"]="vllm_normal"
+    ["google/gemma-3-27b-it"]="vllm_normal"
+    # Phi-4
+    ["microsoft/Phi-4-multimodal-instruct"]="vllm_normal"
+    # Aya Vision
+    ["CohereLabs/aya-vision-8b"]="vllm_normal"
+    ["CohereLabs/aya-vision-32b"]="vllm_normal"
+    # GLM-4.5V
     ["zai-org/GLM-4.5V"]="vllm_normal"
-    # ["AIDC-AI/Ovis2-1B"]="vllm_normal"
-    # ["AIDC-AI/Ovis2-2B"]="vllm_normal"
-    # ["AIDC-AI/Ovis2-4B"]="vllm_normal"
-    # ["AIDC-AI/Ovis2-8B"]="vllm_normal"
-    # ["AIDC-AI/Ovis2-16B"]="vllm_normal"
-    # ["AIDC-AI/Ovis2-34B"]="vllm_normal"
-    # ["AIDC-AI/Ovis2.5-2B"]="vllm_normal"
-    # ["AIDC-AI/Ovis2.5-9B"]="vllm_normal"
-    # ["OpenGVLab/InternVL3-1B"]="vllm_normal"
-    # ["OpenGVLab/InternVL3-2B"]="vllm_normal"
-    # ["OpenGVLab/InternVL3-8B"]="vllm_normal"
-    # ["OpenGVLab/InternVL3-14B"]="vllm_normal"
-    # ["OpenGVLab/InternVL3-38B"]="vllm_normal"
-    # ["OpenGVLab/InternVL3-78B"]="vllm_normal"
 )
 
 declare -a task_list=(
@@ -40,13 +58,13 @@ declare -a task_list=(
     "cc-ocr"
     "mecha-ja"
     "ai2d"
-    # "blink"
+    "blink"
     "docvqa"
     "infographicvqa"
     "textvqa"
     "chartqa"
-    # "chartqapro"
-    # "mathvista"
+    "chartqapro"
+    "mathvista"
     "okvqa"
 )
 
@@ -86,9 +104,8 @@ for RESULT_DIR in "${result_dir_list[@]}"; do
         METRIC=${METRIC_MAP[$task]}
         for model_name in "${!MODEL_GROUP_MAP[@]}"; do
             model_group=${MODEL_GROUP_MAP[$model_name]}
-            source .uv/vllm_normal-env/bin/activate
-            uv pip list
-            python examples/sample_vllm.py \
+            uv sync --group $model_group
+            uv run --group $model_group python examples/sample_vllm.py \
                 --model_id "$model_name" \
                 --task_id "$task" \
                 --metrics "$METRIC" \

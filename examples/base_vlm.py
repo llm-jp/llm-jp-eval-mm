@@ -5,11 +5,25 @@ from PIL import Image
 from loguru import logger
 
 from eval_mm.models.base_vlm import BaseVLM as _BaseVLM
-from eval_mm.models.generation_config import GenerationConfig  # noqa: F401
+from eval_mm.models.generation_config import GenerationConfig
 
 
 class BaseVLM(_BaseVLM):
     """BaseVLM with convenience test helpers for examples/ adapters."""
+
+    def batch_generate(
+        self,
+        images_list: list[list[Image.Image]] | None,
+        text_list: list[str],
+        gen_kwargs: GenerationConfig = GenerationConfig(),
+    ) -> list[str]:
+        """Default batch_generate: sequential fallback for adapters that only implement generate."""
+        if images_list is None:
+            images_list = [[] for _ in text_list]
+        return [
+            self.generate(images, text, gen_kwargs)
+            for images, text in zip(images_list, text_list)
+        ]
 
     def test_vlm(self):
         """Test the model with one or two images."""

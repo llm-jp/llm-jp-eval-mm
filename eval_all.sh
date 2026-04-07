@@ -4,33 +4,35 @@ set -eux  # エラーが発生したらスクリプトを停止する
 #export CUDA_VISIBLE_DEVICES=0
 
 # Model name to group name mapping
+# Models that require transformers backend (not supported by vLLM)
+# For vLLM-supported models, use eval_with_vllm.sh instead.
 declare -A MODEL_GROUP_MAP=(
-    ["stabilityai/japanese-instructblip-alpha"]="normal"
-    ["stabilityai/japanese-stable-vlm"]="normal"
-    ["cyberagent/llava-calm2-siglip"]="calm"
-    ["llava-hf/llava-1.5-7b-hf"]="normal"
-    ["llava-hf/llava-v1.6-mistral-7b-hf"]="normal"
-    ["neulab/Pangea-7B-hf"]="sarashina"
+    # Llama-3.2-Vision (removed from vLLM in v0.10.2)
     ["meta-llama/Llama-3.2-11B-Vision-Instruct"]="normal"
     ["meta-llama/Llama-3.2-90B-Vision-Instruct"]="normal"
-    ["OpenGVLab/InternVL2-8B"]="normal"
-    ["OpenGVLab/InternVL2-26B"]="normal"
-    ["Qwen/Qwen2-VL-7B-Instruct"]="normal"
-    ["Qwen/Qwen2-VL-72B-Instruct"]="normal"
-    ["Qwen/Qwen2.5-VL-7B-Instruct"]="normal"
-    ["Qwen/Qwen2.5-VL-72B-Instruct"]="normal"
-    ["gpt-4o-2024-11-20"]="normal"
-    ["mistralai/Pixtral-12B-2409"]="pixtral"
-    ["llm-jp/llm-jp-3-vila-14b"]="vilaja"
-    ["Efficient-Large-Model/VILA1.5-13b"]="vilaja"
-    ["SakanaAI/Llama-3-EvoVLM-JP-v2"]="evovlm"
-    ["google/gemma-3-4b-it"]="normal"
-    ["google/gemma-3-12b-it"]="normal"
-    ["google/gemma-3-27b-it"]="normal"
+    # Pixtral (uses its own vLLM adapter with tokenizer_mode=mistral via pixtral.py)
+    ["mistralai/Pixtral-12B-2409"]="vllm_normal"
+    # llava-calm2-siglip (custom, needs transformers==4.45.0)
+    ["cyberagent/llava-calm2-siglip"]="calm"
+    # Sarashina2-Vision (custom, needs transformers==4.47.0)
     ["sbintuitions/sarashina2-vision-8b"]="sarashina"
     ["sbintuitions/sarashina2-vision-14b"]="sarashina"
-    ["microsoft/Phi-4-multimodal-instruct"]="phi"
+    # EvoVLM (custom Mantis-based)
+    ["SakanaAI/Llama-3-EvoVLM-JP-v2"]="evovlm"
+    # llm-jp-3-vila (VILA-based, custom)
+    ["llm-jp/llm-jp-3-vila-14b"]="vilaja"
+    # Heron-NVILA (custom NVILA)
+    ["turing-motors/Heron-NVILA-Lite-1B"]="heron_nvila"
+    ["turing-motors/Heron-NVILA-Lite-2B"]="heron_nvila"
     ["turing-motors/Heron-NVILA-Lite-15B"]="heron_nvila"
+    ["turing-motors/Heron-NVILA-Lite-33B"]="heron_nvila"
+    # Asagi (custom LLaVA, needs transformers<4.50)
+    ["MIL-UT/Asagi-14B"]="old"
+    # Stability AI (old models)
+    ["stabilityai/japanese-instructblip-alpha"]="stablevlm"
+    ["stabilityai/japanese-stable-vlm"]="stablevlm"
+    # GPT-4o (API-based)
+    ["gpt-4o-2024-11-20"]="normal"
 )
 
 
