@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -7,14 +8,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TASKS, MODELS } from "@/lib/mock-predictions";
+import { TASKS as MOCK_TASKS, MODELS as MOCK_MODELS } from "@/lib/mock-predictions";
+import { fetchTasks, fetchModels, type ApiTask } from "@/lib/api";
 import { cn } from "@/lib/utils";
+
+interface TaskOption {
+  id: string;
+  name: string;
+}
+
+interface ModelOption {
+  id: string;
+  name: string;
+}
 
 interface BrowserSelectorProps {
   selectedTask: string;
   onTaskChange: (taskId: string) => void;
   selectedModels: string[];
   onModelsChange: (modelIds: string[]) => void;
+  tasks?: TaskOption[];
+  models?: ModelOption[];
 }
 
 export function BrowserSelector({
@@ -22,7 +36,59 @@ export function BrowserSelector({
   onTaskChange,
   selectedModels,
   onModelsChange,
+  tasks: externalTasks,
+  models: externalModels,
 }: BrowserSelectorProps) {
+  const [tasks, setTasks] = useState<TaskOption[]>(
+    externalTasks ?? MOCK_TASKS.map((t) => ({ id: t.id, name: t.name })),
+  );
+  const [models, setModels] = useState<ModelOption[]>(
+    externalModels ?? MOCK_MODELS.map((m) => ({ id: m.id, name: m.name })),
+  );
+
+  // Fetch real data on mount if external data not provided
+  useEffect(() => {
+    if (externalTasks) return;
+    let cancelled = false;
+    fetchTasks()
+      .then((apiTasks: ApiTask[]) => {
+        if (cancelled) return;
+        setTasks(
+          apiTasks.map((t) => ({
+            id: t.task_id,
+            name: t.display_name,
+          })),
+        );
+      })
+      .catch(() => {
+        // Keep mock data on failure
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [externalTasks]);
+
+  useEffect(() => {
+    if (externalModels) return;
+    let cancelled = false;
+    fetchModels()
+      .then((apiModels: string[]) => {
+        if (cancelled) return;
+        setModels(
+          apiModels.map((id) => ({
+            id,
+            name: id.split("/").pop() ?? id,
+          })),
+        );
+      })
+      .catch(() => {
+        // Keep mock data on failure
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [externalModels]);
+
   const toggleModel = (modelId: string) => {
     if (selectedModels.includes(modelId)) {
       // Don't allow deselecting the last model
@@ -53,7 +119,7 @@ export function BrowserSelector({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {TASKS.map((task) => (
+              {tasks.map((task) => (
                 <SelectItem key={task.id} value={task.id}>
                   {task.name}
                 </SelectItem>
@@ -71,7 +137,7 @@ export function BrowserSelector({
             Models
           </label>
           <div className="flex flex-wrap gap-1.5">
-            {MODELS.map((model) => {
+            {models.map((model) => {
               const isSelected = selectedModels.includes(model.id);
               return (
                 <button

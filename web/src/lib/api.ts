@@ -67,3 +67,41 @@ export async function fetchAllScores(): Promise<Record<string, ApiScoreEntry[]>>
   }
   return scores;
 }
+
+// ── Prediction browsing ──────────────────────────────────────────
+
+export interface ApiPrediction {
+  question_id: string;
+  text: string; // model's prediction
+  answer: string; // ground truth
+  input_text: string; // the question / prompt
+  [key: string]: unknown; // task-specific score fields (e.g. "jmmmu": 1)
+}
+
+export interface ApiPredictionsResponse {
+  task_id: string;
+  model_id: string;
+  total: number;
+  offset: number;
+  limit: number;
+  predictions: ApiPrediction[];
+}
+
+export async function fetchPredictions(
+  taskId: string,
+  modelId: string,
+  offset = 0,
+  limit = 10,
+): Promise<ApiPredictionsResponse> {
+  const res = await fetch(
+    `${API_BASE}/api/predictions/${taskId}/${encodeURIComponent(modelId)}?offset=${offset}&limit=${limit}`,
+  );
+  if (!res.ok)
+    throw new Error(`Failed to fetch predictions: ${res.status}`);
+  return res.json();
+}
+
+/** Discover which task/model combinations have results. */
+export async function fetchAvailableResults(): Promise<ApiResult[]> {
+  return fetchResults();
+}

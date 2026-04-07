@@ -1,10 +1,18 @@
 "use client";
 
-import type { Sample } from "@/lib/mock-predictions";
 import { ImageIcon } from "lucide-react";
 
+/** Unified sample shape used across mock and real data. */
+export interface SampleData {
+  id: string;
+  imageUrl: string | null;
+  placeholderColor: string;
+  question: string;
+  groundTruth: string;
+}
+
 interface SampleViewerProps {
-  sample: Sample;
+  sample: SampleData;
 }
 
 export function SampleViewer({ sample }: SampleViewerProps) {
