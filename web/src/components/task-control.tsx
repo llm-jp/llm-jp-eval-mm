@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { MODELS, TASKS } from "@/lib/mock-runs";
+import { useState, useEffect } from "react";
+import {
+  MODELS,
+  TASKS,
+  type ModelOption,
+  type TaskOption,
+} from "@/lib/mock-runs";
+import { fetchTasks, fetchModels } from "@/lib/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Play, ChevronDown } from "lucide-react";
@@ -10,12 +16,57 @@ import { cn } from "@/lib/utils";
 type Backend = "transformers" | "vllm";
 
 export function TaskControl() {
+  const [models, setModels] = useState<ModelOption[]>(MODELS);
+  const [tasks, setTasks] = useState<TaskOption[]>(TASKS);
   const [selectedModel, setSelectedModel] = useState(MODELS[0].id);
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(
     new Set(TASKS.slice(0, 4).map((t) => t.id))
   );
   const [backend, setBackend] = useState<Backend>("vllm");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Fetch real task/model lists from the API; fall back to mock data on error.
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const [apiTasks, apiModels] = await Promise.all([
+          fetchTasks(),
+          fetchModels(),
+        ]);
+
+        if (cancelled) return;
+
+        if (apiTasks.length > 0) {
+          const mapped: TaskOption[] = apiTasks.map((t) => ({
+            id: t.task_id,
+            label: t.display_name,
+          }));
+          setTasks(mapped);
+          setSelectedTasks(
+            new Set(mapped.slice(0, Math.min(4, mapped.length)).map((t) => t.id))
+          );
+        }
+
+        if (apiModels.length > 0) {
+          const mapped: ModelOption[] = apiModels.map((m) => ({
+            id: m,
+            label: m,
+          }));
+          setModels(mapped);
+          setSelectedModel(mapped[0].id);
+        }
+      } catch {
+        // API unavailable — keep mock data (already set as initial state).
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function toggleTask(id: string) {
     setSelectedTasks((prev) => {
@@ -40,7 +91,7 @@ export function TaskControl() {
             className="flex w-full items-center justify-between rounded-md border border-[#362d59] bg-[#1f1633] px-3 py-2 text-sm text-white hover:border-[#6a5fc1] transition-colors"
           >
             <span className="truncate">
-              {MODELS.find((m) => m.id === selectedModel)?.label}
+              {models.find((m) => m.id === selectedModel)?.label}
             </span>
             <ChevronDown
               className={cn(
@@ -51,7 +102,7 @@ export function TaskControl() {
           </button>
           {dropdownOpen && (
             <div className="absolute z-10 mt-1 w-full rounded-md border border-[#362d59] bg-[#1f1633] py-1 shadow-lg">
-              {MODELS.map((model) => (
+              {models.map((model) => (
                 <button
                   key={model.id}
                   type="button"
@@ -78,7 +129,7 @@ export function TaskControl() {
       <div className="mb-4">
         <label className="block text-xs text-[#e5e7eb] mb-1.5">Tasks</label>
         <div className="grid gap-2">
-          {TASKS.map((task) => (
+          {tasks.map((task) => (
             <label
               key={task.id}
               className="flex items-center gap-2 cursor-pointer group"

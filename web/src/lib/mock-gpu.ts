@@ -1,3 +1,9 @@
+/**
+ * Placeholder GPU data. GPU monitoring requires a separate system-level API
+ * (e.g. nvidia-smi polling) that does not exist yet. Replace with real GPU
+ * telemetry once a backend endpoint is available.
+ */
+
 export interface GpuInfo {
   id: number;
   name: string;
