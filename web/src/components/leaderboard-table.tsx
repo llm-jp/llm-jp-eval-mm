@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -14,9 +14,11 @@ import {
   type TaskDef,
   EN_TASKS,
   JA_TASKS,
+  makeEntryFromScores,
 } from "@/lib/mock-data";
+import { fetchTasks, fetchAllScores, type ApiTask } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, Loader2 } from "lucide-react";
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -25,6 +27,8 @@ type SortDir = "asc" | "desc";
 
 interface LeaderboardTableProps {
   data: ModelEntry[];
+  /** Callback to notify parent of live stats when API data loads. */
+  onApiLoaded?: (info: { modelCount: number; taskCount: number }) => void;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -134,9 +138,92 @@ function ScoreCell({
 
 // ── Main component ───────────────────────────────────────────────
 
-export function LeaderboardTable({ data }: LeaderboardTableProps) {
+export function LeaderboardTable({ data, onApiLoaded }: LeaderboardTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>("overall");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [apiData, setApiData] = useState<ModelEntry[] | null>(null);
+  const [apiTasks, setApiTasks] = useState<{ en: TaskDef[]; ja: TaskDef[] } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFromApi() {
+      try {
+        const [tasks, allScores] = await Promise.all([
+          fetchTasks(),
+          fetchAllScores(),
+        ]);
+
+        if (cancelled) return;
+
+        // Build task definitions from API
+        const apiTaskDefs: TaskDef[] = tasks.map((t: ApiTask) => ({
+          taskId: t.task_id,
+          displayName: t.display_name,
+          cluster: t.cluster,
+        }));
+        const enTasks = apiTaskDefs.filter((t) => t.cluster === "英語");
+        const jaTasks = apiTaskDefs.filter((t) => t.cluster !== "英語");
+
+        // Build a map: model_id -> { taskDisplayName -> score }
+        const modelScores: Record<string, Record<string, number | null>> = {};
+        const taskDisplayMap: Record<string, string> = {};
+        for (const t of apiTaskDefs) {
+          taskDisplayMap[t.taskId] = t.displayName;
+        }
+
+        for (const [taskId, entries] of Object.entries(allScores)) {
+          const displayName = taskDisplayMap[taskId];
+          if (!displayName) continue;
+          for (const entry of entries) {
+            if (!modelScores[entry.model_id]) {
+              modelScores[entry.model_id] = {};
+            }
+            // Take the first metric value as the score
+            if (entry.metrics && entry.metrics.length > 0) {
+              const firstMetric = entry.metrics[0];
+              const val = typeof firstMetric === "object"
+                ? Object.values(firstMetric)[0]
+                : firstMetric;
+              if (typeof val === "number") {
+                modelScores[entry.model_id][displayName] = val;
+              }
+            }
+          }
+        }
+
+        // Convert to ModelEntry[]
+        const entries: ModelEntry[] = Object.entries(modelScores).map(
+          ([modelId, scores]) => {
+            const shortName = modelId.includes("/")
+              ? modelId.split("/").pop()!
+              : modelId;
+            return makeEntryFromScores(modelId, shortName, scores, enTasks, jaTasks);
+          },
+        );
+
+        if (entries.length > 0 && !cancelled) {
+          setApiData(entries);
+          setApiTasks({ en: enTasks, ja: jaTasks });
+          onApiLoaded?.({ modelCount: entries.length, taskCount: apiTaskDefs.length });
+        }
+      } catch {
+        // API unavailable — fall back to mock data silently
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadFromApi();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Resolve active data: prefer API data, fall back to props (mock)
+  const activeData = apiData ?? data;
+  const activeEnTasks = apiTasks?.en ?? EN_TASKS;
+  const activeJaTasks = apiTasks?.ja ?? JA_TASKS;
 
   const handleSort = useCallback(
     (key: SortKey) => {
@@ -151,7 +238,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
   );
 
   const sorted = useMemo(() => {
-    const rows = [...data];
+    const rows = [...activeData];
     rows.sort((a, b) => {
       let va: number | null;
       let vb: number | null;
@@ -181,11 +268,11 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
       return sortDir === "asc" ? va - vb : vb - va;
     });
     return rows;
-  }, [data, sortKey, sortDir]);
+  }, [activeData, sortKey, sortDir]);
 
   // Precompute top-1/top-2 per column
   const aggregateKeys = ["overall", "enAvg", "jaAvg"] as const;
-  const allTaskNames = [...EN_TASKS, ...JA_TASKS].map((t) => t.displayName);
+  const allTaskNames = [...activeEnTasks, ...activeJaTasks].map((t) => t.displayName);
   const allKeys = [...aggregateKeys, ...allTaskNames];
 
   const topMap = useMemo(() => {
@@ -244,11 +331,31 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
     });
   }
 
+  // ── Loading state ────────────────────────────────────────────
+
+  if (loading) {
+    return (
+      <div
+        className="flex items-center justify-center rounded-xl border border-[#e5edf5] py-20"
+        style={{ boxShadow: "0 4px 24px rgba(50,50,93,0.08), 0 1px 3px rgba(0,0,0,0.04)" }}
+      >
+        <Loader2 className="mr-2 size-5 animate-spin text-[#533afd]" />
+        <span className="text-sm text-[#64748d]">Loading leaderboard data...</span>
+      </div>
+    );
+  }
+
   return (
     <div
       className="overflow-hidden rounded-xl border border-[#e5edf5]"
       style={{ boxShadow: "0 4px 24px rgba(50,50,93,0.08), 0 1px 3px rgba(0,0,0,0.04)" }}
     >
+      {/* Data source indicator */}
+      {apiData && (
+        <div className="border-b border-[#e5edf5] bg-[#f8f6ff] px-4 py-1.5">
+          <span className="text-xs text-[#533afd]">Live data from API</span>
+        </div>
+      )}
       <div className="overflow-x-auto">
         <Table className="min-w-[1400px]">
           {/* ── Cluster row ─────────────────────────────────── */}
@@ -259,8 +366,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                 colSpan={4}
                 className="border-b border-[#e5edf5] bg-white px-2 py-1.5"
               />
-              <ClusterHeader label="English" span={EN_TASKS.length} />
-              <ClusterHeader label="Japanese" span={JA_TASKS.length} />
+              <ClusterHeader label="English" span={activeEnTasks.length} />
+              <ClusterHeader label="Japanese" span={activeJaTasks.length} />
             </tr>
           </thead>
 
@@ -285,8 +392,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               />
               <SortableHead column="enAvg" label="EN Avg" />
               <SortableHead column="jaAvg" label="JA Avg" />
-              {renderTaskHeaders(EN_TASKS)}
-              {renderTaskHeaders(JA_TASKS)}
+              {renderTaskHeaders(activeEnTasks)}
+              {renderTaskHeaders(activeJaTasks)}
             </TableRow>
           </TableHeader>
 
@@ -325,8 +432,8 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                 />
 
                 {/* Task columns */}
-                {renderTaskCells(row, rowIdx, EN_TASKS)}
-                {renderTaskCells(row, rowIdx, JA_TASKS)}
+                {renderTaskCells(row, rowIdx, activeEnTasks)}
+                {renderTaskCells(row, rowIdx, activeJaTasks)}
               </TableRow>
             ))}
           </TableBody>

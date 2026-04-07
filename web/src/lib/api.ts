@@ -37,3 +37,33 @@ export async function fetchResults(): Promise<ApiResult[]> {
   if (!res.ok) throw new Error(`Failed to fetch results: ${res.status}`);
   return res.json();
 }
+
+export interface ApiScoreEntry {
+  model_id: string;
+  metrics: Record<string, number>[];
+}
+
+export interface ApiScoresResponse {
+  task_id: string;
+  models: ApiScoreEntry[];
+}
+
+export async function fetchScores(taskId: string): Promise<ApiScoresResponse> {
+  const res = await fetch(`${API_BASE}/api/scores/${taskId}`);
+  if (!res.ok) throw new Error(`Failed to fetch scores for ${taskId}: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchAllScores(): Promise<Record<string, ApiScoreEntry[]>> {
+  const tasks = await fetchTasks();
+  const scores: Record<string, ApiScoreEntry[]> = {};
+  for (const task of tasks) {
+    try {
+      const resp = await fetchScores(task.task_id);
+      scores[task.task_id] = resp.models;
+    } catch {
+      /* skip unavailable tasks */
+    }
+  }
+  return scores;
+}

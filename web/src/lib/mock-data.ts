@@ -93,6 +93,30 @@ function makeEntry(
   };
 }
 
+/**
+ * Build a ModelEntry from arbitrary task lists (used when API provides
+ * different tasks than the hardcoded mock definitions).
+ */
+export function makeEntryFromScores(
+  modelId: string,
+  displayName: string,
+  scores: Record<string, number | null>,
+  enTasks: TaskDef[],
+  jaTasks: TaskDef[],
+): ModelEntry {
+  const enScores = enTasks.map((t) => scores[t.displayName] ?? null);
+  const jaScores = jaTasks.map((t) => scores[t.displayName] ?? null);
+  const allScores = [...enScores, ...jaScores];
+  return {
+    modelId,
+    displayName,
+    scores,
+    overall: avg(allScores),
+    enAvg: avg(enScores),
+    jaAvg: avg(jaScores),
+  };
+}
+
 // ── Mock data ───────────────────────────────────────────────────
 
 export const LEADERBOARD_DATA: ModelEntry[] = [
