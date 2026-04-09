@@ -1,6 +1,11 @@
 # Set CUDA devices
 set -eux  # エラーが発生したらスクリプトを停止する
 
+# Load environment variables (.env) for HF_TOKEN, API keys, etc.
+if [ -f .env ]; then
+    set -a; source .env; set +a
+fi
+
 #export CUDA_VISIBLE_DEVICES=0
 
 # Model name to group name mapping
@@ -31,6 +36,13 @@ declare -A MODEL_GROUP_MAP=(
     # Stability AI (old models)
     ["stabilityai/japanese-instructblip-alpha"]="stablevlm"
     ["stabilityai/japanese-stable-vlm"]="stablevlm"
+    # Mistral-Small-3.1 (same pixtral.py path, tokenizer_mode=mistral)
+    ["mistralai/Mistral-Small-3.1-24B-Instruct-2503"]="vllm_normal"
+    # Gemma 4 (needs transformers>=5.5, not compatible with vLLM)
+    ["google/gemma-4-E2B-it"]="gemma4"
+    ["google/gemma-4-E4B-it"]="gemma4"
+    ["google/gemma-4-26B-A4B-it"]="gemma4"
+    ["google/gemma-4-31B-it"]="gemma4"
     # GPT-4o (API-based)
     ["gpt-4o-2024-11-20"]="normal"
 )

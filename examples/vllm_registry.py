@@ -120,6 +120,11 @@ GEMMA4_MODELS: tuple[str, ...] = (
     "google/gemma-4-31B-it",
 )
 
+GLM4_6V_MODELS: tuple[str, ...] = (
+    "zai-org/GLM-4.6V",
+    "zai-org/GLM-4.6V-Flash",
+)
+
 MOLMO2_MODELS: tuple[str, ...] = (
     "allenai/Molmo2-4B",
     "allenai/Molmo2-8B",
@@ -206,13 +211,15 @@ class VLLMModelRegistry:
         for m in INTERNVL3_5_MODELS:
             registry[m] = (self._engine_args_internvl, self._load_internvl3)
 
-        # GEMMA4_MODELS: requires transformers >= 4.58 (gemma4 architecture)
-        # Uncomment when transformers is updated:
-        # for m in GEMMA4_MODELS:
-        #     registry[m] = (self._engine_args_gemma4, self._load_gemma3)
+        # GEMMA4_MODELS: vLLM 0.19 requires transformers<5, but gemma4
+        # needs transformers>=5.5.  Use the transformers backend instead
+        # (eval_all.sh with gemma4 group + examples/gemma4.py).
 
         for m in MOLMO2_MODELS:
             registry[m] = (self._engine_args_molmo2, self._load_generic_chat)
+
+        for m in GLM4_6V_MODELS:
+            registry[m] = (self._engine_args_glm4_6v, self._load_glm4_5v)
 
         try:
             self._engine_resolver, self._request_builder = registry[model_id]

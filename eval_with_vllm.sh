@@ -1,6 +1,11 @@
 # Set CUDA devices
 set -eux  # エラーが発生したらスクリプトを停止する
 
+# Load environment variables (.env) for HF_TOKEN, API keys, etc.
+if [ -f .env ]; then
+    set -a; source .env; set +a
+fi
+
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 
 # Model name to group name mapping
@@ -64,6 +69,27 @@ declare -A MODEL_GROUP_MAP=(
     # Molmo2
     ["allenai/Molmo2-4B"]="vllm_normal"
     ["allenai/Molmo2-8B"]="vllm_normal"
+    # Ovis2
+    ["AIDC-AI/Ovis2-1B"]="vllm_normal"
+    ["AIDC-AI/Ovis2-2B"]="vllm_normal"
+    ["AIDC-AI/Ovis2-4B"]="vllm_normal"
+    ["AIDC-AI/Ovis2-8B"]="vllm_normal"
+    ["AIDC-AI/Ovis2-16B"]="vllm_normal"
+    ["AIDC-AI/Ovis2-34B"]="vllm_normal"
+    # Ovis2.5
+    ["AIDC-AI/Ovis2.5-2B"]="vllm_normal"
+    ["AIDC-AI/Ovis2.5-9B"]="vllm_normal"
+    # Kimi-VL
+    ["moonshotai/Kimi-VL-A3B-Instruct"]="vllm_normal"
+    # DeepSeek-VL2
+    ["deepseek-ai/deepseek-vl2"]="vllm_normal"
+    # MiniCPM-o
+    ["openbmb/MiniCPM-o-2_6"]="vllm_normal"
+    # Qwen2-VL-2B (small)
+    ["Qwen/Qwen2-VL-2B-Instruct"]="vllm_normal"
+    # GLM-4.6V
+    ["zai-org/GLM-4.6V"]="vllm_normal"
+    ["zai-org/GLM-4.6V-Flash"]="vllm_normal"
 )
 
 declare -a task_list=(

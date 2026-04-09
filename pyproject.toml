@@ -184,6 +184,13 @@ vllm_normal = [
     "vllm>=0.11.0",
 ]
 
+gemma4 = [
+    "torch>=2.8.0",
+    "torchvision",
+    "accelerate>=1.2.1",
+    "transformers>=5.5.0",
+]
+
 [tool.uv]
 conflicts = [
     [
@@ -198,6 +205,7 @@ conflicts = [
         { group = "stablevlm" },
         { group = "heron_nvila" },
         { group = "vllm_normal" },
+        { group = "gemma4" },
     ],
 ]
 no-build-isolation-package = ["flash-attn"]

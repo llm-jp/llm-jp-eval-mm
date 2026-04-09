@@ -50,6 +50,13 @@ MODEL_ID_TO_CLASS_PATH = {
     "turing-motors/Heron-NVILA-Lite-33B": "heron_nvila.VLM",
     "CohereLabs/aya-vision-8b": "aya_vision.VLM",
     "CohereLabs/aya-vision-32b": "aya_vision.VLM",
+    # Mistral-Small-3.1 (same architecture/prompt format as Pixtral)
+    "mistralai/Mistral-Small-3.1-24B-Instruct-2503": "pixtral.VLM",
+    # Gemma 4 (transformers>=5.5 backend)
+    "google/gemma-4-E2B-it": "gemma4.VLM",
+    "google/gemma-4-E4B-it": "gemma4.VLM",
+    "google/gemma-4-26B-A4B-it": "gemma4.VLM",
+    "google/gemma-4-31B-it": "gemma4.VLM",
 }
 
 
