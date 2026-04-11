@@ -13,9 +13,9 @@ set -eu
 
 # ============================================================================
 # Load config (.env is sourced inside config.sh)
+# #$ -cwd ensures we start in the submission directory (project root)
 # ============================================================================
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-. "${SCRIPT_DIR}/config.sh"
+. ./tsubame/config.sh
 
 cd "${PROJECT_DIR}"
 
