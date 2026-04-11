@@ -5,7 +5,9 @@
  * callers should fall back to mock data.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Use relative URL so requests go through Next.js rewrites proxy,
+// avoiding cross-port issues with devcontainer port forwarding.
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 
 export interface ApiTask {
   task_id: string;

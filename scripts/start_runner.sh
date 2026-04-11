@@ -35,7 +35,7 @@ WEB_PORT="${WEB_PORT:-3000}"
 echo "[runner] Starting web frontend on port ${WEB_PORT}..."
 cd web
 pnpm install --frozen-lockfile 2>/dev/null || pnpm install
-NEXT_PUBLIC_API_URL="http://localhost:${API_PORT}" PORT="$WEB_PORT" pnpm dev &
+PORT="$WEB_PORT" pnpm dev &
 WEB_PID=$!
 cd ..
 
