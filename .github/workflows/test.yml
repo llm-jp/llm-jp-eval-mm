@@ -24,8 +24,5 @@ jobs:
       - name: Install the project (dev deps)
         run: uv sync --group dev
 
-      - name: Run tests (metrics)
-        run: uv run pytest src/eval_mm/metrics/*.py
-
-      - name: Run tests (tasks)
+      - name: Run tests
         run: bash test_git_workflow.sh
