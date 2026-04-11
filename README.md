@@ -299,6 +299,39 @@ The legacy GitHub Pages leaderboard is in `github_pages/`. To update its data:
 python scripts/make_leaderboard.py --update_pages
 ```
 
+## Environment-Specific Configuration (mdx)
+
+This project runs on [mdx](https://mdx.jp/) (a GPU computing platform for academic research in Japan). The devcontainer is pre-configured for this environment.
+
+### Storage Layout on mdx
+
+| Mount | Filesystem | Capacity | Purpose |
+|-------|-----------|----------|---------|
+| `/workspace` | NFS (`/home/$USER/workspace/evalmm`) | ~6T (shared) | Source code, results, datasets |
+| `/model` | Lustre (`/model`) | ~4P | Model weights, HF/uv/vLLM caches |
+
+### Cache Configuration
+
+Large caches (HuggingFace models, uv packages, vLLM compilations) are stored on `/model` to avoid filling the NFS home directory. This is configured in `.devcontainer/docker-compose.yml`:
+
+```yaml
+volumes:
+  - /model:/model:cached
+environment:
+  HF_HOME: /model/<username>/cache/huggingface
+  UV_CACHE_DIR: /model/<username>/cache/uv
+  VLLM_CACHE_DIR: /model/<username>/cache/vllm
+```
+
+Before rebuilding the devcontainer, create the cache directories on the host:
+```bash
+mkdir -p /model/$USER/cache/{huggingface,uv,vllm}
+```
+
+### Running on Other Environments
+
+If you are **not** using mdx, remove or comment out the `/model` volume mount and the cache environment variables in `.devcontainer/docker-compose.yml`. Caches will fall back to their default locations (`~/.cache/`).
+
 ## Acknowledgements
 - [Heron](https://github.com/turingmotors/heron): We refer to the Heron code for the evaluation of the Japanese Heron Bench task.
 - [lmms-eval](https://github.com/EvolvingLMMs-Lab/lmms-eval): We refer to the lmms-eval code for the evaluation of the JMMMU and MMMU tasks.

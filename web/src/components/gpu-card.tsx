@@ -1,6 +1,6 @@
 "use client";
 
-import { type GpuInfo } from "@/lib/mock-gpu";
+import { type GpuData as GpuInfo } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Cpu, Thermometer, HardDrive } from "lucide-react";
 

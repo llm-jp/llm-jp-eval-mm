@@ -177,7 +177,7 @@ result/*_tmp_*/
 *.swp
 *.swo
 *~
- 
+
 # HPC scripts (ignored per request)
 scripts/nvlink/
 scripts/tsubame/
@@ -185,3 +185,21 @@ scripts/tsubame/
 data/shared/**
 !data/shared/.gitkeep
 data/local/
+
+# pnpm global store
+.pnpm-store/
+
+# Claude Code
+.claude/
+
+# Personal convenience scripts
+claude-san
+
+# Temporary validation output
+result_validation/
+
+# NFS temp files
+.nfs*
+
+# Superseded by src/eval_mm/api.py
+scripts/monitor_server.py

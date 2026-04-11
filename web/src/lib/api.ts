@@ -105,3 +105,76 @@ export async function fetchPredictions(
 export async function fetchAvailableResults(): Promise<ApiResult[]> {
   return fetchResults();
 }
+
+// ── GPU monitoring ──────────────────────────────────────────────
+
+export interface GpuData {
+  id: number;
+  name: string;
+  utilization: number;
+  memoryUsed: number;
+  memoryTotal: number;
+  temperature: number;
+  status: "idle" | "active" | "high";
+}
+
+export async function fetchGpus(): Promise<GpuData[]> {
+  try {
+    const res = await fetch(`${API_BASE}/api/gpus`);
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+// ── Eval run status ─────────────────────────────────────────────
+
+export interface InferenceProgress {
+  current: number;
+  total: number;
+  phase?: "loading_model" | "loading_dataset" | "inferring";
+}
+
+export interface RunStatusData {
+  running: boolean;
+  currentTask?: string;
+  currentModel?: string;
+  backend?: string;
+  completed?: number;
+  failed?: number;
+  total?: number;
+  progress?: number;
+  etaSeconds?: number;
+  elapsedSeconds?: number;
+  inference?: InferenceProgress;
+}
+
+export async function fetchRunStatus(): Promise<RunStatusData> {
+  try {
+    const res = await fetch(`${API_BASE}/api/run/status`);
+    if (!res.ok) return { running: false };
+    return res.json();
+  } catch {
+    return { running: false };
+  }
+}
+
+// ── Run results matrix ──────────────────────────────────────────
+
+export interface RunResultEntry {
+  task: string;
+  model: string;
+  status: "pass" | "fail" | "running";
+}
+
+export async function fetchRunResults(): Promise<RunResultEntry[]> {
+  try {
+    const res = await fetch(`${API_BASE}/api/run/results`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.results ?? [];
+  } catch {
+    return [];
+  }
+}

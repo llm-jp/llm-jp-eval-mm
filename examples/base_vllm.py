@@ -1,7 +1,8 @@
+import dataclasses
 from typing import Iterable
 
 from PIL import Image
-from vllm import LLM, SamplingParams
+from vllm import EngineArgs, LLM, SamplingParams
 from vllm.lora.request import LoRARequest
 
 from eval_mm.models.base_vlm import BaseVLM
@@ -20,20 +21,21 @@ class VLLM(BaseVLM):
         self.registry = VLLMModelRegistry(model_id)
 
         ea = self.registry.get_engine_args()
-        engine_args = {
-            "model": ea.model,
-            "trust_remote_code": ea.trust_remote_code,
-            "max_model_len": ea.max_model_len,
-            "max_num_seqs": ea.max_num_seqs,
-            "tensor_parallel_size": tensor_parallel_size,
-            "gpu_memory_utilization": gpu_memory_utilization,
-        }
-        if ea.enable_lora:
-            engine_args["enable_lora"] = True
-            if ea.max_lora_rank:
-                engine_args["max_lora_rank"] = ea.max_lora_rank
-        if ea.hf_overrides:
-            engine_args["hf_overrides"] = ea.hf_overrides
+
+        # Extract non-default fields from EngineArgs to forward all
+        # registry-specified settings (enforce_eager, dtype, mm_processor_kwargs,
+        # limit_mm_per_prompt, tokenizer_mode, etc.) to the LLM constructor.
+        default_ea = EngineArgs(model=ea.model)
+        engine_args: dict = {}
+        for f in dataclasses.fields(ea):
+            value = getattr(ea, f.name)
+            default_value = getattr(default_ea, f.name)
+            if value != default_value or f.name == "model":
+                engine_args[f.name] = value
+
+        # Override with user-provided values
+        engine_args["tensor_parallel_size"] = tensor_parallel_size
+        engine_args["gpu_memory_utilization"] = gpu_memory_utilization
         if max_model_len is not None:
             engine_args["max_model_len"] = max_model_len
 
