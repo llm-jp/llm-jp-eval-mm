@@ -46,6 +46,16 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-runner-bg: var(--runner-bg);
+  --color-runner-surface: var(--runner-surface);
+  --color-runner-border: var(--runner-border);
+  --color-runner-border-subtle: var(--runner-border-subtle);
+  --color-runner-text: var(--runner-text);
+  --color-runner-text-secondary: var(--runner-text-secondary);
+  --color-runner-success: var(--runner-success);
+  --color-runner-primary: var(--runner-primary);
+  --color-runner-danger: var(--runner-danger);
+  --color-runner-bar-track: var(--runner-bar-track);
 }
 
 :root {
@@ -115,6 +125,23 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ── Runner dashboard theme ──────────────────────────────────── */
+:root {
+  --runner-bg: #1f1633;
+  --runner-surface: #150f23;
+  --runner-border: #362d59;
+  --runner-border-subtle: rgba(54, 45, 89, 0.4);
+  --runner-text: #ffffff;
+  --runner-text-secondary: #e5e7eb;
+  --runner-success: #c2ef4e;
+  --runner-primary: #6a5fc1;
+  --runner-danger: #ea2261;
+  --runner-bar-track: #362d59;
+  --runner-glow-success: rgba(194, 239, 78, 0.15);
+  --runner-glow-primary: rgba(106, 95, 193, 0.15);
+  --runner-glow-danger: rgba(234, 34, 97, 0.15);
 }
 
 @layer base {
