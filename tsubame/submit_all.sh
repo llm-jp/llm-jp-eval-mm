@@ -66,13 +66,22 @@ for entry in "${MODEL_LIST[@]}"; do
 
     log_file="${LOG_DIR}/${job_name}.log"
 
+    # Select resource type based on tensor parallel size (GPU count)
+    # transformers models don't specify tp; they use 1 GPU
+    tp="${model_tp:-1}"
+    case "$tp" in
+        1) resource="node_q" ;;   # 1 GPU
+        2) resource="node_h" ;;   # 2 GPUs
+        *) resource="node_f" ;;   # 4 GPUs (full node)
+    esac
+
     # Build qsub arguments (Altair Grid Engine / SGE)
     qsub_args=(
         -g "$TSUBAME_GROUP"
         -N "$job_name"
         -o "$log_file"
         -e "$log_file"
-        -l "${TSUBAME_RESOURCE}=1"
+        -l "${resource}=1"
         -l "h_rt=${TSUBAME_H_RT}"
         -v "MODEL_ENTRY=${entry}"
     )

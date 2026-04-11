@@ -1,6 +1,5 @@
 #!/bin/sh
 #$ -cwd
-#$ -l node_f=1
 #$ -j y
 #
 # SGE job script: evaluate a single model on all tasks.
