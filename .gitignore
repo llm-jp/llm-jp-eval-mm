@@ -189,9 +189,8 @@ data/local/
 # pnpm global store
 .pnpm-store/
 
-# Claude Code local/personal files
-.claude/settings.local.json
-.claude/projects/
+# Claude Code
+.claude/
 
 # Personal convenience scripts
 claude-san
