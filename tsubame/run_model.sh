@@ -15,6 +15,7 @@ set -eu
 # Load config (.env is sourced inside config.sh)
 # #$ -cwd ensures we start in the submission directory (project root)
 # ============================================================================
+export PATH="$HOME/.local/bin:$PATH"
 . ./tsubame/config.sh
 
 cd "${PROJECT_DIR}"
