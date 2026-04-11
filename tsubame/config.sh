@@ -168,7 +168,7 @@ declare -a MODEL_LIST=(
     "Qwen/Qwen2.5-VL-32B-Instruct|vllm_normal|vllm|2"
     "CohereLabs/aya-vision-32b|vllm_normal|vllm|2"
     "google/gemma-4-31B-it|gemma4|transformers"
-    "turing-motors/Heron-NVILA-Lite-33B|heron_nvila|transformers"
+    # "turing-motors/Heron-NVILA-Lite-33B|heron_nvila|transformers"  # 33B: 1GPU では VRAM 不足
     "AIDC-AI/Ovis2-34B|vllm_normal|vllm|2"
     "OpenGVLab/InternVL3-38B|vllm_normal|vllm|2"
     "OpenGVLab/InternVL3_5-38B|vllm_normal|vllm|2"
@@ -176,7 +176,7 @@ declare -a MODEL_LIST=(
     "Qwen/Qwen2-VL-72B-Instruct|vllm_normal|vllm|4"
     "Qwen/Qwen2.5-VL-72B-Instruct|vllm_normal|vllm|4"
     "OpenGVLab/InternVL3-78B|vllm_normal|vllm|4"
-    "meta-llama/Llama-3.2-90B-Vision-Instruct|normal|transformers"
+    # "meta-llama/Llama-3.2-90B-Vision-Instruct|normal|transformers"  # 90B: 1GPU では VRAM 不足
     "deepseek-ai/deepseek-vl2|vllm_normal|vllm|4"
     # Size unknown / special
     "zai-org/GLM-4.5V|vllm_normal|vllm"
