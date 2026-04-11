@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { fetchRunResults, type RunResultEntry } from "@/lib/api";
-import { cn } from "@/lib/utils";
 import { CheckCircle, XCircle, Loader2, Minus, LayoutGrid } from "lucide-react";
 
 type Status = "pass" | "fail" | "running" | "pending";
@@ -46,8 +45,8 @@ export function ResultsMatrix() {
   const models = [...new Set(results.map((r) => r.model))];
 
   function getStatus(model: string, task: string): Status {
-    const r = results.find((r) => r.model === model && r.task === task);
-    return (r?.status as Status) ?? "pending";
+    const entry = results.find((e) => e.model === model && e.task === task);
+    return (entry?.status as Status) ?? "pending";
   }
 
   function shortName(name: string): string {

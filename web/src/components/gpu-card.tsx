@@ -34,7 +34,10 @@ function formatMemory(mib: number): string {
 }
 
 export function GpuCard({ gpu }: { gpu: GpuInfo }) {
-  const memPct = Math.round((gpu.memoryUsed / gpu.memoryTotal) * 100);
+  const memPct =
+    gpu.memoryTotal > 0
+      ? Math.round((gpu.memoryUsed / gpu.memoryTotal) * 100)
+      : 0;
 
   return (
     <div

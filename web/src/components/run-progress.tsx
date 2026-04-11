@@ -140,7 +140,7 @@ export function RunProgress({ status }: { status: RunStatusData }) {
             )}
 
           {/* Stats cards */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="rounded-md bg-runner-bg p-2.5 text-center">
               <div className="flex items-center justify-center gap-1.5 mb-0.5">
                 <CheckCircle className="size-3.5 text-runner-success" />
@@ -151,12 +151,20 @@ export function RunProgress({ status }: { status: RunStatusData }) {
               </span>
               <span className="text-xs text-runner-text-secondary"> / {total}</span>
             </div>
-            <div className="rounded-md bg-runner-bg p-2.5 text-center">
+            <div
+              className={
+                failed > 0
+                  ? "rounded-md bg-runner-danger/10 p-2.5 text-center"
+                  : "rounded-md bg-runner-bg p-2.5 text-center"
+              }
+            >
               <div className="flex items-center justify-center gap-1.5 mb-0.5">
                 <XCircle className="size-3.5 text-runner-danger" />
                 <span className="text-xs text-runner-text-secondary">Failed</span>
               </div>
-              <span className="text-lg font-mono font-semibold text-runner-text tabular-nums">
+              <span
+                className={`text-lg font-mono font-semibold tabular-nums ${failed > 0 ? "text-runner-danger" : "text-runner-text"}`}
+              >
                 {failed}
               </span>
               <span className="text-xs text-runner-text-secondary"> / {total}</span>
