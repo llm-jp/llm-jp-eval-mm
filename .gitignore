@@ -197,3 +197,9 @@ claude-san
 
 # Temporary validation output
 result_validation/
+
+# NFS temp files
+.nfs*
+
+# Superseded by src/eval_mm/api.py
+scripts/monitor_server.py
