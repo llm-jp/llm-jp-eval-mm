@@ -6,7 +6,9 @@ Run with:
 
 from __future__ import annotations
 
+import json
 import os
+import subprocess
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,12 +23,170 @@ app.add_middleware(
 
 # Root directory where evaluation results are stored.
 # Override via the EVAL_MM_RESULT_DIR environment variable.
-RESULT_DIR = os.environ.get("EVAL_MM_RESULT_DIR", "result")
+_default_result_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "result")
+RESULT_DIR = os.environ.get("EVAL_MM_RESULT_DIR", os.path.normpath(_default_result_dir))
+
+
+# ── Helpers ────────────────────────────────────────────────────
+
+
+def _has_result_files(path: str) -> bool:
+    """Return True if *path* contains any known result artefact."""
+    return any(
+        os.path.isfile(os.path.join(path, f))
+        for f in ("prediction.jsonl", "evaluation.jsonl", "manifest.json", "error_message.jsonl")
+    )
+
+
+def _iter_model_dirs(task_path: str):
+    """Yield ``(model_id, model_path)`` under a task directory.
+
+    Handles both flat (``model/``) and nested (``org/model/``) layouts.
+    """
+    for entry in sorted(os.listdir(task_path)):
+        entry_path = os.path.join(task_path, entry)
+        if not os.path.isdir(entry_path):
+            continue
+        if _has_result_files(entry_path):
+            yield entry, entry_path
+        else:
+            for sub in sorted(os.listdir(entry_path)):
+                sub_path = os.path.join(entry_path, sub)
+                if os.path.isdir(sub_path) and _has_result_files(sub_path):
+                    yield f"{entry}/{sub}", sub_path
 
 
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+# ── GPU monitoring ──────────────────────────────────────────────
+
+
+@app.get("/api/gpus")
+def get_gpus() -> list[dict]:
+    """Return real-time GPU stats from nvidia-smi."""
+    try:
+        result = subprocess.run(
+            [
+                "nvidia-smi",
+                "--query-gpu=index,name,utilization.gpu,memory.used,memory.total,temperature.gpu",
+                "--format=csv,noheader,nounits",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except FileNotFoundError:
+        return []
+
+    if result.returncode != 0:
+        return []
+
+    gpus = []
+    for line in result.stdout.strip().splitlines():
+        parts = [p.strip() for p in line.split(",")]
+        if len(parts) < 6:
+            continue
+        idx, name, util, mem_used, mem_total, temp = parts
+        utilization = int(util)
+        if utilization >= 80:
+            status = "high"
+        elif utilization > 5:
+            status = "active"
+        else:
+            status = "idle"
+        gpus.append(
+            {
+                "id": int(idx),
+                "name": name,
+                "utilization": utilization,
+                "memoryUsed": int(mem_used),
+                "memoryTotal": int(mem_total),
+                "temperature": int(temp),
+                "status": status,
+            }
+        )
+    return gpus
+
+
+# ── Eval run status ─────────────────────────────────────────────
+
+
+@app.get("/api/run/status")
+def get_run_status() -> dict:
+    """Return current eval.sh run status from .eval_status.json."""
+    status_path = os.path.join(RESULT_DIR, ".eval_status.json")
+    if not os.path.isfile(status_path):
+        return {"running": False}
+    try:
+        with open(status_path) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {"running": False}
+
+
+@app.get("/api/run/results")
+def get_run_results() -> dict:
+    """Build a task×model results matrix from the result directory.
+
+    Each entry reports ``pass`` (evaluation or prediction exists),
+    ``fail`` (logged in eval_failures.log or error_message.jsonl),
+    or ``running`` (currently executing according to .eval_status.json).
+    """
+    results: list[dict] = []
+    seen: set[tuple[str, str]] = set()
+
+    # 1. Walk result directory for completed runs (handles org/model nesting)
+    if os.path.isdir(RESULT_DIR):
+        for task_id in sorted(os.listdir(RESULT_DIR)):
+            task_path = os.path.join(RESULT_DIR, task_id)
+            if not os.path.isdir(task_path):
+                continue
+            for model_id, model_path in _iter_model_dirs(task_path):
+                has_eval = os.path.isfile(os.path.join(model_path, "evaluation.jsonl"))
+                has_pred = os.path.isfile(os.path.join(model_path, "prediction.jsonl"))
+                has_error = os.path.isfile(os.path.join(model_path, "error_message.jsonl"))
+                if has_eval or has_pred:
+                    results.append({"task": task_id, "model": model_id, "status": "pass"})
+                    seen.add((task_id, model_id))
+                elif has_error:
+                    results.append({"task": task_id, "model": model_id, "status": "fail"})
+                    seen.add((task_id, model_id))
+
+    # 2. Read failures log (FAIL|task|model|backend)
+    fail_log = os.path.join(RESULT_DIR, "eval_failures.log")
+    if os.path.isfile(fail_log):
+        try:
+            with open(fail_log) as f:
+                for line in f:
+                    line = line.strip()
+                    if not line.startswith("FAIL|"):
+                        continue
+                    parts = line.split("|")
+                    if len(parts) >= 3:
+                        task, model = parts[1], parts[2]
+                        if (task, model) not in seen:
+                            results.append({"task": task, "model": model, "status": "fail"})
+                            seen.add((task, model))
+        except OSError:
+            pass
+
+    # 3. Mark currently running entry
+    status = get_run_status()
+    if status.get("running") and status.get("currentTask") and status.get("currentModel"):
+        ct, cm = status["currentTask"], status["currentModel"]
+        found = False
+        for r in results:
+            if r["task"] == ct and r["model"] == cm:
+                r["status"] = "running"
+                found = True
+                break
+        if not found:
+            results.append({"task": ct, "model": cm, "status": "running"})
+
+    return {"results": results}
 
 
 @app.get("/api/tasks")
@@ -78,10 +238,7 @@ def _discover_results(result_dir: str) -> list[dict]:
         task_path = os.path.join(result_dir, task_id)
         if not os.path.isdir(task_path):
             continue
-        for model_id in sorted(os.listdir(task_path)):
-            model_path = os.path.join(task_path, model_id)
-            if not os.path.isdir(model_path):
-                continue
+        for model_id, model_path in _iter_model_dirs(task_path):
             manifest_path = os.path.join(model_path, "manifest.json")
             if os.path.isfile(manifest_path):
                 try:
@@ -95,7 +252,6 @@ def _discover_results(result_dir: str) -> list[dict]:
                         }
                     )
                 except Exception:
-                    # Skip malformed manifests
                     results.append(
                         {
                             "task_id": task_id,
@@ -105,7 +261,6 @@ def _discover_results(result_dir: str) -> list[dict]:
                         }
                     )
             else:
-                # Directory exists but no manifest — still expose it
                 has_predictions = os.path.isfile(
                     os.path.join(model_path, "prediction.jsonl")
                 )
@@ -190,10 +345,7 @@ def get_scores(
         raise HTTPException(status_code=404, detail=f"No results for task {task_id}")
 
     scores: list[dict] = []
-    for model_id in sorted(os.listdir(task_path)):
-        model_path = os.path.join(task_path, model_id)
-        if not os.path.isdir(model_path):
-            continue
+    for model_id, model_path in _iter_model_dirs(task_path):
         eval_path = os.path.join(model_path, "evaluation.jsonl")
         if not os.path.isfile(eval_path):
             continue
@@ -201,7 +353,6 @@ def get_scores(
             metrics = load_evaluation(model_path)
             scores.append({"model_id": model_id, "metrics": metrics})
         except Exception:
-            # Skip unreadable evaluation files
             continue
 
     return {"task_id": task_id, "models": scores}

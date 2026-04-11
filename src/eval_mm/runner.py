@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import asdict
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from loguru import logger
 from tqdm import tqdm
@@ -69,14 +69,43 @@ def generate_predictions_batch(
     model: BaseVLM,
     task,
     gen_kwargs: GenerationConfig,
+    chunk_size: int = 0,
+    progress_callback: "Callable[[int, int], None] | None" = None,
 ) -> list[dict]:
-    """Generate predictions in batch (vLLM backend)."""
+    """Generate predictions in batch (vLLM backend).
+
+    Parameters
+    ----------
+    chunk_size : int
+        If > 0, process in chunks of this size and call *progress_callback*
+        after each chunk.  0 means process all at once.
+    progress_callback : callable(current, total) | None
+        Called after each chunk with the number of samples completed so far.
+    """
     qids = [task.doc_to_id(doc) for doc in task.dataset]
     images = [task.doc_to_visual(doc) for doc in task.dataset]
     texts = [task.doc_to_text(doc).replace("<image>", "") for doc in task.dataset]
 
-    results = model.batch_generate(images, texts, gen_kwargs)
-    return [{"question_id": qid, "text": pred} for qid, pred in zip(qids, results)]
+    total = len(qids)
+
+    if chunk_size <= 0 or chunk_size >= total:
+        results = model.batch_generate(images, texts, gen_kwargs)
+        if progress_callback:
+            progress_callback(total, total)
+        return [{"question_id": qid, "text": pred} for qid, pred in zip(qids, results)]
+
+    all_preds: list[dict] = []
+    for start in range(0, total, chunk_size):
+        end = min(start + chunk_size, total)
+        chunk_results = model.batch_generate(
+            images[start:end], texts[start:end], gen_kwargs
+        )
+        for qid, pred in zip(qids[start:end], chunk_results):
+            all_preds.append({"question_id": qid, "text": pred})
+        if progress_callback:
+            progress_callback(end, total)
+
+    return all_preds
 
 
 def evaluate_predictions(
@@ -164,6 +193,8 @@ def run_evaluation(
     inference_only: bool = False,
     random_choice: bool = False,
     batch_mode: bool = False,
+    batch_chunk_size: int = 0,
+    progress_callback: "Callable[[int, int], None] | None" = None,
 ) -> dict[str, dict] | None:
     """Run the full evaluation pipeline.
 
@@ -224,7 +255,11 @@ def run_evaluation(
     elif model is not None:
         logger.info("Generating predictions...")
         if batch_mode:
-            preds = generate_predictions_batch(model, task, gen_config)
+            preds = generate_predictions_batch(
+                model, task, gen_config,
+                chunk_size=batch_chunk_size,
+                progress_callback=progress_callback,
+            )
         else:
             preds, errors = generate_predictions_sequential(
                 model, task, gen_config, output_dir
