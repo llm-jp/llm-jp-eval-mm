@@ -1,7 +1,14 @@
 "use client";
 
 import { type RunStatusData } from "@/lib/api";
-import { Timer, CheckCircle, XCircle, Cpu } from "lucide-react";
+import {
+  Timer,
+  CheckCircle,
+  XCircle,
+  Cpu,
+  Play,
+  CircleDashed,
+} from "lucide-react";
 
 function formatEta(seconds: number): string {
   if (seconds <= 0) return "--";
@@ -33,13 +40,14 @@ export function RunProgress({ status }: { status: RunStatusData }) {
   const completed = status.completed ?? 0;
   const failed = status.failed ?? 0;
   const total = status.total ?? 0;
+  const passed = completed - failed;
   const inference = status.inference;
 
   return (
-    <div className="rounded-lg border border-[#362d59] bg-[#150f23] p-4">
+    <div className="rounded-lg border border-runner-border bg-runner-surface p-4">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-white">Progress</h2>
-        <div className="flex items-center gap-3 text-xs text-[#e5e7eb]">
+        <h2 className="text-sm font-semibold text-runner-text">Progress</h2>
+        <div className="flex items-center gap-3 text-xs text-runner-text-secondary">
           {status.running && status.etaSeconds != null && (
             <span className="flex items-center gap-1.5">
               <Timer className="size-3.5" />
@@ -53,14 +61,20 @@ export function RunProgress({ status }: { status: RunStatusData }) {
       </div>
 
       {!status.running && total === 0 ? (
-        <p className="text-sm text-[#e5e7eb]">
-          No evaluation running. Start eval.sh to see progress here.
-        </p>
+        <div className="flex flex-col items-center justify-center py-6 text-center">
+          <div className="mb-3 rounded-full bg-runner-border/30 p-3">
+            <Play className="size-6 text-runner-text-secondary/60" />
+          </div>
+          <p className="text-sm text-runner-text mb-1">No Evaluation Running</p>
+          <p className="text-xs text-runner-text-secondary max-w-[280px]">
+            Start eval.sh to see real-time progress tracking here.
+          </p>
+        </div>
       ) : (
         <>
           {/* Current task + percentage */}
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-white">
+            <span className="text-sm text-runner-text">
               {status.running ? (
                 <>
                   Running:{" "}
@@ -68,7 +82,7 @@ export function RunProgress({ status }: { status: RunStatusData }) {
                     {status.currentTask}
                   </span>
                   {" / "}
-                  <span className="font-mono text-xs text-[#e5e7eb]">
+                  <span className="font-mono text-xs text-runner-text-secondary">
                     {status.currentModel}
                   </span>
                 </>
@@ -76,34 +90,34 @@ export function RunProgress({ status }: { status: RunStatusData }) {
                 "Evaluation complete"
               )}
             </span>
-            <span className="text-xs font-mono text-[#c2ef4e]">
+            <span className="text-sm font-mono font-semibold text-runner-success tabular-nums">
               {progress}%
             </span>
           </div>
 
           {/* Overall progress bar */}
-          <div className="h-2 rounded-full bg-[#362d59] mb-3 overflow-hidden">
+          <div className="h-3 rounded-full bg-runner-bar-track mb-4 overflow-hidden">
             <div
-              className="h-full rounded-full bg-[#c2ef4e] transition-all"
+              className="h-full rounded-full bg-runner-success transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
 
           {/* Inference progress (per-dataset) */}
           {status.running && inference && inference.total > 0 && (
-            <div className="mb-3 rounded-md bg-[#1f1633] p-2.5">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="flex items-center gap-1.5 text-xs text-[#e5e7eb]">
-                  <Cpu className="size-3.5 text-[#6a5fc1]" />
+            <div className="mb-4 rounded-md bg-runner-bg p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="flex items-center gap-1.5 text-xs text-runner-text-secondary">
+                  <Cpu className="size-3.5 text-runner-primary" />
                   {PHASE_LABEL[inference.phase ?? "inferring"] ?? inference.phase}
                 </span>
-                <span className="text-xs font-mono text-[#e5e7eb]">
+                <span className="text-xs font-mono text-runner-text-secondary tabular-nums">
                   {inference.current} / {inference.total} samples
                 </span>
               </div>
-              <div className="h-1.5 rounded-full bg-[#362d59] overflow-hidden">
+              <div className="h-2 rounded-full bg-runner-bar-track overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-[#6a5fc1] transition-all"
+                  className="h-full rounded-full bg-runner-primary transition-all duration-500 ease-out"
                   style={{
                     width: `${Math.round((inference.current / inference.total) * 100)}%`,
                   }}
@@ -117,32 +131,64 @@ export function RunProgress({ status }: { status: RunStatusData }) {
             inference &&
             inference.total === 0 &&
             inference.phase && (
-              <div className="mb-3 rounded-md bg-[#1f1633] p-2.5">
-                <span className="flex items-center gap-1.5 text-xs text-[#e5e7eb]">
-                  <Cpu className="size-3.5 text-[#6a5fc1] animate-pulse" />
+              <div className="mb-4 rounded-md bg-runner-bg p-3">
+                <span className="flex items-center gap-1.5 text-xs text-runner-text-secondary">
+                  <Cpu className="size-3.5 text-runner-primary animate-pulse" />
                   {PHASE_LABEL[inference.phase] ?? inference.phase}
                 </span>
               </div>
             )}
 
-          {/* Stats row */}
-          <div className="flex items-center gap-4 text-xs text-[#e5e7eb]">
-            <span className="flex items-center gap-1">
-              <CheckCircle className="size-3.5 text-[#c2ef4e]" />
-              {completed - failed} / {total} passed
-            </span>
-            {failed > 0 && (
-              <span className="flex items-center gap-1">
-                <XCircle className="size-3.5 text-[#ea2261]" />
-                {failed} failed
+          {/* Stats cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-md bg-runner-bg p-2.5 text-center">
+              <div className="flex items-center justify-center gap-1.5 mb-0.5">
+                <CheckCircle className="size-3.5 text-runner-success" />
+                <span className="text-xs text-runner-text-secondary">Passed</span>
+              </div>
+              <span className="text-lg font-mono font-semibold text-runner-text tabular-nums">
+                {passed}
               </span>
-            )}
-            {status.backend && status.running && (
-              <span className="ml-auto font-mono text-[11px] text-[#6a5fc1]">
+              <span className="text-xs text-runner-text-secondary"> / {total}</span>
+            </div>
+            <div
+              className={
+                failed > 0
+                  ? "rounded-md bg-runner-danger/10 p-2.5 text-center"
+                  : "rounded-md bg-runner-bg p-2.5 text-center"
+              }
+            >
+              <div className="flex items-center justify-center gap-1.5 mb-0.5">
+                <XCircle className="size-3.5 text-runner-danger" />
+                <span className="text-xs text-runner-text-secondary">Failed</span>
+              </div>
+              <span
+                className={`text-lg font-mono font-semibold tabular-nums ${failed > 0 ? "text-runner-danger" : "text-runner-text"}`}
+              >
+                {failed}
+              </span>
+              <span className="text-xs text-runner-text-secondary"> / {total}</span>
+            </div>
+            <div className="rounded-md bg-runner-bg p-2.5 text-center">
+              <div className="flex items-center justify-center gap-1.5 mb-0.5">
+                <CircleDashed className="size-3.5 text-runner-text-secondary" />
+                <span className="text-xs text-runner-text-secondary">Remaining</span>
+              </div>
+              <span className="text-lg font-mono font-semibold text-runner-text tabular-nums">
+                {total - completed}
+              </span>
+              <span className="text-xs text-runner-text-secondary"> / {total}</span>
+            </div>
+          </div>
+
+          {/* Backend indicator */}
+          {status.backend && status.running && (
+            <div className="mt-3 text-right">
+              <span className="font-mono text-[11px] text-runner-primary">
                 {status.backend}
               </span>
-            )}
-          </div>
+            </div>
+          )}
         </>
       )}
     </div>
