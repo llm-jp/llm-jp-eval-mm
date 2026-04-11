@@ -45,9 +45,10 @@ echo "Start:   $(date -Iseconds)"
 echo "========================================"
 
 # ============================================================================
-# Sync dependencies for this model's group
+# Isolate venv per dependency group to avoid conflicts between parallel jobs
 # ============================================================================
-echo ">>> Syncing group: $MODEL_GROUP"
+export UV_PROJECT_ENVIRONMENT="${PROJECT_DIR}/.venvs/${MODEL_GROUP}"
+echo ">>> Syncing group: $MODEL_GROUP (venv: $UV_PROJECT_ENVIRONMENT)"
 uv sync --group "$MODEL_GROUP"
 
 # ============================================================================
