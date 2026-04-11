@@ -5,25 +5,18 @@
 #   qsub -v MODEL_ENTRY="Qwen/Qwen2.5-VL-7B-Instruct|vllm_normal|vllm|1" tsubame/run_model.sh
 #
 # PBS directives are defaults; submit_all.sh overrides -N, -o, -e per model.
-#PBS -q gpu_h100
 #PBS -l select=1:ngpus=4:ncpus=16:mem=200gb
-#PBS -l walltime=24:00:00
 #PBS -j oe
 
 set -eu
 
 # ============================================================================
-# Resolve paths
+# Load config (.env is sourced inside config.sh)
 # ============================================================================
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 source "${SCRIPT_DIR}/config.sh"
 
 cd "${PROJECT_DIR}"
-
-# Load .env if present (HF_TOKEN, OPENAI_API_KEY, etc.)
-if [ -f .env ]; then
-    set -a; source .env; set +a
-fi
 
 # ============================================================================
 # Parse MODEL_ENTRY (passed via qsub -v)

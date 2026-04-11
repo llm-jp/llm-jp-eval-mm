@@ -59,16 +59,21 @@ for entry in "${MODEL_LIST[@]}"; do
 
     log_file="${LOG_DIR}/${job_name}.log"
 
+    # Build qsub arguments
+    qsub_args=(
+        -N "$job_name"
+        -v "MODEL_ENTRY=${entry}"
+        -o "$log_file"
+        -e "$log_file"
+        -q "$TSUBAME_QUEUE"
+        -l "walltime=${TSUBAME_WALLTIME}"
+    )
+    [ -n "$TSUBAME_GROUP" ] && qsub_args+=(-W "group_list=${TSUBAME_GROUP}")
+
     if [ "$DRY_RUN" = true ]; then
-        echo "[DRY-RUN] qsub -N $job_name -v MODEL_ENTRY=$entry -o $log_file"
+        echo "[DRY-RUN] qsub ${qsub_args[*]} ${SCRIPT_DIR}/run_model.sh"
     else
-        job_id=$(qsub \
-            -N "$job_name" \
-            -v "MODEL_ENTRY=${entry}" \
-            -o "$log_file" \
-            -e "$log_file" \
-            -W "group_list=${TSUBAME_GROUP}" \
-            "${SCRIPT_DIR}/run_model.sh")
+        job_id=$(qsub "${qsub_args[@]}" "${SCRIPT_DIR}/run_model.sh")
         echo "Submitted: $model_id -> $job_id"
     fi
     SUBMITTED=$((SUBMITTED + 1))

@@ -1,31 +1,47 @@
 #!/usr/bin/env bash
-# TSUBAME 4.0 shared configuration for llm-jp-eval-mm.
+# Shared configuration for llm-jp-eval-mm TSUBAME scripts.
 # Source this file from other scripts: source "$(dirname "$0")/config.sh"
+#
+# Environment-specific settings (paths, credentials) are loaded from .env.
+# This file only contains shared definitions (models, tasks, metrics).
 
 # ============================================================================
-# TSUBAME paths — edit these to match your group/user
+# Load .env from project root
 # ============================================================================
-TSUBAME_GROUP="${TSUBAME_GROUP:-tga-NII-LLM}"          # PBS group (-W group_list)
-TSUBAME_QUEUE="${TSUBAME_QUEUE:-gpu_h100}"              # PBS queue (-q)
-TSUBAME_WALLTIME="${TSUBAME_WALLTIME:-24:00:00}"        # Default wall time
+_PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ -f "${_PROJECT_ROOT}/.env" ]; then
+    set -a; source "${_PROJECT_ROOT}/.env"; set +a
+fi
 
-# Storage paths
-GS_DIR="/gs/bs/${TSUBAME_GROUP}"                        # Group storage root
-PROJECT_DIR="${PROJECT_DIR:-${GS_DIR}/eval-mm}"         # Project clone location
-RESULT_DIR="${RESULT_DIR:-${GS_DIR}/eval-mm-results}"   # Evaluation results
-LOG_DIR="${LOG_DIR:-${GS_DIR}/eval-mm-logs}"            # PBS job logs
+# ============================================================================
+# Required environment variables (set these in .env)
+# ============================================================================
+# PROJECT_DIR     — project clone location (e.g. /gs/bs/.../eval-mm)
+# RESULT_DIR      — evaluation results output
+# LOG_DIR         — PBS job logs
+# HF_HOME         — HuggingFace cache
+# TSUBAME_GROUP   — PBS group (-W group_list)
+#
+# Optional:
+# TSUBAME_QUEUE   — PBS queue (default: gpu_h100)
+# TSUBAME_WALLTIME — wall time (default: 24:00:00)
+# UV_CACHE_DIR    — uv cache
+# VLLM_CACHE_DIR  — vLLM cache
+# JUDGE_MODEL     — LLM judge model
 
-# Cache paths (HuggingFace, uv, vLLM)
-export HF_HOME="${HF_HOME:-${GS_DIR}/cache/huggingface}"
-export UV_CACHE_DIR="${UV_CACHE_DIR:-${GS_DIR}/cache/uv}"
-export VLLM_CACHE_DIR="${VLLM_CACHE_DIR:-${GS_DIR}/cache/vllm}"
+PROJECT_DIR="${PROJECT_DIR:-${_PROJECT_ROOT}}"
+RESULT_DIR="${RESULT_DIR:-${PROJECT_DIR}/result}"
+LOG_DIR="${LOG_DIR:-${PROJECT_DIR}/logs}"
+TSUBAME_GROUP="${TSUBAME_GROUP:-}"
+TSUBAME_QUEUE="${TSUBAME_QUEUE:-gpu_h100}"
+TSUBAME_WALLTIME="${TSUBAME_WALLTIME:-24:00:00}"
 
 # ============================================================================
 # GPU / evaluation settings
 # ============================================================================
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0,1,2,3}"
 TENSOR_PARALLEL_SIZE=4
-JUDGE_MODEL="gpt-5.1-2025-11-13"
+JUDGE_MODEL="${JUDGE_MODEL:-gpt-5.1-2025-11-13}"
 
 # ============================================================================
 # Tasks & Metrics (same as eval.sh)
