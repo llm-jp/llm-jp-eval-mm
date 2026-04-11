@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Submit PBS jobs for all (or selected) models.
+# Submit SGE jobs for all (or selected) models on TSUBAME 4.0.
 #
 # Usage:
 #   bash tsubame/submit_all.sh                          # Submit all models
@@ -29,6 +29,14 @@ while [[ $# -gt 0 ]]; do
 done
 
 # ============================================================================
+# Validate required settings
+# ============================================================================
+if [ -z "$TSUBAME_GROUP" ]; then
+    echo "ERROR: TSUBAME_GROUP is not set. Add it to .env" >&2
+    exit 1
+fi
+
+# ============================================================================
 # Ensure directories exist
 # ============================================================================
 mkdir -p "$LOG_DIR" "$RESULT_DIR"
@@ -54,21 +62,29 @@ for entry in "${MODEL_LIST[@]}"; do
 
     # Sanitize model name for job name and log files
     job_name="eval_$(echo "$model_id" | tr '/' '_' | tr '[:upper:]' '[:lower:]')"
-    # PBS job names: max 236 chars, alphanumeric + underscore/hyphen
     job_name="${job_name:0:100}"
 
     log_file="${LOG_DIR}/${job_name}.log"
 
-    # Build qsub arguments
+    # Select resource type based on tensor parallel size (GPU count)
+    # transformers models don't specify tp; they use 1 GPU
+    tp="${model_tp:-1}"
+    case "$tp" in
+        1) resource="node_q" ;;   # 1 GPU
+        2) resource="node_h" ;;   # 2 GPUs
+        *) resource="node_f" ;;   # 4 GPUs (full node)
+    esac
+
+    # Build qsub arguments (Altair Grid Engine / SGE)
     qsub_args=(
+        -g "$TSUBAME_GROUP"
         -N "$job_name"
-        -v "MODEL_ENTRY=${entry}"
         -o "$log_file"
         -e "$log_file"
-        -q "$TSUBAME_QUEUE"
-        -l "walltime=${TSUBAME_WALLTIME}"
+        -l "${resource}=1"
+        -l "h_rt=${TSUBAME_H_RT}"
+        -v "MODEL_ENTRY=${entry}"
     )
-    [ -n "$TSUBAME_GROUP" ] && qsub_args+=(-W "group_list=${TSUBAME_GROUP}")
 
     if [ "$DRY_RUN" = true ]; then
         echo "[DRY-RUN] qsub ${qsub_args[*]} ${SCRIPT_DIR}/run_model.sh"

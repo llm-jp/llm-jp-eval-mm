@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared configuration for llm-jp-eval-mm TSUBAME scripts.
+# Shared configuration for llm-jp-eval-mm TSUBAME 4.0 scripts.
 # Source this file from other scripts: source "$(dirname "$0")/config.sh"
 #
 # Environment-specific settings (paths, credentials) are loaded from .env.
@@ -18,13 +18,13 @@ fi
 # ============================================================================
 # PROJECT_DIR     — project clone location (e.g. /gs/bs/.../eval-mm)
 # RESULT_DIR      — evaluation results output
-# LOG_DIR         — PBS job logs
+# LOG_DIR         — job logs
 # HF_HOME         — HuggingFace cache
-# TSUBAME_GROUP   — PBS group (-W group_list)
+# TSUBAME_GROUP   — SGE group (-g)
 #
 # Optional:
-# TSUBAME_QUEUE   — PBS queue (default: gpu_h100)
-# TSUBAME_WALLTIME — wall time (default: 24:00:00)
+# TSUBAME_RESOURCE — SGE resource type (default: node_f)
+# TSUBAME_H_RT     — elapsed time limit (default: 24:00:00)
 # UV_CACHE_DIR    — uv cache
 # VLLM_CACHE_DIR  — vLLM cache
 # JUDGE_MODEL     — LLM judge model
@@ -33,8 +33,8 @@ PROJECT_DIR="${PROJECT_DIR:-${_PROJECT_ROOT}}"
 RESULT_DIR="${RESULT_DIR:-${PROJECT_DIR}/result}"
 LOG_DIR="${LOG_DIR:-${PROJECT_DIR}/logs}"
 TSUBAME_GROUP="${TSUBAME_GROUP:-}"
-TSUBAME_QUEUE="${TSUBAME_QUEUE:-gpu_h100}"
-TSUBAME_WALLTIME="${TSUBAME_WALLTIME:-24:00:00}"
+TSUBAME_RESOURCE="${TSUBAME_RESOURCE:-node_f}"
+TSUBAME_H_RT="${TSUBAME_H_RT:-24:00:00}"
 
 # ============================================================================
 # GPU / evaluation settings
@@ -168,7 +168,7 @@ declare -a MODEL_LIST=(
     "Qwen/Qwen2.5-VL-32B-Instruct|vllm_normal|vllm|2"
     "CohereLabs/aya-vision-32b|vllm_normal|vllm|2"
     "google/gemma-4-31B-it|gemma4|transformers"
-    "turing-motors/Heron-NVILA-Lite-33B|heron_nvila|transformers"
+    # "turing-motors/Heron-NVILA-Lite-33B|heron_nvila|transformers"  # 33B: 1GPU では VRAM 不足
     "AIDC-AI/Ovis2-34B|vllm_normal|vllm|2"
     "OpenGVLab/InternVL3-38B|vllm_normal|vllm|2"
     "OpenGVLab/InternVL3_5-38B|vllm_normal|vllm|2"
@@ -176,7 +176,7 @@ declare -a MODEL_LIST=(
     "Qwen/Qwen2-VL-72B-Instruct|vllm_normal|vllm|4"
     "Qwen/Qwen2.5-VL-72B-Instruct|vllm_normal|vllm|4"
     "OpenGVLab/InternVL3-78B|vllm_normal|vllm|4"
-    "meta-llama/Llama-3.2-90B-Vision-Instruct|normal|transformers"
+    # "meta-llama/Llama-3.2-90B-Vision-Instruct|normal|transformers"  # 90B: 1GPU では VRAM 不足
     "deepseek-ai/deepseek-vl2|vllm_normal|vllm|4"
     # Size unknown / special
     "zai-org/GLM-4.5V|vllm_normal|vllm"
