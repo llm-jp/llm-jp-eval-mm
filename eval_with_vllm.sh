@@ -114,6 +114,9 @@ declare -a task_list=(
     "chartqapro"
     "mathvista"
     "okvqa"
+    "jawildtext-board-vqa"
+    "jawildtext-handwriting-ocr"
+    "jawildtext-receipt-kie"
 )
 
 # === Metrics Mapping ===
@@ -139,6 +142,9 @@ declare -A METRIC_MAP=(
     ["chartqapro"]="substring-match"
     ["mathvista"]="mathvista"
     ["okvqa"]="substring-match"
+    ["jawildtext-board-vqa"]="jawildtext-board-vqa"
+    ["jawildtext-handwriting-ocr"]="jawildtext-handwriting-ocr"
+    ["jawildtext-receipt-kie"]="jawildtext-receipt-kie"
 )
 
 # Result directories

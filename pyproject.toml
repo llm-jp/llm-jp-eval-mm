@@ -8,7 +8,7 @@ authors = [
 dependencies = [
     "setuptools",
     "psutil",
-    "datasets==2.18.0",
+    "datasets>=2.21.0",
     "pyarrow>=14.0.0",
     "requests>=2.32.3",
     "python-dotenv>=1.0.1",
@@ -51,7 +51,6 @@ path = "src/eval_mm/_version.py"
 exclude = ["result", "scripts"]
 
 [tool.uv.sources]
-mantis-vl = { git = "https://github.com/TIGER-AI-Lab/Mantis" }
 s2wrapper = { git = "https://github.com/bfshi/scaling_on_scales.git" }
 vila = { git = "https://github.com/LLM-jp/llm-jp-VILA.git", branch = "dep-relax" }
 flash-attn = { url = "https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.3/flash_attn-2.7.3%2Bcu12torch2.6cxx11abiFALSE-cp312-cp312-linux_x86_64.whl" }
@@ -68,7 +67,8 @@ dev = [
     "streamlit>=1.43.2",
 ]
 
-evovlm = ["torch==2.6.0", "torchvision>=0.20.1", "flash-attn>=2.7.3", "transformers==4.42.4", "mantis-vl"]
+# evovlm: deprecated (mantis-vl pins datasets==2.18.0)
+# evovlm = ["torch==2.6.0", "torchvision>=0.20.1", "flash-attn>=2.7.3", "transformers==4.42.4", "mantis-vl"]
 
 vilaja = [
     "torch==2.6.0",
@@ -197,7 +197,6 @@ gemma4 = [
 [tool.uv]
 conflicts = [
     [
-        { group = "evovlm" },
         { group = "vilaja" },
         { group = "normal" },
         { group = "old" },

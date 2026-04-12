@@ -13,6 +13,9 @@ from .cc_ocr_scorer import CCOCRScorer
 from .ai2d_scorer import AI2DScorer
 from .blink_scorer import BLINKScorer
 from .mathvista_scorer import MathVistaScorer
+from .jawildtext_board_vqa_scorer import JaWildTextBoardVQAScorer
+from .jawildtext_handwriting_ocr_scorer import JaWildTextHandwritingOCRScorer
+from .jawildtext_receipt_kie_scorer import JaWildTextReceiptKIEScorer
 from .scorer_registry import ScorerRegistry
 
 
@@ -33,5 +36,8 @@ __all__ = [
     "AI2DScorer",
     "BLINKScorer",
     "MathVistaScorer",
+    "JaWildTextBoardVQAScorer",
+    "JaWildTextHandwritingOCRScorer",
+    "JaWildTextReceiptKIEScorer",
     "ScorerRegistry",
 ]

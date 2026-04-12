@@ -20,6 +20,9 @@ from .chartqa import ChartQA
 from .chartqapro import ChartQAPro
 from .okvqa import OKVQA
 from .mnist import MNIST
+from .jawildtext_board_vqa import JaWildTextBoardVQA
+from .jawildtext_handwriting_ocr import JaWildTextHandwritingOCR
+from .jawildtext_receipt_kie import JaWildTextReceiptKIE
 from .task_registry import TaskRegistry
 from .task import TaskConfig
 
@@ -46,6 +49,9 @@ __all__ = [
     "ChartQAPro",
     "OKVQA",
     "MNIST",
+    "JaWildTextBoardVQA",
+    "JaWildTextHandwritingOCR",
+    "JaWildTextReceiptKIE",
     "TaskRegistry",
     "TaskConfig",
 ]
