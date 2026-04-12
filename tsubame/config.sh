@@ -64,7 +64,7 @@ declare -a TASK_LIST=(
     "textvqa"
     "chartqa"
     "chartqapro"
-    "mathvista"
+    # "mathvista"  # 一時的に除外
     "okvqa"
 )
 
@@ -86,7 +86,7 @@ declare -A METRIC_MAP=(
     ["textvqa"]="substring-match"
     ["chartqa"]="substring-match"
     ["chartqapro"]="substring-match"
-    ["mathvista"]="mathvista"
+    # ["mathvista"]="mathvista"  # 一時的に除外
     ["okvqa"]="substring-match"
 )
 
