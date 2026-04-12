@@ -73,6 +73,12 @@ TASKS: dict[str, TaskMeta] = {t.task_id: t for t in [
              ["heron-bench"], "https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench"),
     TaskMeta("mecha-ja", "MECHA", "言語・知識中心",
              ["mecha-ja"], "https://huggingface.co/datasets/llm-jp/MECHA-ja"),
+    TaskMeta("jawildtext-board-vqa", "JWTxt-Board", "言語・知識中心",
+             ["jawildtext-board-vqa"], "https://huggingface.co/datasets/llm-jp/jawildtext"),
+    TaskMeta("jawildtext-handwriting-ocr", "JWTxt-HW", "言語・知識中心",
+             ["jawildtext-handwriting-ocr"], "https://huggingface.co/datasets/llm-jp/jawildtext"),
+    TaskMeta("jawildtext-receipt-kie", "JWTxt-Receipt", "言語・知識中心",
+             ["jawildtext-receipt-kie"], "https://huggingface.co/datasets/llm-jp/jawildtext"),
 ]}
 
 
@@ -93,6 +99,9 @@ METRICS: dict[str, MetricMeta] = {m.metric_id: m for m in [
     MetricMeta("ai2d", "Acc"),
     MetricMeta("blink", "Acc"),
     MetricMeta("mathvista", "Acc"),
+    MetricMeta("jawildtext-board-vqa", "LLM"),
+    MetricMeta("jawildtext-handwriting-ocr", "CER"),
+    MetricMeta("jawildtext-receipt-kie", "F1"),
 ]}
 
 

@@ -1,33 +1,21 @@
 {
-    "Heron": {
-        "url": "https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench"
+    "TextVQA": {
+        "url": "https://huggingface.co/datasets/lmms-lab/textvqa"
     },
-    "JVB-ItW": {
-        "url": "https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild"
+    "AI2D": {
+        "url": "https://huggingface.co/datasets/lmms-lab/ai2d"
     },
-    "VG-VQA": {
-        "url": "https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500"
+    "ChartQA": {
+        "url": "https://huggingface.co/datasets/lmms-lab/ChartQA"
     },
-    "JIC": {
-        "url": "https://huggingface.co/datasets/line-corporation/JIC-VQA"
+    "DocVQA": {
+        "url": "https://huggingface.co/datasets/lmms-lab/DocVQA"
     },
-    "CVQA": {
-        "url": "https://huggingface.co/datasets/afaji/cvqa"
+    "BLINK": {
+        "url": "https://huggingface.co/datasets/BLINK-Benchmark/BLINK"
     },
-    "JMMMU": {
-        "url": "https://huggingface.co/datasets/JMMMU/JMMMU"
-    },
-    "JDocQA": {
-        "url": "https://github.com/mizuumi/JDocQA"
-    },
-    "MECHA": {
-        "url": "https://huggingface.co/datasets/llm-jp/MECHA-ja"
-    },
-    "CC-OCR": {
-        "url": "https://huggingface.co/datasets/wulipc/CC-OCR"
-    },
-    "MulIm-VQA": {
-        "url": "https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA"
+    "InfoVQA": {
+        "url": "https://huggingface.co/datasets/lmms-lab/infographicvqa"
     },
     "MMMU": {
         "url": "https://huggingface.co/datasets/MMMU/MMMU"
@@ -35,22 +23,43 @@
     "LLAVA": {
         "url": "https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild"
     },
-    "AI2D": {
-        "url": "https://huggingface.co/datasets/lmms-lab/ai2d"
+    "CVQA": {
+        "url": "https://huggingface.co/datasets/afaji/cvqa"
     },
-    "BLINK": {
-        "url": "https://huggingface.co/datasets/BLINK-Benchmark/BLINK"
+    "CC-OCR": {
+        "url": "https://huggingface.co/datasets/wulipc/CC-OCR"
     },
-    "DocVQA": {
-        "url": "https://huggingface.co/datasets/lmms-lab/DocVQA"
+    "JIC": {
+        "url": "https://huggingface.co/datasets/line-corporation/JIC-VQA"
     },
-    "InfoVQA": {
-        "url": "https://huggingface.co/datasets/lmms-lab/infographicvqa"
+    "MulIm-VQA": {
+        "url": "https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA"
     },
-    "TextVQA": {
-        "url": "https://huggingface.co/datasets/lmms-lab/textvqa"
+    "JMMMU": {
+        "url": "https://huggingface.co/datasets/JMMMU/JMMMU"
     },
-    "ChartQA": {
-        "url": "https://huggingface.co/datasets/lmms-lab/ChartQA"
+    "JDocQA": {
+        "url": "https://github.com/mizuumi/JDocQA"
+    },
+    "JVB-ItW": {
+        "url": "https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild"
+    },
+    "VG-VQA": {
+        "url": "https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500"
+    },
+    "Heron": {
+        "url": "https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench"
+    },
+    "MECHA": {
+        "url": "https://huggingface.co/datasets/llm-jp/MECHA-ja"
+    },
+    "JWTxt-Board": {
+        "url": "https://huggingface.co/datasets/llm-jp/jawildtext"
+    },
+    "JWTxt-HW": {
+        "url": "https://huggingface.co/datasets/llm-jp/jawildtext"
+    },
+    "JWTxt-Receipt": {
+        "url": "https://huggingface.co/datasets/llm-jp/jawildtext"
     }
 }

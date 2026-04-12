@@ -22,8 +22,8 @@ declare -A MODEL_GROUP_MAP=(
     # Sarashina2-Vision (custom, needs transformers==4.47.0)
     ["sbintuitions/sarashina2-vision-8b"]="sarashina"
     ["sbintuitions/sarashina2-vision-14b"]="sarashina"
-    # EvoVLM (custom Mantis-based)
-    ["SakanaAI/Llama-3-EvoVLM-JP-v2"]="evovlm"
+    # EvoVLM (deprecated: evovlm group removed)
+    # ["SakanaAI/Llama-3-EvoVLM-JP-v2"]="evovlm"
     # llm-jp-3-vila (VILA-based, custom)
     ["llm-jp/llm-jp-3-vila-14b"]="vilaja"
     # Heron-NVILA (custom NVILA)
@@ -70,6 +70,9 @@ declare -a task_list=(
     "chartqapro"
     "mathvista"
     "okvqa"
+    "jawildtext-board-vqa"
+    "jawildtext-handwriting-ocr"
+    "jawildtext-receipt-kie"
 )
 
 # === Metrics Mapping ===
@@ -95,6 +98,9 @@ declare -A METRIC_MAP=(
     ["chartqapro"]="substring-match"
     ["mathvista"]="mathvista"
     ["okvqa"]="substring-match"
+    ["jawildtext-board-vqa"]="jawildtext-board-vqa"
+    ["jawildtext-handwriting-ocr"]="jawildtext-handwriting-ocr"
+    ["jawildtext-receipt-kie"]="jawildtext-receipt-kie"
 )
 
 # Result directories

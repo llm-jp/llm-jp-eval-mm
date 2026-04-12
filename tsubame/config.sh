@@ -66,6 +66,9 @@ declare -a TASK_LIST=(
     "chartqapro"
     # "mathvista"  # 一時的に除外
     "okvqa"
+    "jawildtext-board-vqa"
+    "jawildtext-handwriting-ocr"
+    "jawildtext-receipt-kie"
 )
 
 declare -A METRIC_MAP=(
@@ -88,6 +91,9 @@ declare -A METRIC_MAP=(
     ["chartqapro"]="substring-match"
     # ["mathvista"]="mathvista"  # 一時的に除外
     ["okvqa"]="substring-match"
+    ["jawildtext-board-vqa"]="jawildtext-board-vqa"
+    ["jawildtext-handwriting-ocr"]="jawildtext-handwriting-ocr"
+    ["jawildtext-receipt-kie"]="jawildtext-receipt-kie"
 )
 
 # Build comma-separated lists for multi-task script
@@ -146,7 +152,7 @@ declare -a MODEL_LIST=(
     "AIDC-AI/Ovis2-8B|vllm_normal|vllm|1"
     "AIDC-AI/Ovis2.5-9B|vllm_normal|vllm|1"
     "sbintuitions/sarashina2-vision-8b|sarashina|transformers"
-    "SakanaAI/Llama-3-EvoVLM-JP-v2|evovlm|transformers"
+    # "SakanaAI/Llama-3-EvoVLM-JP-v2|evovlm|transformers"  # deprecated: evovlm group removed
     "openbmb/MiniCPM-o-2_6|vllm_normal|vllm|1"
     # ~11-15B (tp=1)
     "meta-llama/Llama-3.2-11B-Vision-Instruct|normal|transformers"
