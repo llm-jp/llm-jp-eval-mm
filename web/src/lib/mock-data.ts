@@ -50,6 +50,9 @@ export const TASKS: TaskDef[] = [
     cluster: "視覚中心",
   },
   { taskId: "mecha-ja", displayName: "MECHA", cluster: "言語・知識中心" },
+  { taskId: "jawildtext-board-vqa", displayName: "JWTxt-Board", cluster: "言語・知識中心" },
+  { taskId: "jawildtext-handwriting-ocr", displayName: "JWTxt-HW", cluster: "言語・知識中心" },
+  { taskId: "jawildtext-receipt-kie", displayName: "JWTxt-Receipt", cluster: "言語・知識中心" },
 ];
 
 export const EN_TASKS = TASKS.filter((t) => t.cluster === "英語");

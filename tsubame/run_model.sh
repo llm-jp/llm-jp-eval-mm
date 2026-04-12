@@ -92,6 +92,9 @@ else
             cvqa|docvqa|infographicvqa)  METRIC="substring-match" ;;
             textvqa|chartqa|chartqapro)  METRIC="substring-match" ;;
             okvqa)                       METRIC="substring-match" ;;
+            jawildtext-board-vqa)        METRIC="jawildtext-board-vqa" ;;
+            jawildtext-handwriting-ocr)  METRIC="jawildtext-handwriting-ocr" ;;
+            jawildtext-receipt-kie)      METRIC="jawildtext-receipt-kie" ;;
             mathvista)                   METRIC="mathvista" ;;
             *)                           METRIC="substring-match" ;;
         esac
