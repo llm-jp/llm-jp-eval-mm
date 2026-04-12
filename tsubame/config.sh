@@ -170,8 +170,8 @@ declare -a MODEL_LIST=(
     "google/gemma-4-31B-it|gemma4|transformers"
     # "turing-motors/Heron-NVILA-Lite-33B|heron_nvila|transformers"  # 33B: 1GPU では VRAM 不足
     "AIDC-AI/Ovis2-34B|vllm_normal|vllm|2"
-    "OpenGVLab/InternVL3-38B|vllm_normal|vllm|2"
-    "OpenGVLab/InternVL3_5-38B|vllm_normal|vllm|2"
+    "OpenGVLab/InternVL3-38B|vllm_normal|vllm|4"
+    "OpenGVLab/InternVL3_5-38B|vllm_normal|vllm|4"
     # ~72B+ (tp=4)
     "Qwen/Qwen2-VL-72B-Instruct|vllm_normal|vllm|4"
     "Qwen/Qwen2.5-VL-72B-Instruct|vllm_normal|vllm|4"
