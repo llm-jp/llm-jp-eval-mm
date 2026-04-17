@@ -85,16 +85,23 @@ def process_results(
 ) -> pd.DataFrame:
     """Process all evaluation results into a structured DataFrame."""
     if not task_id_list:
-        task_id_list = [d for d in os.listdir(result_dir) if not d.startswith(".")]
+        task_id_list = [
+            d for d in os.listdir(result_dir)
+            if not d.startswith(".")
+            and not d.startswith("eval_failures_")
+            and not d.startswith("judge_failures")
+            and os.path.isdir(os.path.join(result_dir, d))
+        ]
 
-    df = pd.DataFrame()
-
+    rows: list[dict] = []
     for model in model_list:
         logger.info(f"Processing results for {model}")
         model_results = load_evaluation_data(result_dir, model, task_id_list)
         if len(model_results) == 1:
             continue
-        df = df._append(model_results, ignore_index=True)
+        rows.append(model_results)
+
+    df = pd.DataFrame(rows) if rows else pd.DataFrame()
 
     df = df.set_index("Model").round(2)
     df = df.rename(
@@ -431,12 +438,20 @@ def compute_cluster_scores(df: pd.DataFrame) -> pd.DataFrame:
 def format_output(df: pd.DataFrame, output_format: str) -> str:
     """Format the DataFrame output for markdown or LaTeX."""
 
+    # Cast numeric columns to object so we can write formatted markdown strings
+    # (pandas >=2.2 refuses implicit str→float coercion on typed columns).
+    df = df.astype(object)
+
     # textbf top1 score and underline top2 score for each task
     for col in df.columns:
-        top1_model = df[col].astype(float).idxmax()
-        top2_model = df[col].astype(float).nlargest(2).index[-1]
-        top1_score = f"{float(df.loc[top1_model, col]):.1f}"
-        top2_score = f"{float(df.loc[top2_model, col]):.1f}"
+        numeric = pd.to_numeric(df[col], errors="coerce")
+        if numeric.dropna().empty:
+            continue
+        top1_model = numeric.idxmax()
+        top2_candidates = numeric.nlargest(2).dropna()
+        top2_model = top2_candidates.index[-1] if len(top2_candidates) > 1 else top1_model
+        top1_score = f"{float(numeric.loc[top1_model]):.1f}"
+        top2_score = f"{float(numeric.loc[top2_model]):.1f}"
         # apply formatting
         if output_format == "latex":
             df.loc[top1_model, col] = f"\\textbf{{{top1_score}}}"
