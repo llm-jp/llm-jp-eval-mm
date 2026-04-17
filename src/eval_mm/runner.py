@@ -116,14 +116,23 @@ def evaluate_predictions(
     batch_size: int = 10,
     random_choice: bool = False,
     client=None,
+    refs: list | None = None,
 ) -> tuple[dict[str, list], dict[str, dict]]:
-    """Run scoring on predictions and return per-sample scores + aggregates."""
+    """Run scoring on predictions and return per-sample scores + aggregates.
+
+    Pass ``refs`` (gold answers, one per doc) to skip the per-call
+    ``[task.doc_to_answer(doc) for doc in task.dataset]`` iteration —
+    useful when scoring many models against the same task.
+    """
     logger.info("Starting evaluation...")
     scores_by_metric: dict[str, list] = {}
     aggregated_metrics: dict[str, dict] = {}
 
     if client is None:
         client = OpenAIChatAPI()
+
+    if refs is None:
+        refs = [task.doc_to_answer(doc) for doc in task.dataset]
 
     for metric in metrics:
         scorer = ScorerRegistry.load_scorer(
@@ -137,7 +146,7 @@ def evaluate_predictions(
             ),
         )
         scores = scorer.score(
-            [task.doc_to_answer(doc) for doc in task.dataset],
+            refs,
             [pred["text"] for pred in preds],
         )
         scores_by_metric[metric] = scores
@@ -157,16 +166,28 @@ def save_results(
     scores_by_metric: dict[str, list],
     aggregated_metrics: dict[str, dict],
     output_dir: str,
+    answers: list | None = None,
+    input_texts: list | None = None,
 ) -> None:
-    """Write prediction.jsonl (with scores) and evaluation.jsonl."""
+    """Write prediction.jsonl (with scores) and evaluation.jsonl.
+
+    Pass ``answers`` / ``input_texts`` (one per doc) to skip the
+    per-call ``task.dataset`` iteration — useful when saving many
+    models against the same task (image-heavy datasets are slow to
+    re-decode).
+    """
+    if answers is None:
+        answers = [task.doc_to_answer(task.dataset[i]) for i in range(len(preds))]
+    if input_texts is None:
+        input_texts = [task.doc_to_text(task.dataset[i]) for i in range(len(preds))]
+
     final_results = []
     for i, pred in enumerate(preds):
-        doc = task.dataset[i]
         result = {
             "question_id": pred["question_id"],
             "text": pred["text"],
-            "answer": task.doc_to_answer(doc),
-            "input_text": task.doc_to_text(doc),
+            "answer": answers[i],
+            "input_text": input_texts[i],
         }
         for metric in metrics:
             result[metric] = scores_by_metric[metric][i]
@@ -200,6 +221,7 @@ def run_evaluation(
     batch_chunk_size: int = 0,
     progress_callback: "Callable[[int, int], None] | None" = None,
     client=None,
+    task=None,
 ) -> dict[str, dict] | None:
     """Run the full evaluation pipeline.
 
@@ -244,7 +266,8 @@ def run_evaluation(
     if gen_config is None:
         gen_config = _GC()
 
-    task = TaskRegistry.load_task(task_id, task_config)
+    if task is None:
+        task = TaskRegistry.load_task(task_id, task_config)
 
     output_dir = os.path.join(result_dir, task_id, model_id)
     os.makedirs(output_dir, exist_ok=True)
