@@ -17,6 +17,8 @@ import sys
 import traceback
 from pathlib import Path
 
+os  # silence unused import (used below)
+
 # task_id -> metric (mirrors tsubame/run_model.sh)
 METRIC_MAP: dict[str, str] = {
     "japanese-heron-bench": "heron-bench",
@@ -70,6 +72,9 @@ def parse_args():
                    help="only run metrics that don't need the LLM judge (fast)")
     p.add_argument("--judge_only", action="store_true",
                    help="only run metrics that need the LLM judge")
+    p.add_argument("--model_shard", default="",
+                   help="'i/N' — only process models where sorted_idx %% N == i-1 "
+                        "(1-indexed). Stride-based so sizes are balanced across shards.")
     p.add_argument("--dry_run", action="store_true")
     p.add_argument("--limit", type=int, default=0,
                    help="stop after N cells (for smoke test)")
@@ -114,13 +119,31 @@ def build_plan(args) -> list[tuple[str, str, str]]:
     return plan
 
 
+def apply_shard(plan, shard_spec: str):
+    if not shard_spec:
+        return plan
+    try:
+        i_str, n_str = shard_spec.split("/")
+        i, n = int(i_str), int(n_str)
+    except ValueError as e:
+        raise SystemExit(f"Bad --model_shard '{shard_spec}': expected 'i/N'") from e
+    if not (1 <= i <= n):
+        raise SystemExit(f"Bad --model_shard '{shard_spec}': need 1 <= i <= N")
+    models_sorted = sorted({m for _, m, _ in plan})
+    kept = {m for idx, m in enumerate(models_sorted) if idx % n == (i - 1)}
+    return [(t, m, metric) for (t, m, metric) in plan if m in kept]
+
+
 def main() -> int:
     args = parse_args()
 
     plan = build_plan(args)
+    plan = apply_shard(plan, args.model_shard)
     llm_cells = sum(1 for _, _, m in plan if m in LLM_METRICS)
     local_cells = len(plan) - llm_cells
 
+    if args.model_shard:
+        print(f"Shard: {args.model_shard}")
     print(f"Planned cells: {len(plan)} (LLM judge={llm_cells}, local={local_cells})")
     if args.limit and len(plan) > args.limit:
         print(f"Limiting to first {args.limit}")
@@ -150,33 +173,67 @@ def main() -> int:
     else:
         print("No LLM-judge cells — running local-only scoring.")
 
-    from eval_mm import TaskConfig, run_evaluation
+    from eval_mm import TaskConfig, TaskRegistry
+    from eval_mm.runner import evaluate_predictions, save_results
+    from eval_mm.result_schema import load_predictions, write_manifest
+
+    # Group plan by task so we load each task's dataset only once
+    plan_by_task: dict[str, list[tuple[str, str]]] = {}
+    for task_id, model_id, metric in plan:
+        plan_by_task.setdefault(task_id, []).append((model_id, metric))
 
     fail_log = Path(args.result_dir) / "judge_failures_vllm.log"
     n_ok = 0
     n_fail = 0
-    for i, (task, model_id, metric) in enumerate(plan, 1):
-        print(f"\n===== [{i}/{len(plan)}] {task} :: {model_id} ({metric}) =====")
+    cell_idx = 0
+
+    for task_id, items in plan_by_task.items():
+        print(f"\n########## Task: {task_id} ({len(items)} cells) ##########")
         try:
-            run_evaluation(
-                model=None,
-                model_id=model_id,
-                task_id=task,
-                metrics=[metric],
-                task_config=TaskConfig(),
-                result_dir=args.result_dir,
-                judge_model=args.judge_model,
-                batch_size_for_evaluation=args.batch_size,
-                client=client,
-            )
-            n_ok += 1
+            task_obj = TaskRegistry.load_task(task_id, TaskConfig())
+            # Precompute refs/input_texts once per task — image-heavy datasets
+            # are slow to re-decode and evaluate/save both iterate them.
+            answers = [task_obj.doc_to_answer(doc) for doc in task_obj.dataset]
+            input_texts = [task_obj.doc_to_text(doc) for doc in task_obj.dataset]
         except Exception as e:
-            n_fail += 1
-            msg = f"FAIL|{task}|{model_id}|{type(e).__name__}: {e}"
+            n_fail += len(items)
+            msg = f"FAIL|task-load|{task_id}||{type(e).__name__}: {e}"
             print(msg, file=sys.stderr)
             traceback.print_exc()
             with open(fail_log, "a") as fh:
-                fh.write(msg + "\n")
+                for model_id, _ in items:
+                    fh.write(f"FAIL|{task_id}|{model_id}|task-load: {e}\n")
+            continue
+
+        for model_id, metric in items:
+            cell_idx += 1
+            print(f"\n===== [{cell_idx}/{len(plan)}] {task_id} :: {model_id} ({metric}) =====")
+            try:
+                output_dir = os.path.join(args.result_dir, task_id, model_id)
+                preds = load_predictions(output_dir)
+                assert len(preds) == len(task_obj.dataset), (
+                    f"Prediction length mismatch: {len(preds)} vs {len(task_obj.dataset)}"
+                )
+                scores_by_metric, aggregated = evaluate_predictions(
+                    task_obj, preds, [metric],
+                    judge_model=args.judge_model,
+                    batch_size=args.batch_size,
+                    client=client,
+                    refs=answers,
+                )
+                save_results(
+                    preds, task_obj, [metric], scores_by_metric, aggregated,
+                    output_dir, answers=answers, input_texts=input_texts,
+                )
+                write_manifest(output_dir, model_id, task_id, [metric])
+                n_ok += 1
+            except Exception as e:
+                n_fail += 1
+                msg = f"FAIL|{task_id}|{model_id}|{type(e).__name__}: {e}"
+                print(msg, file=sys.stderr)
+                traceback.print_exc()
+                with open(fail_log, "a") as fh:
+                    fh.write(msg + "\n")
 
     print(f"\n========== Done: ok={n_ok}, fail={n_fail}, total={len(plan)} ==========")
     if n_fail:

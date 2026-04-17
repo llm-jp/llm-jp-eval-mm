@@ -33,6 +33,7 @@ JUDGE_TASK_FILTER="${JUDGE_TASK_FILTER:-}"
 JUDGE_MODEL_FILTER="${JUDGE_MODEL_FILTER:-}"
 JUDGE_LIMIT="${JUDGE_LIMIT:-0}"
 JUDGE_OVERWRITE="${JUDGE_OVERWRITE:-0}"
+JUDGE_SHARD="${JUDGE_SHARD:-}"
 
 EXTRA_FLAGS=""
 case "$JUDGE_MODE" in
@@ -45,6 +46,7 @@ esac
 [ -n "$JUDGE_MODEL_FILTER" ] && EXTRA_FLAGS="$EXTRA_FLAGS --model_filter $JUDGE_MODEL_FILTER"
 [ "$JUDGE_LIMIT" != "0" ]    && EXTRA_FLAGS="$EXTRA_FLAGS --limit $JUDGE_LIMIT"
 [ "$JUDGE_OVERWRITE" = "1" ] && EXTRA_FLAGS="$EXTRA_FLAGS --overwrite"
+[ -n "$JUDGE_SHARD" ]        && EXTRA_FLAGS="$EXTRA_FLAGS --model_shard $JUDGE_SHARD"
 
 echo "========================================"
 echo "Judge model : $JUDGE_VLLM_MODEL (tp=$JUDGE_TP)"

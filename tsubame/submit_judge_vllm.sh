@@ -23,6 +23,7 @@ TASK_FILTER=""
 MODEL_FILTER=""
 LIMIT=0
 OVERWRITE=0
+SHARD=""
 DRY_RUN=false
 
 while [[ $# -gt 0 ]]; do
@@ -39,6 +40,7 @@ while [[ $# -gt 0 ]]; do
         --model-filter) MODEL_FILTER="$2"; shift 2 ;;
         --limit)        LIMIT="$2"; shift 2 ;;
         --overwrite)    OVERWRITE=1; shift ;;
+        --shard)        SHARD="$2"; shift 2 ;;
         --h-rt)         H_RT="$2"; shift 2 ;;
         --resource)     RESOURCE="$2"; shift 2 ;;
         --name)         JOB_NAME="$2"; shift 2 ;;
@@ -46,6 +48,12 @@ while [[ $# -gt 0 ]]; do
         *) echo "Unknown option: $1" >&2; exit 1 ;;
     esac
 done
+
+# Append shard id to job name if sharded (so parallel jobs don't overwrite logs)
+if [ -n "$SHARD" ]; then
+    sanitized_shard=$(echo "$SHARD" | tr '/' '_')
+    JOB_NAME="${JOB_NAME}_s${sanitized_shard}"
+fi
 
 if [ -z "${TSUBAME_GROUP:-}" ]; then
     echo "ERROR: TSUBAME_GROUP is not set in .env" >&2
@@ -61,6 +69,7 @@ VARS="JUDGE_MODE=${MODE}"
 [ -n "$MODEL_FILTER" ] && VARS="${VARS},JUDGE_MODEL_FILTER=${MODEL_FILTER}"
 [ "$LIMIT" != "0" ]    && VARS="${VARS},JUDGE_LIMIT=${LIMIT}"
 [ "$OVERWRITE" = "1" ] && VARS="${VARS},JUDGE_OVERWRITE=1"
+[ -n "$SHARD" ]        && VARS="${VARS},JUDGE_SHARD=${SHARD}"
 
 qsub_args=(
     -g "$TSUBAME_GROUP"
