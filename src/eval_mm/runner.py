@@ -115,11 +115,15 @@ def evaluate_predictions(
     judge_model: str = "gpt-4o-2024-11-20",
     batch_size: int = 10,
     random_choice: bool = False,
+    client=None,
 ) -> tuple[dict[str, list], dict[str, dict]]:
     """Run scoring on predictions and return per-sample scores + aggregates."""
     logger.info("Starting evaluation...")
     scores_by_metric: dict[str, list] = {}
     aggregated_metrics: dict[str, dict] = {}
+
+    if client is None:
+        client = OpenAIChatAPI()
 
     for metric in metrics:
         scorer = ScorerRegistry.load_scorer(
@@ -128,7 +132,7 @@ def evaluate_predictions(
                 docs=task.dataset,
                 judge_model=judge_model,
                 batch_size=batch_size,
-                client=OpenAIChatAPI(),
+                client=client,
                 random_choice=random_choice,
             ),
         )
@@ -195,6 +199,7 @@ def run_evaluation(
     batch_mode: bool = False,
     batch_chunk_size: int = 0,
     progress_callback: "Callable[[int, int], None] | None" = None,
+    client=None,
 ) -> dict[str, dict] | None:
     """Run the full evaluation pipeline.
 
@@ -285,6 +290,7 @@ def run_evaluation(
         judge_model=judge_model,
         batch_size=batch_size_for_evaluation,
         random_choice=random_choice,
+        client=client,
     )
 
     save_results(preds, task, metrics, scores_by_metric, aggregated_metrics, output_dir)
