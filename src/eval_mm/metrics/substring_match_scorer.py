@@ -1,5 +1,6 @@
 from .scorer import Scorer, AggregateOutput
 from .scorer_registry import register_scorer
+from ._text_utils import strip_reasoning
 import re
 
 
@@ -32,6 +33,9 @@ class SubstringMatchScorer(Scorer):
     def score(refs: list[str | list[str]], preds: list[str]) -> list[int]:
         scores = []
         for ref, pred in zip(refs, preds):
+            # Drop any <think>…</think> reasoning block — it inflates the
+            # score by coincidentally mentioning candidate answers.
+            pred = strip_reasoning(pred)
             # Normalize prediction: lowercase and convert number words
             pred_normalized = SubstringMatchScorer.normalize_numbers(pred.lower())
             
