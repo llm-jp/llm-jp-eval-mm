@@ -18,6 +18,12 @@
 #                        --task_filter japanese-heron-bench / --limit 3
 set -eu
 
+# Match run_model.sh: load CUDA 13 so flashinfer GDN kernels resolve
+# libcudart.so.13 (needed only for GDN-attention judges, harmless otherwise).
+if command -v module >/dev/null 2>&1; then
+    module load cuda/13.1.1 2>/dev/null || true
+fi
+
 export PATH="$HOME/.local/bin:$PATH"
 . ./tsubame/config.sh
 

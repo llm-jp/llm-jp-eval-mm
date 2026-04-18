@@ -12,6 +12,16 @@
 set -eu
 
 # ============================================================================
+# Load CUDA 13 — required by flashinfer kernels (gdn_prefill_sm90.so, used by
+# GDN linear-attention models such as Qwen3.5). System default is CUDA 12 on
+# TSUBAME 4.0, which causes "libcudart.so.13: cannot open shared object file"
+# at EngineCore init time. Safe no-op on nodes without modules.
+# ============================================================================
+if command -v module >/dev/null 2>&1; then
+    module load cuda/13.1.1 2>/dev/null || true
+fi
+
+# ============================================================================
 # Load config (.env is sourced inside config.sh)
 # #$ -cwd ensures we start in the submission directory (project root)
 # ============================================================================
