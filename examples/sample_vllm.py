@@ -41,7 +41,7 @@ def parse_args():
     )
     parser.add_argument("--rotate_choices", action="store_true")
     parser.add_argument("--random_choice", action="store_true")
-    parser.add_argument("--gpu_memory_utilization", type=float, default=0.95)
+    parser.add_argument("--gpu_memory_utilization", type=float, default=0.85)
     parser.add_argument("--max_model_len", type=int, default=None)
     parser.add_argument("--tensor_parallel_size", type=int, default=1)
     return parser.parse_args()

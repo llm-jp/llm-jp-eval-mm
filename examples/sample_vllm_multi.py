@@ -35,7 +35,7 @@ def parse_args():
     p.add_argument("--result_dir", default="result")
     p.add_argument("--judge_model", default="gpt-5.1-2025-11-13")
     p.add_argument("--tensor_parallel_size", type=int, default=1)
-    p.add_argument("--gpu_memory_utilization", type=float, default=0.95)
+    p.add_argument("--gpu_memory_utilization", type=float, default=0.85)
     p.add_argument("--max_model_len", type=int, default=None)
     p.add_argument("--inference_only", action="store_true")
     p.add_argument("--overwrite", action="store_true")
