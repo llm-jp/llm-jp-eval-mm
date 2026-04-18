@@ -198,6 +198,14 @@ claude-san
 # Temporary validation output
 result_validation/
 
+# Local scratch: personal notes, ad-hoc outputs, generated leaderboards
+# that shouldn't be tracked but are convenient to keep in-tree
+scratch/
+
+# SGE job output logs (created automatically by qsub when -o is not set)
+run_model.sh.o*
+run_model.sh.e*
+
 # NFS temp files
 .nfs*
 
