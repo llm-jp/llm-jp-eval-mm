@@ -40,6 +40,11 @@ JUDGE_MODEL_FILTER="${JUDGE_MODEL_FILTER:-}"
 JUDGE_LIMIT="${JUDGE_LIMIT:-0}"
 JUDGE_OVERWRITE="${JUDGE_OVERWRITE:-0}"
 JUDGE_SHARD="${JUDGE_SHARD:-}"
+# JUDGE_SKIP_TASKS_SET=1 signals "override the orchestrator default";
+# without that flag, JUDGE_SKIP_TASKS is ignored. This lets us pass an
+# empty override ("") to disable skipping entirely.
+JUDGE_SKIP_TASKS_SET="${JUDGE_SKIP_TASKS_SET:-0}"
+JUDGE_SKIP_TASKS="${JUDGE_SKIP_TASKS:-}"
 
 EXTRA_FLAGS=""
 case "$JUDGE_MODE" in
@@ -53,6 +58,11 @@ esac
 [ "$JUDGE_LIMIT" != "0" ]    && EXTRA_FLAGS="$EXTRA_FLAGS --limit $JUDGE_LIMIT"
 [ "$JUDGE_OVERWRITE" = "1" ] && EXTRA_FLAGS="$EXTRA_FLAGS --overwrite"
 [ -n "$JUDGE_SHARD" ]        && EXTRA_FLAGS="$EXTRA_FLAGS --model_shard $JUDGE_SHARD"
+if [ "$JUDGE_SKIP_TASKS_SET" = "1" ]; then
+    # Use --flag=value form so an empty override (e.g. "") still survives
+    # word-splitting into a single argparse arg.
+    EXTRA_FLAGS="$EXTRA_FLAGS --skip_tasks=$JUDGE_SKIP_TASKS"
+fi
 
 echo "========================================"
 echo "Judge model : $JUDGE_VLLM_MODEL (tp=$JUDGE_TP)"

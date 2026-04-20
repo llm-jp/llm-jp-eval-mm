@@ -24,6 +24,8 @@ MODEL_FILTER=""
 LIMIT=0
 OVERWRITE=0
 SHARD=""
+SKIP_TASKS_SET=false
+SKIP_TASKS=""
 DRY_RUN=false
 
 while [[ $# -gt 0 ]]; do
@@ -41,6 +43,7 @@ while [[ $# -gt 0 ]]; do
         --limit)        LIMIT="$2"; shift 2 ;;
         --overwrite)    OVERWRITE=1; shift ;;
         --shard)        SHARD="$2"; shift 2 ;;
+        --skip-tasks)   SKIP_TASKS_SET=true; SKIP_TASKS="$2"; shift 2 ;;
         --h-rt)         H_RT="$2"; shift 2 ;;
         --resource)     RESOURCE="$2"; shift 2 ;;
         --name)         JOB_NAME="$2"; shift 2 ;;
@@ -70,6 +73,9 @@ VARS="JUDGE_MODE=${MODE}"
 [ "$LIMIT" != "0" ]    && VARS="${VARS},JUDGE_LIMIT=${LIMIT}"
 [ "$OVERWRITE" = "1" ] && VARS="${VARS},JUDGE_OVERWRITE=1"
 [ -n "$SHARD" ]        && VARS="${VARS},JUDGE_SHARD=${SHARD}"
+if [ "$SKIP_TASKS_SET" = true ]; then
+    VARS="${VARS},JUDGE_SKIP_TASKS_SET=1,JUDGE_SKIP_TASKS=${SKIP_TASKS}"
+fi
 
 qsub_args=(
     -g "$TSUBAME_GROUP"
