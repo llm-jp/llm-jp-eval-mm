@@ -104,9 +104,11 @@ def process_results(
     df = pd.DataFrame(rows) if rows else pd.DataFrame()
 
     df = df.set_index("Model").round(2)
+    # Use HTML <br> so Task / Metric render on two lines in GFM table
+    # headers — the "/" form is too cramped to read at a glance.
     df = df.rename(
         columns={
-            k: f"{TASK_ALIAS[k.split('/')[0]]}/{METRIC_ALIAS[k.split('/')[1]]}"
+            k: f"{TASK_ALIAS[k.split('/')[0]]}<br>{METRIC_ALIAS[k.split('/')[1]]}"
             for k in df.columns
         }
     )
@@ -462,14 +464,22 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
             df.loc[top2_model, col] = f"*{top2_score}*"
             df.loc[top2_model, col] = f"<u>{top2_score}</u>"
 
-    df = df.fillna("")
+    # Use "--" for missing cells so blanks render distinctly (structural
+    # inference gaps for single-image models on multi-image tasks).
+    df = df.fillna("--")
 
     if output_format == "markdown":
+        judge_note = (
+            f"> **Judge model:** `{format_output.judge_model}`  \n"
+            if getattr(format_output, "judge_model", None) else ""
+        )
         note = (
             "> [!NOTE]\n"
-            "> Multi-image tasks (JDocQA, MulIm-VQA, JMMMU, MMMU) appear blank "
-            "for models that only accept a single image per prompt. Those cells "
-            "are inference-time structural gaps, not scoring failures.\n\n"
+            f"{judge_note}"
+            "> Multi-image tasks (JDocQA, MulIm-VQA, JMMMU, MMMU) render as "
+            "`--` for models that only accept a single image per prompt — "
+            "those cells are inference-time structural gaps, not scoring "
+            "failures.\n\n"
         )
         return note + df.to_markdown(mode="github", floatfmt=".1f")
     elif output_format == "latex":
@@ -779,11 +789,22 @@ def parse_args():
         action="store_true",
         help="Export leaderboard results to artifact/result_*.tex files",
     )
+    parser.add_argument(
+        "--judge_model",
+        type=str,
+        default=None,
+        help="Judge model id to print in the output header "
+             "(e.g. 'openai/gpt-oss-20b'). Optional; omit to skip the note.",
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
+
+    # Stash judge model on format_output so the markdown header can
+    # include it without threading another kwarg through main().
+    format_output.judge_model = args.judge_model
 
     print(args.task_id_list)
     main(
