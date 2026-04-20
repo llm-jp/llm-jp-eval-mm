@@ -465,7 +465,13 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
     df = df.fillna("")
 
     if output_format == "markdown":
-        return df.to_markdown(mode="github", floatfmt=".1f")
+        note = (
+            "> [!NOTE]\n"
+            "> Multi-image tasks (JDocQA, MulIm-VQA, JMMMU, MMMU) appear blank "
+            "for models that only accept a single image per prompt. Those cells "
+            "are inference-time structural gaps, not scoring failures.\n\n"
+        )
+        return note + df.to_markdown(mode="github", floatfmt=".1f")
     elif output_format == "latex":
         return df.to_latex(
             float_format="%.1f", column_format="l" + "c" * len(df.columns)

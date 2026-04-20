@@ -182,6 +182,12 @@ This will create a `leaderboard.md` file with your model performance:
 
 The official leaderboard is available [here](https://llm-jp.github.io/llm-jp-eval-mm/)
 
+> [!NOTE]
+> Multi-image tasks — **JDocQA**, **JA-Multi-Image-VQA**, **JMMMU**, and
+> **MMMU** — may appear blank for models that only accept a single image
+> per prompt (e.g. LLaVA-1.6, Pangea, Aya-Vision, older Ovis2). Those
+> cells are structural gaps from inference, not scoring failures.
+
 ## Supported Tasks
 
 Japanese Tasks:
