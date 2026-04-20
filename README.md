@@ -186,19 +186,26 @@ The official leaderboard is available [here](https://llm-jp.github.io/llm-jp-eva
 
 Japanese Tasks:
 - [Japanese Heron Bench](https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench)
-- [JA-VG-VQA500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500)
+- [JA-VG-VQA-500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500)
 - [JA-VLM-Bench-In-the-Wild](https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild)
 - [JA-Multi-Image-VQA](https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA)
 - [JDocQA](https://github.com/mizuumi/JDocQA)
 - [JMMMU](https://huggingface.co/datasets/JMMMU/JMMMU)
-- [JIC-VQA](https://huggingface.co/datasets/line-corporation/JIC-VQA)
 - [MECHA-ja](https://huggingface.co/datasets/llm-jp/MECHA-ja)
 - [CC-OCR](https://huggingface.co/datasets/wulipc/CC-OCR) (multi_lan_ocr split, ja subset)
+- [jawildtext-board-vqa / handwriting-ocr / receipt-kie](https://huggingface.co/datasets/llm-jp/jawildtext)
 - [CVQA](https://huggingface.co/datasets/afaji/cvqa) (ja subset)
 
 English Tasks:
 - [MMMU](https://huggingface.co/datasets/MMMU/MMMU)
 - [LlaVA-Bench-In-the-Wild](https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild)
+- [OK-VQA](https://okvqa.allenai.org/)
+- [TextVQA](https://huggingface.co/datasets/lmms-lab/textvqa)
+- [AI2D](https://huggingface.co/datasets/lmms-lab/ai2d)
+- [ChartQA](https://huggingface.co/datasets/lmms-lab/ChartQA)
+- [ChartQAPro](https://huggingface.co/datasets/ahmed-masry/ChartQAPro)
+- [DocVQA](https://huggingface.co/datasets/lmms-lab/DocVQA)
+- [InfoVQA (infographicvqa)](https://huggingface.co/datasets/lmms-lab/infographicvqa)
 
 ## Managing Dependencies
 
@@ -354,6 +361,22 @@ We also thank the developers of the evaluation datasets for their hard work.
   pages={TBD},
   year={2026},
   note = {local.ja},
+  month = {January}
+}
+
+@article{maeda-etal-2026-evalmm-en,
+  title = {Cross-Task Evaluation and Empirical Analysis of Japanese Visual Language Models},
+  author = {Koki Maeda and
+    Issa Sugiura and
+    Yusuke Oda and
+    Shuhei Kurita and
+    Naoaki Okazaki},
+  journal = {自然言語処理},
+  volume = {33},
+  number = {2},
+  pages = {TBD},
+  year = {2026},
+  note = {local.en},
   month = {January}
 }
 ```
