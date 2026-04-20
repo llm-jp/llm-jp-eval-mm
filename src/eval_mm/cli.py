@@ -34,7 +34,6 @@ def _add_model_adapter_path(adapter_dir: str | None) -> None:
 def _load_model(model_id: str, backend: str, vllm_kwargs: dict):
     """Instantiate a model from the given backend."""
     if backend == "vllm":
-        from eval_mm.models.base_vlm import BaseVLM
 
         # Import base_vllm from adapter path (examples/)
         base_vllm_mod = importlib.import_module("base_vllm")

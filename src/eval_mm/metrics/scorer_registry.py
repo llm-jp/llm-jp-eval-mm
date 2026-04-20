@@ -2,7 +2,7 @@
 Scorer registry with decorator-based registration to avoid duplication.
 """
 
-from typing import Type, Callable
+from typing import Type
 from .scorer import Scorer, ScorerConfig
 
 # Global registry dictionary

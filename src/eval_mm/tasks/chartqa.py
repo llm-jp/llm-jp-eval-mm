@@ -80,7 +80,7 @@ def test_chartqa_task():
     
     # Test with first example
     example = ds[0]
-    print(f"\nFirst example:")
+    print("\nFirst example:")
     print(f"  ID: {task.doc_to_id(example)}")
     print(f"  Question: {task.doc_to_text(example)}")
     print(f"  Image: {task.doc_to_visual(example)[0]}")

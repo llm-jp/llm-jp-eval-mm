@@ -113,7 +113,7 @@ def test_blink_task():
     
     # Test with first example
     example = ds[0]
-    print(f"\nFirst example:")
+    print("\nFirst example:")
     print(f"  Config: {example['config_name']}")
     print(f"  ID: {task.doc_to_id(example)}")
     print(f"  Question: {example['question']}")

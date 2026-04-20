@@ -10,8 +10,6 @@ These tests verify:
 - Runner can evaluate pre-existing predictions
 """
 
-import json
-import os
 import tempfile
 from pathlib import Path
 
@@ -21,9 +19,7 @@ from PIL import Image
 from eval_mm import (
     BaseVLM,
     GenerationConfig,
-    ScorerConfig,
     ScorerRegistry,
-    TaskConfig,
     TaskRegistry,
 )
 from eval_mm.result_schema import RunManifest, write_manifest, load_manifest
@@ -42,7 +38,6 @@ def test_task_registry_lists_tasks():
 
 
 def test_scorer_registry_lists_metrics():
-    import eval_mm.metrics  # ensure registration
 
     metrics = ScorerRegistry.get_metric_list()
     assert len(metrics) > 0
@@ -116,7 +111,6 @@ def test_cli_list_tasks(capsys):
 
 def test_cli_list_metrics(capsys):
     from eval_mm.cli import main
-    import eval_mm.metrics  # ensure registration
 
     main(["list", "metrics"])
     captured = capsys.readouterr()

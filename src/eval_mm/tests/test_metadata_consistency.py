@@ -1,11 +1,9 @@
 """Validate that metadata in eval_mm.metadata is consistent with registries."""
 
-import pytest
 
 from eval_mm.metadata import TASKS, METRICS
 from eval_mm.tasks.task_registry import TaskRegistry
 from eval_mm.metrics.scorer_registry import ScorerRegistry
-import eval_mm.metrics  # trigger scorer registration
 
 
 # Tasks that are registered but intentionally excluded from metadata

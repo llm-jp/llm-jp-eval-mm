@@ -2,7 +2,6 @@ from datasets import Dataset, load_dataset
 from .task import Task
 from .task_registry import register_task
 from PIL import Image
-import os
 
 MULTI_CHOICE_PROMPT = (
     "与えられた選択肢の中から最も適切な回答のアルファベットを直接記入してください。"
