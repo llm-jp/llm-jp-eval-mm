@@ -6,7 +6,7 @@ on:
       - master
     paths:
       - .github/workflows/deploy-github-pages.yml
-      - github_pages/**
+      - web/**
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: github_pages
+        working-directory: web
 
     steps:
       - name: Checkout
@@ -22,21 +22,30 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Instal Node.js
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - name: Install Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.2
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: npm run build
+      - name: Build static export
+        run: pnpm build
         env:
-          PUBLIC_URL: /llm-jp-eval-mm
+          STATIC_EXPORT: "1"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: github_pages/build
+          path: web/out
 
   deploy:
     needs: build

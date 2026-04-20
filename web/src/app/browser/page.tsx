@@ -20,6 +20,8 @@ import {
   type ApiResult,
 } from "@/lib/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { IS_STATIC_EXPORT } from "@/lib/base-path";
+import { BackendOnlyNotice } from "@/components/backend-only-notice";
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -71,6 +73,11 @@ interface ModelOption {
 // ── Page component ───────────────────────────────────────────────
 
 export default function BrowserPage() {
+  if (IS_STATIC_EXPORT) return <BackendOnlyNotice page="Browser" />;
+  return <BrowserPageInner />;
+}
+
+function BrowserPageInner() {
   // Data sources
   const [tasks, setTasks] = useState<TaskOption[]>(
     MOCK_TASKS.map((t) => ({ id: t.id, name: t.name, sampleCount: t.sampleCount })),

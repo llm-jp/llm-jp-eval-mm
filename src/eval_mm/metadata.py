@@ -347,7 +347,7 @@ def get_metric_alias() -> dict[str, str]:
 
 
 def generate_default_metrics_json() -> dict:
-    """Generate the default_metrics.json content for github_pages."""
+    """Generate the default_metrics.json content for the GitHub Pages site."""
     result: dict[str, str] = {}
     for task in TASKS.values():
         if task.default_metrics:
@@ -366,7 +366,7 @@ def generate_default_metrics_json() -> dict:
 
 
 def generate_dataset_url_json() -> dict:
-    """Generate the dataset_url.json content for github_pages."""
+    """Generate the dataset_url.json content for the GitHub Pages site."""
     result: dict[str, dict[str, str]] = {}
     for task in TASKS.values():
         if task.dataset_url:

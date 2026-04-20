@@ -104,11 +104,12 @@ def process_results(
     df = pd.DataFrame(rows) if rows else pd.DataFrame()
 
     df = df.set_index("Model").round(2)
-    # Use HTML <br> so Task / Metric render on two lines in GFM table
-    # headers — the "/" form is too cramped to read at a glance.
+    # Keep "Task/Metric" with a "/" separator so downstream consumers
+    # (JSON export, LaTeX export) can still split on "/". The markdown
+    # renderer swaps "/" for "<br>" at the last moment for two-line headers.
     df = df.rename(
         columns={
-            k: f"{TASK_ALIAS[k.split('/')[0]]}<br>{METRIC_ALIAS[k.split('/')[1]]}"
+            k: f"{TASK_ALIAS[k.split('/')[0]]}/{METRIC_ALIAS[k.split('/')[1]]}"
             for k in df.columns
         }
     )
@@ -481,7 +482,11 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
             "those cells are inference-time structural gaps, not scoring "
             "failures.\n\n"
         )
-        return note + df.to_markdown(mode="github", floatfmt=".1f")
+        # Swap "Task/Metric" → "Task<br>Metric" for two-line GFM headers.
+        df_md = df.rename(
+            columns={c: c.replace("/", "<br>", 1) for c in df.columns}
+        )
+        return note + df_md.to_markdown(mode="github", floatfmt=".1f")
     elif output_format == "latex":
         return df.to_latex(
             float_format="%.1f", column_format="l" + "c" * len(df.columns)
@@ -717,9 +722,9 @@ def main(
     if update_pages:
         # sort by task
         df = df.sort_index(axis=1)
-        generate_json_path(df.copy(), "github_pages/public/leaderboard.json")
+        generate_json_path(df.copy(), "web/public/leaderboard.json")
         # Regenerate metadata JSON from single source (eval_mm.metadata)
-        write_github_pages_json("github_pages/public")
+        write_github_pages_json("web/public")
     
     tex_columns = None
     if export_tex:

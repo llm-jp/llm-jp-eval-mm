@@ -1,0 +1,3266 @@
+[
+  {
+    "model": "llava-hf/llava-1.5-7b-hf",
+    "url": "https://huggingface.co/llava-hf/llava-1.5-7b-hf",
+    "scores": {
+      "AI2D": {
+        "Acc": 52.78
+      },
+      "CC-OCR": {
+        "macro_f1": 14.99
+      },
+      "CVQA": {
+        "Acc": 39.9
+      },
+      "ChartQA": {
+        "Acc": 9.48
+      },
+      "ChartQAPro": {
+        "Acc": 9.45
+      },
+      "DocVQA": {
+        "Acc": 12.3
+      },
+      "Heron": {
+        "LLM": 34.01
+      },
+      "InfoVQA": {
+        "Acc": 13.67
+      },
+      "JDocQA": {
+        "LLM": 2.09
+      },
+      "JMMMU": {
+        "Acc": 29.09
+      },
+      "JVB-ItW": {
+        "LLM": 2.62
+      },
+      "JWTxt-Board": {
+        "LLM": 0.04
+      },
+      "JWTxt-HW": {
+        "CER": 0.05
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.0
+      },
+      "LLAVA": {
+        "LLM": 2.73
+      },
+      "MECHA": {
+        "Acc": 38.01
+      },
+      "MMMU": {
+        "Acc": 33.89
+      },
+      "MulIm-VQA": {
+        "LLM": 2.02
+      },
+      "OK-VQA": {
+        "Acc": 72.35
+      },
+      "TextVQA": {
+        "Acc": 58.58
+      },
+      "VG-VQA": {
+        "LLM": 2.54
+      }
+    }
+  },
+  {
+    "model": "llava-hf/llava-v1.6-mistral-7b-hf",
+    "url": "https://huggingface.co/llava-hf/llava-v1.6-mistral-7b-hf",
+    "scores": {
+      "AI2D": {
+        "Acc": 67.36
+      },
+      "CC-OCR": {
+        "macro_f1": 19.72
+      },
+      "CVQA": {
+        "Acc": 31.03
+      },
+      "ChartQA": {
+        "Acc": 43.0
+      },
+      "ChartQAPro": {
+        "Acc": 12.68
+      },
+      "DocVQA": {
+        "Acc": 47.34
+      },
+      "Heron": {
+        "LLM": 25.62
+      },
+      "InfoVQA": {
+        "Acc": 21.56
+      },
+      "JVB-ItW": {
+        "LLM": 2.44
+      },
+      "JWTxt-Board": {
+        "LLM": 0.04
+      },
+      "JWTxt-HW": {
+        "CER": 0.0
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.04
+      },
+      "LLAVA": {
+        "LLM": 2.85
+      },
+      "MECHA": {
+        "Acc": 34.87
+      },
+      "OK-VQA": {
+        "Acc": 77.65
+      },
+      "TextVQA": {
+        "Acc": 75.54
+      },
+      "VG-VQA": {
+        "LLM": 2.44
+      }
+    }
+  },
+  {
+    "model": "neulab/Pangea-7B-hf",
+    "url": "https://huggingface.co/neulab/Pangea-7B-hf",
+    "scores": {
+      "AI2D": {
+        "Acc": 76.72
+      },
+      "CC-OCR": {
+        "macro_f1": 18.77
+      },
+      "CVQA": {
+        "Acc": 48.77
+      },
+      "ChartQA": {
+        "Acc": 65.8
+      },
+      "ChartQAPro": {
+        "Acc": 18.12
+      },
+      "DocVQA": {
+        "Acc": 65.04
+      },
+      "Heron": {
+        "LLM": 48.3
+      },
+      "InfoVQA": {
+        "Acc": 35.56
+      },
+      "JVB-ItW": {
+        "LLM": 3.4
+      },
+      "JWTxt-Board": {
+        "LLM": 0.13
+      },
+      "JWTxt-HW": {
+        "CER": 0.02
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.11
+      },
+      "LLAVA": {
+        "LLM": 2.97
+      },
+      "MECHA": {
+        "Acc": 57.26
+      },
+      "OK-VQA": {
+        "Acc": 78.2
+      },
+      "TextVQA": {
+        "Acc": 78.52
+      },
+      "VG-VQA": {
+        "LLM": 3.59
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3-1B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3-1B",
+    "scores": {
+      "AI2D": {
+        "Acc": 67.42
+      },
+      "CC-OCR": {
+        "macro_f1": 60.84
+      },
+      "CVQA": {
+        "Acc": 36.95
+      },
+      "ChartQA": {
+        "Acc": 67.56
+      },
+      "ChartQAPro": {
+        "Acc": 14.32
+      },
+      "DocVQA": {
+        "Acc": 76.74
+      },
+      "Heron": {
+        "LLM": 33.4
+      },
+      "InfoVQA": {
+        "Acc": 45.45
+      },
+      "JDocQA": {
+        "LLM": 2.27
+      },
+      "JMMMU": {
+        "Acc": 30.15
+      },
+      "JVB-ItW": {
+        "LLM": 2.56
+      },
+      "JWTxt-Board": {
+        "LLM": 0.15
+      },
+      "JWTxt-HW": {
+        "CER": 0.62
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.22
+      },
+      "LLAVA": {
+        "LLM": 2.45
+      },
+      "MECHA": {
+        "Acc": 36.41
+      },
+      "MMMU": {
+        "Acc": 40.22
+      },
+      "MulIm-VQA": {
+        "LLM": 1.89
+      },
+      "OK-VQA": {
+        "Acc": 66.77
+      },
+      "TextVQA": {
+        "Acc": 79.72
+      },
+      "VG-VQA": {
+        "LLM": 2.17
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3-2B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3-2B",
+    "scores": {
+      "AI2D": {
+        "Acc": 76.49
+      },
+      "CC-OCR": {
+        "macro_f1": 60.26
+      },
+      "CVQA": {
+        "Acc": 44.33
+      },
+      "ChartQA": {
+        "Acc": 73.16
+      },
+      "ChartQAPro": {
+        "Acc": 19.1
+      },
+      "DocVQA": {
+        "Acc": 84.24
+      },
+      "Heron": {
+        "LLM": 46.61
+      },
+      "InfoVQA": {
+        "Acc": 57.44
+      },
+      "JDocQA": {
+        "LLM": 2.78
+      },
+      "JMMMU": {
+        "Acc": 37.5
+      },
+      "JVB-ItW": {
+        "LLM": 3.02
+      },
+      "JWTxt-Board": {
+        "LLM": 0.19
+      },
+      "JWTxt-HW": {
+        "CER": 0.65
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.31
+      },
+      "LLAVA": {
+        "LLM": 2.88
+      },
+      "MECHA": {
+        "Acc": 47.91
+      },
+      "MMMU": {
+        "Acc": 46.44
+      },
+      "MulIm-VQA": {
+        "LLM": 2.8
+      },
+      "OK-VQA": {
+        "Acc": 74.0
+      },
+      "TextVQA": {
+        "Acc": 83.66
+      },
+      "VG-VQA": {
+        "LLM": 2.81
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3-8B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3-8B",
+    "scores": {
+      "AI2D": {
+        "Acc": 83.55
+      },
+      "CC-OCR": {
+        "macro_f1": 47.18
+      },
+      "CVQA": {
+        "Acc": 54.68
+      },
+      "ChartQA": {
+        "Acc": 80.0
+      },
+      "ChartQAPro": {
+        "Acc": 26.28
+      },
+      "DocVQA": {
+        "Acc": 88.58
+      },
+      "Heron": {
+        "LLM": 59.57
+      },
+      "InfoVQA": {
+        "Acc": 67.9
+      },
+      "JDocQA": {
+        "LLM": 2.92
+      },
+      "JMMMU": {
+        "Acc": 48.41
+      },
+      "JVB-ItW": {
+        "LLM": 3.34
+      },
+      "JWTxt-Board": {
+        "LLM": 0.37
+      },
+      "JWTxt-HW": {
+        "CER": 0.71
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.37
+      },
+      "LLAVA": {
+        "LLM": 3.25
+      },
+      "MECHA": {
+        "Acc": 59.63
+      },
+      "MMMU": {
+        "Acc": 56.11
+      },
+      "MulIm-VQA": {
+        "LLM": 3.09
+      },
+      "OK-VQA": {
+        "Acc": 76.38
+      },
+      "TextVQA": {
+        "Acc": 83.34
+      },
+      "VG-VQA": {
+        "LLM": 3.08
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3-14B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3-14B",
+    "scores": {
+      "AI2D": {
+        "Acc": 84.97
+      },
+      "CC-OCR": {
+        "macro_f1": 59.78
+      },
+      "CVQA": {
+        "Acc": 63.05
+      },
+      "ChartQA": {
+        "Acc": 75.04
+      },
+      "ChartQAPro": {
+        "Acc": 28.54
+      },
+      "DocVQA": {
+        "Acc": 74.29
+      },
+      "Heron": {
+        "LLM": 63.55
+      },
+      "InfoVQA": {
+        "Acc": 71.05
+      },
+      "JDocQA": {
+        "LLM": 3.07
+      },
+      "JMMMU": {
+        "Acc": 52.42
+      },
+      "JVB-ItW": {
+        "LLM": 3.82
+      },
+      "JWTxt-Board": {
+        "LLM": 0.43
+      },
+      "JWTxt-HW": {
+        "CER": 0.67
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.36
+      },
+      "LLAVA": {
+        "LLM": 3.4
+      },
+      "MECHA": {
+        "Acc": 67.33
+      },
+      "MMMU": {
+        "Acc": 58.33
+      },
+      "MulIm-VQA": {
+        "LLM": 3.2
+      },
+      "OK-VQA": {
+        "Acc": 78.38
+      },
+      "TextVQA": {
+        "Acc": 82.24
+      },
+      "VG-VQA": {
+        "LLM": 3.16
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3-38B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3-38B",
+    "scores": {
+      "AI2D": {
+        "Acc": 87.31
+      },
+      "CC-OCR": {
+        "macro_f1": 64.87
+      },
+      "CVQA": {
+        "Acc": 63.55
+      },
+      "ChartQA": {
+        "Acc": 76.2
+      },
+      "ChartQAPro": {
+        "Acc": 27.36
+      },
+      "DocVQA": {
+        "Acc": 75.02
+      },
+      "Heron": {
+        "LLM": 66.72
+      },
+      "InfoVQA": {
+        "Acc": 74.22
+      },
+      "JDocQA": {
+        "LLM": 3.05
+      },
+      "JMMMU": {
+        "Acc": 58.64
+      },
+      "JVB-ItW": {
+        "LLM": 3.78
+      },
+      "JWTxt-Board": {
+        "LLM": 0.46
+      },
+      "JWTxt-HW": {
+        "CER": 0.68
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.38
+      },
+      "LLAVA": {
+        "LLM": 3.68
+      },
+      "MECHA": {
+        "Acc": 69.91
+      },
+      "MMMU": {
+        "Acc": 62.44
+      },
+      "MulIm-VQA": {
+        "LLM": 3.47
+      },
+      "OK-VQA": {
+        "Acc": 78.34
+      },
+      "TextVQA": {
+        "Acc": 82.52
+      },
+      "VG-VQA": {
+        "LLM": 3.26
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3-78B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3-78B",
+    "scores": {
+      "AI2D": {
+        "Acc": 88.99
+      },
+      "CC-OCR": {
+        "macro_f1": 47.6
+      },
+      "CVQA": {
+        "Acc": 69.95
+      },
+      "ChartQA": {
+        "Acc": 78.96
+      },
+      "ChartQAPro": {
+        "Acc": 31.47
+      },
+      "DocVQA": {
+        "Acc": 79.02
+      },
+      "Heron": {
+        "LLM": 67.56
+      },
+      "InfoVQA": {
+        "Acc": 75.69
+      },
+      "JDocQA": {
+        "LLM": 3.08
+      },
+      "JMMMU": {
+        "Acc": 62.27
+      },
+      "JVB-ItW": {
+        "LLM": 3.5
+      },
+      "JWTxt-Board": {
+        "LLM": 0.5
+      },
+      "JWTxt-HW": {
+        "CER": 0.69
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.35
+      },
+      "LLAVA": {
+        "LLM": 3.57
+      },
+      "MECHA": {
+        "Acc": 75.03
+      },
+      "MMMU": {
+        "Acc": 64.67
+      },
+      "MulIm-VQA": {
+        "LLM": 3.35
+      },
+      "OK-VQA": {
+        "Acc": 77.09
+      },
+      "TextVQA": {
+        "Acc": 87.96
+      },
+      "VG-VQA": {
+        "LLM": 3.3
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen2-VL-7B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 80.86
+      },
+      "CC-OCR": {
+        "macro_f1": 59.08
+      },
+      "CVQA": {
+        "Acc": 56.65
+      },
+      "ChartQA": {
+        "Acc": 75.88
+      },
+      "ChartQAPro": {
+        "Acc": 21.71
+      },
+      "DocVQA": {
+        "Acc": 90.8
+      },
+      "Heron": {
+        "LLM": 52.5
+      },
+      "InfoVQA": {
+        "Acc": 68.69
+      },
+      "JDocQA": {
+        "LLM": 3.09
+      },
+      "JMMMU": {
+        "Acc": 46.59
+      },
+      "JVB-ItW": {
+        "LLM": 3.36
+      },
+      "JWTxt-Board": {
+        "LLM": 0.28
+      },
+      "JWTxt-HW": {
+        "CER": 0.71
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.4
+      },
+      "LLAVA": {
+        "LLM": 3.37
+      },
+      "MECHA": {
+        "Acc": 58.86
+      },
+      "MMMU": {
+        "Acc": 50.11
+      },
+      "MulIm-VQA": {
+        "LLM": 3.07
+      },
+      "OK-VQA": {
+        "Acc": 79.67
+      },
+      "TextVQA": {
+        "Acc": 90.32
+      },
+      "VG-VQA": {
+        "LLM": 3.05
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen2-VL-72B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2-VL-72B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 86.79
+      },
+      "CC-OCR": {
+        "macro_f1": 60.81
+      },
+      "CVQA": {
+        "Acc": 73.4
+      },
+      "ChartQA": {
+        "Acc": 81.6
+      },
+      "ChartQAPro": {
+        "Acc": 28.13
+      },
+      "DocVQA": {
+        "Acc": 92.93
+      },
+      "Heron": {
+        "LLM": 67.3
+      },
+      "InfoVQA": {
+        "Acc": 78.65
+      },
+      "JDocQA": {
+        "LLM": 3.28
+      },
+      "JMMMU": {
+        "Acc": 59.02
+      },
+      "JVB-ItW": {
+        "LLM": 3.8
+      },
+      "JWTxt-Board": {
+        "LLM": 0.44
+      },
+      "JWTxt-HW": {
+        "CER": 0.74
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.42
+      },
+      "LLAVA": {
+        "LLM": 3.5
+      },
+      "MECHA": {
+        "Acc": 75.36
+      },
+      "MMMU": {
+        "Acc": 61.0
+      },
+      "MulIm-VQA": {
+        "LLM": 3.65
+      },
+      "OK-VQA": {
+        "Acc": 85.37
+      },
+      "TextVQA": {
+        "Acc": 90.92
+      },
+      "VG-VQA": {
+        "LLM": 3.19
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-VL-3B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 79.21
+      },
+      "CC-OCR": {
+        "macro_f1": 68.25
+      },
+      "CVQA": {
+        "Acc": 54.19
+      },
+      "ChartQA": {
+        "Acc": 75.48
+      },
+      "ChartQAPro": {
+        "Acc": 21.66
+      },
+      "DocVQA": {
+        "Acc": 88.84
+      },
+      "Heron": {
+        "LLM": 46.64
+      },
+      "InfoVQA": {
+        "Acc": 67.51
+      },
+      "JDocQA": {
+        "LLM": 2.9
+      },
+      "JMMMU": {
+        "Acc": 44.47
+      },
+      "JVB-ItW": {
+        "LLM": 3.2
+      },
+      "JWTxt-Board": {
+        "LLM": 0.23
+      },
+      "JWTxt-HW": {
+        "CER": 0.7
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.32
+      },
+      "LLAVA": {
+        "LLM": 3.22
+      },
+      "MECHA": {
+        "Acc": 54.13
+      },
+      "MMMU": {
+        "Acc": 46.44
+      },
+      "MulIm-VQA": {
+        "LLM": 2.56
+      },
+      "OK-VQA": {
+        "Acc": 75.25
+      },
+      "TextVQA": {
+        "Acc": 87.52
+      },
+      "VG-VQA": {
+        "LLM": 2.47
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 82.84
+      },
+      "CC-OCR": {
+        "macro_f1": 74.63
+      },
+      "CVQA": {
+        "Acc": 56.65
+      },
+      "ChartQA": {
+        "Acc": 79.52
+      },
+      "ChartQAPro": {
+        "Acc": 27.36
+      },
+      "DocVQA": {
+        "Acc": 91.34
+      },
+      "Heron": {
+        "LLM": 56.04
+      },
+      "InfoVQA": {
+        "Acc": 74.97
+      },
+      "JDocQA": {
+        "LLM": 3.17
+      },
+      "JMMMU": {
+        "Acc": 47.12
+      },
+      "JVB-ItW": {
+        "LLM": 3.38
+      },
+      "JWTxt-Board": {
+        "LLM": 0.42
+      },
+      "JWTxt-HW": {
+        "CER": 0.76
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.41
+      },
+      "LLAVA": {
+        "LLM": 3.78
+      },
+      "MECHA": {
+        "Acc": 60.78
+      },
+      "MMMU": {
+        "Acc": 50.89
+      },
+      "MulIm-VQA": {
+        "LLM": 2.89
+      },
+      "OK-VQA": {
+        "Acc": 80.18
+      },
+      "TextVQA": {
+        "Acc": 90.88
+      },
+      "VG-VQA": {
+        "LLM": 2.88
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-VL-32B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2.5-VL-32B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 84.52
+      },
+      "CC-OCR": {
+        "macro_f1": 75.23
+      },
+      "CVQA": {
+        "Acc": 58.62
+      },
+      "ChartQA": {
+        "Acc": 78.4
+      },
+      "ChartQAPro": {
+        "Acc": 31.93
+      },
+      "DocVQA": {
+        "Acc": 92.17
+      },
+      "Heron": {
+        "LLM": 62.2
+      },
+      "InfoVQA": {
+        "Acc": 77.47
+      },
+      "JDocQA": {
+        "LLM": 3.22
+      },
+      "JMMMU": {
+        "Acc": 50.3
+      },
+      "JVB-ItW": {
+        "LLM": 3.92
+      },
+      "JWTxt-Board": {
+        "LLM": 0.47
+      },
+      "JWTxt-HW": {
+        "CER": 0.67
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.4
+      },
+      "LLAVA": {
+        "LLM": 3.72
+      },
+      "MECHA": {
+        "Acc": 68.21
+      },
+      "MMMU": {
+        "Acc": 59.44
+      },
+      "MulIm-VQA": {
+        "LLM": 3.42
+      },
+      "OK-VQA": {
+        "Acc": 83.31
+      },
+      "TextVQA": {
+        "Acc": 91.62
+      },
+      "VG-VQA": {
+        "LLM": 3.12
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen2.5-VL-72B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 86.69
+      },
+      "CC-OCR": {
+        "macro_f1": 76.18
+      },
+      "CVQA": {
+        "Acc": 68.47
+      },
+      "ChartQA": {
+        "Acc": 82.96
+      },
+      "ChartQAPro": {
+        "Acc": 33.37
+      },
+      "DocVQA": {
+        "Acc": 93.36
+      },
+      "Heron": {
+        "LLM": 70.96
+      },
+      "InfoVQA": {
+        "Acc": 81.65
+      },
+      "JDocQA": {
+        "LLM": 3.33
+      },
+      "JMMMU": {
+        "Acc": 60.76
+      },
+      "JVB-ItW": {
+        "LLM": 3.8
+      },
+      "JWTxt-Board": {
+        "LLM": 0.6
+      },
+      "JWTxt-HW": {
+        "CER": 0.77
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.4
+      },
+      "LLAVA": {
+        "LLM": 3.75
+      },
+      "MECHA": {
+        "Acc": 76.29
+      },
+      "MMMU": {
+        "Acc": 62.67
+      },
+      "MulIm-VQA": {
+        "LLM": 3.53
+      },
+      "OK-VQA": {
+        "Acc": 81.91
+      },
+      "TextVQA": {
+        "Acc": 92.04
+      },
+      "VG-VQA": {
+        "LLM": 3.11
+      }
+    }
+  },
+  {
+    "model": "google/gemma-3-4b-it",
+    "url": "https://huggingface.co/google/gemma-3-4b-it",
+    "scores": {
+      "AI2D": {
+        "Acc": 70.5
+      },
+      "CC-OCR": {
+        "macro_f1": 56.16
+      },
+      "CVQA": {
+        "Acc": 46.8
+      },
+      "ChartQA": {
+        "Acc": 51.24
+      },
+      "ChartQAPro": {
+        "Acc": 15.91
+      },
+      "DocVQA": {
+        "Acc": 62.46
+      },
+      "Heron": {
+        "LLM": 44.75
+      },
+      "InfoVQA": {
+        "Acc": 35.31
+      },
+      "JDocQA": {
+        "LLM": 2.56
+      },
+      "JMMMU": {
+        "Acc": 36.52
+      },
+      "JVB-ItW": {
+        "LLM": 3.02
+      },
+      "JWTxt-Board": {
+        "LLM": 0.2
+      },
+      "JWTxt-HW": {
+        "CER": 0.41
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.09
+      },
+      "LLAVA": {
+        "LLM": 3.22
+      },
+      "MECHA": {
+        "Acc": 48.73
+      },
+      "MMMU": {
+        "Acc": 35.89
+      },
+      "MulIm-VQA": {
+        "LLM": 2.95
+      },
+      "OK-VQA": {
+        "Acc": 72.41
+      },
+      "TextVQA": {
+        "Acc": 83.64
+      },
+      "VG-VQA": {
+        "LLM": 2.84
+      }
+    }
+  },
+  {
+    "model": "google/gemma-3-12b-it",
+    "url": "https://huggingface.co/google/gemma-3-12b-it",
+    "scores": {
+      "AI2D": {
+        "Acc": 78.11
+      },
+      "CC-OCR": {
+        "macro_f1": 65.37
+      },
+      "CVQA": {
+        "Acc": 61.08
+      },
+      "ChartQA": {
+        "Acc": 55.68
+      },
+      "ChartQAPro": {
+        "Acc": 16.79
+      },
+      "DocVQA": {
+        "Acc": 73.94
+      },
+      "Heron": {
+        "LLM": 57.17
+      },
+      "InfoVQA": {
+        "Acc": 46.23
+      },
+      "JDocQA": {
+        "LLM": 2.88
+      },
+      "JMMMU": {
+        "Acc": 47.65
+      },
+      "JVB-ItW": {
+        "LLM": 3.34
+      },
+      "JWTxt-Board": {
+        "LLM": 0.32
+      },
+      "JWTxt-HW": {
+        "CER": 0.58
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.22
+      },
+      "LLAVA": {
+        "LLM": 3.73
+      },
+      "MECHA": {
+        "Acc": 62.65
+      },
+      "MMMU": {
+        "Acc": 45.78
+      },
+      "MulIm-VQA": {
+        "LLM": 3.29
+      },
+      "OK-VQA": {
+        "Acc": 77.63
+      },
+      "TextVQA": {
+        "Acc": 86.22
+      },
+      "VG-VQA": {
+        "LLM": 3.02
+      }
+    }
+  },
+  {
+    "model": "google/gemma-3-27b-it",
+    "url": "https://huggingface.co/google/gemma-3-27b-it",
+    "scores": {
+      "AI2D": {
+        "Acc": 80.54
+      },
+      "CC-OCR": {
+        "macro_f1": 67.96
+      },
+      "CVQA": {
+        "Acc": 64.53
+      },
+      "ChartQA": {
+        "Acc": 62.0
+      },
+      "ChartQAPro": {
+        "Acc": 23.05
+      },
+      "DocVQA": {
+        "Acc": 75.58
+      },
+      "Heron": {
+        "LLM": 60.67
+      },
+      "InfoVQA": {
+        "Acc": 51.59
+      },
+      "JDocQA": {
+        "LLM": 2.94
+      },
+      "JMMMU": {
+        "Acc": 47.12
+      },
+      "JVB-ItW": {
+        "LLM": 3.64
+      },
+      "JWTxt-Board": {
+        "LLM": 0.39
+      },
+      "JWTxt-HW": {
+        "CER": 0.57
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.2
+      },
+      "LLAVA": {
+        "LLM": 3.57
+      },
+      "MECHA": {
+        "Acc": 68.32
+      },
+      "MMMU": {
+        "Acc": 52.33
+      },
+      "MulIm-VQA": {
+        "LLM": 3.16
+      },
+      "OK-VQA": {
+        "Acc": 80.0
+      },
+      "TextVQA": {
+        "Acc": 88.34
+      },
+      "VG-VQA": {
+        "LLM": 3.05
+      }
+    }
+  },
+  {
+    "model": "CohereLabs/aya-vision-8b",
+    "url": "https://huggingface.co/CohereLabs/aya-vision-8b",
+    "scores": {
+      "AI2D": {
+        "Acc": 68.52
+      },
+      "CC-OCR": {
+        "macro_f1": 25.92
+      },
+      "CVQA": {
+        "Acc": 46.8
+      },
+      "ChartQA": {
+        "Acc": 50.68
+      },
+      "ChartQAPro": {
+        "Acc": 15.97
+      },
+      "DocVQA": {
+        "Acc": 61.06
+      },
+      "Heron": {
+        "LLM": 47.06
+      },
+      "InfoVQA": {
+        "Acc": 38.52
+      },
+      "JDocQA": {
+        "LLM": 2.42
+      },
+      "JVB-ItW": {
+        "LLM": 3.1
+      },
+      "JWTxt-Board": {
+        "LLM": 0.14
+      },
+      "JWTxt-HW": {
+        "CER": 0.1
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.12
+      },
+      "LLAVA": {
+        "LLM": 3.07
+      },
+      "MECHA": {
+        "Acc": 52.92
+      },
+      "MulIm-VQA": {
+        "LLM": 2.91
+      },
+      "OK-VQA": {
+        "Acc": 79.96
+      },
+      "TextVQA": {
+        "Acc": 83.46
+      },
+      "VG-VQA": {
+        "LLM": 3.11
+      }
+    }
+  },
+  {
+    "model": "CohereLabs/aya-vision-32b",
+    "url": "https://huggingface.co/CohereLabs/aya-vision-32b",
+    "scores": {
+      "AI2D": {
+        "Acc": 66.19
+      },
+      "CC-OCR": {
+        "macro_f1": 35.64
+      },
+      "CVQA": {
+        "Acc": 57.64
+      },
+      "ChartQA": {
+        "Acc": 65.92
+      },
+      "ChartQAPro": {
+        "Acc": 17.51
+      },
+      "DocVQA": {
+        "Acc": 77.7
+      },
+      "Heron": {
+        "LLM": 58.89
+      },
+      "InfoVQA": {
+        "Acc": 53.34
+      },
+      "JDocQA": {
+        "LLM": 2.51
+      },
+      "JVB-ItW": {
+        "LLM": 3.36
+      },
+      "JWTxt-Board": {
+        "LLM": 0.25
+      },
+      "JWTxt-HW": {
+        "CER": 0.15
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.16
+      },
+      "LLAVA": {
+        "LLM": 3.7
+      },
+      "MECHA": {
+        "Acc": 67.11
+      },
+      "OK-VQA": {
+        "Acc": 82.86
+      },
+      "TextVQA": {
+        "Acc": 90.1
+      },
+      "VG-VQA": {
+        "LLM": 3.19
+      }
+    }
+  },
+  {
+    "model": "llava-hf/llava-1.5-13b-hf",
+    "url": "https://huggingface.co/llava-hf/llava-1.5-13b-hf",
+    "scores": {
+      "AI2D": {
+        "Acc": 56.41
+      },
+      "CC-OCR": {
+        "macro_f1": 18.16
+      },
+      "CVQA": {
+        "Acc": 38.92
+      },
+      "ChartQA": {
+        "Acc": 11.48
+      },
+      "ChartQAPro": {
+        "Acc": 10.63
+      },
+      "DocVQA": {
+        "Acc": 14.99
+      },
+      "Heron": {
+        "LLM": 33.8
+      },
+      "InfoVQA": {
+        "Acc": 16.24
+      },
+      "JDocQA": {
+        "LLM": 2.08
+      },
+      "JMMMU": {
+        "Acc": 30.0
+      },
+      "JVB-ItW": {
+        "LLM": 2.7
+      },
+      "JWTxt-Board": {
+        "LLM": 0.04
+      },
+      "JWTxt-HW": {
+        "CER": 0.05
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.0
+      },
+      "LLAVA": {
+        "LLM": 3.02
+      },
+      "MECHA": {
+        "Acc": 38.39
+      },
+      "MMMU": {
+        "Acc": 34.56
+      },
+      "MulIm-VQA": {
+        "LLM": 2.24
+      },
+      "OK-VQA": {
+        "Acc": 74.02
+      },
+      "TextVQA": {
+        "Acc": 61.76
+      },
+      "VG-VQA": {
+        "LLM": 2.61
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen2-VL-2B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen2-VL-2B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 70.6
+      },
+      "CC-OCR": {
+        "macro_f1": 32.62
+      },
+      "CVQA": {
+        "Acc": 43.84
+      },
+      "ChartQA": {
+        "Acc": 67.24
+      },
+      "ChartQAPro": {
+        "Acc": 16.74
+      },
+      "DocVQA": {
+        "Acc": 86.22
+      },
+      "Heron": {
+        "LLM": 40.22
+      },
+      "InfoVQA": {
+        "Acc": 55.34
+      },
+      "JDocQA": {
+        "LLM": 2.63
+      },
+      "JMMMU": {
+        "Acc": 35.3
+      },
+      "JVB-ItW": {
+        "LLM": 3.3
+      },
+      "JWTxt-Board": {
+        "LLM": 0.14
+      },
+      "JWTxt-HW": {
+        "CER": 0.67
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.31
+      },
+      "LLAVA": {
+        "LLM": 2.85
+      },
+      "MECHA": {
+        "Acc": 45.1
+      },
+      "MMMU": {
+        "Acc": 39.22
+      },
+      "MulIm-VQA": {
+        "LLM": 2.02
+      },
+      "OK-VQA": {
+        "Acc": 64.72
+      },
+      "TextVQA": {
+        "Acc": 85.68
+      },
+      "VG-VQA": {
+        "LLM": 2.48
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3-VL-2B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 75.74
+      },
+      "CC-OCR": {
+        "macro_f1": 67.32
+      },
+      "CVQA": {
+        "Acc": 45.81
+      },
+      "ChartQA": {
+        "Acc": 71.56
+      },
+      "ChartQAPro": {
+        "Acc": 18.38
+      },
+      "DocVQA": {
+        "Acc": 86.95
+      },
+      "Heron": {
+        "LLM": 52.7
+      },
+      "InfoVQA": {
+        "Acc": 60.05
+      },
+      "JDocQA": {
+        "LLM": 2.83
+      },
+      "JMMMU": {
+        "Acc": 30.76
+      },
+      "JVB-ItW": {
+        "LLM": 3.34
+      },
+      "JWTxt-Board": {
+        "LLM": 0.29
+      },
+      "JWTxt-HW": {
+        "CER": 0.74
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.29
+      },
+      "LLAVA": {
+        "LLM": 3.0
+      },
+      "MECHA": {
+        "Acc": 46.2
+      },
+      "MMMU": {
+        "Acc": 36.44
+      },
+      "MulIm-VQA": {
+        "LLM": 2.8
+      },
+      "OK-VQA": {
+        "Acc": 75.82
+      },
+      "TextVQA": {
+        "Acc": 91.14
+      },
+      "VG-VQA": {
+        "LLM": 2.86
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3-VL-4B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 81.83
+      },
+      "CC-OCR": {
+        "macro_f1": 70.15
+      },
+      "CVQA": {
+        "Acc": 51.72
+      },
+      "ChartQA": {
+        "Acc": 76.36
+      },
+      "ChartQAPro": {
+        "Acc": 27.46
+      },
+      "DocVQA": {
+        "Acc": 90.76
+      },
+      "Heron": {
+        "LLM": 53.11
+      },
+      "InfoVQA": {
+        "Acc": 70.51
+      },
+      "JDocQA": {
+        "LLM": 3.1
+      },
+      "JMMMU": {
+        "Acc": 47.65
+      },
+      "JVB-ItW": {
+        "LLM": 3.44
+      },
+      "JWTxt-Board": {
+        "LLM": 0.45
+      },
+      "JWTxt-HW": {
+        "CER": 0.75
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.35
+      },
+      "LLAVA": {
+        "LLM": 3.52
+      },
+      "MECHA": {
+        "Acc": 56.88
+      },
+      "MMMU": {
+        "Acc": 47.67
+      },
+      "MulIm-VQA": {
+        "LLM": 3.2
+      },
+      "OK-VQA": {
+        "Acc": 85.85
+      },
+      "TextVQA": {
+        "Acc": 93.12
+      },
+      "VG-VQA": {
+        "LLM": 3.19
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3-VL-8B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 83.87
+      },
+      "CC-OCR": {
+        "macro_f1": 72.8
+      },
+      "CVQA": {
+        "Acc": 57.64
+      },
+      "ChartQA": {
+        "Acc": 77.76
+      },
+      "ChartQAPro": {
+        "Acc": 28.13
+      },
+      "DocVQA": {
+        "Acc": 92.41
+      },
+      "Heron": {
+        "LLM": 60.66
+      },
+      "InfoVQA": {
+        "Acc": 75.22
+      },
+      "JDocQA": {
+        "LLM": 3.32
+      },
+      "JMMMU": {
+        "Acc": 51.06
+      },
+      "JVB-ItW": {
+        "LLM": 3.64
+      },
+      "JWTxt-Board": {
+        "LLM": 0.55
+      },
+      "JWTxt-HW": {
+        "CER": 0.77
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.38
+      },
+      "LLAVA": {
+        "LLM": 3.58
+      },
+      "MECHA": {
+        "Acc": 63.31
+      },
+      "MMMU": {
+        "Acc": 52.22
+      },
+      "MulIm-VQA": {
+        "LLM": 3.2
+      },
+      "OK-VQA": {
+        "Acc": 86.17
+      },
+      "TextVQA": {
+        "Acc": 93.3
+      },
+      "VG-VQA": {
+        "LLM": 3.17
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3-VL-32B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-32B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 86.63
+      },
+      "CC-OCR": {
+        "macro_f1": 74.47
+      },
+      "CVQA": {
+        "Acc": 61.08
+      },
+      "ChartQA": {
+        "Acc": 79.92
+      },
+      "ChartQAPro": {
+        "Acc": 33.88
+      },
+      "DocVQA": {
+        "Acc": 92.35
+      },
+      "Heron": {
+        "LLM": 68.44
+      },
+      "InfoVQA": {
+        "Acc": 80.36
+      },
+      "JDocQA": {
+        "LLM": 3.34
+      },
+      "JMMMU": {
+        "Acc": 56.89
+      },
+      "JVB-ItW": {
+        "LLM": 4.0
+      },
+      "JWTxt-Board": {
+        "LLM": 0.63
+      },
+      "JWTxt-HW": {
+        "CER": 0.77
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.4
+      },
+      "LLAVA": {
+        "LLM": 3.48
+      },
+      "MECHA": {
+        "Acc": 70.57
+      },
+      "MMMU": {
+        "Acc": 60.0
+      },
+      "MulIm-VQA": {
+        "LLM": 3.07
+      },
+      "OK-VQA": {
+        "Acc": 87.59
+      },
+      "TextVQA": {
+        "Acc": 93.82
+      },
+      "VG-VQA": {
+        "LLM": 3.28
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 85.88
+      },
+      "CC-OCR": {
+        "macro_f1": 75.71
+      },
+      "CVQA": {
+        "Acc": 60.1
+      },
+      "ChartQA": {
+        "Acc": 80.12
+      },
+      "ChartQAPro": {
+        "Acc": 29.88
+      },
+      "DocVQA": {
+        "Acc": 91.77
+      },
+      "Heron": {
+        "LLM": 67.23
+      },
+      "InfoVQA": {
+        "Acc": 74.72
+      },
+      "JDocQA": {
+        "LLM": 3.24
+      },
+      "JMMMU": {
+        "Acc": 51.97
+      },
+      "JVB-ItW": {
+        "LLM": 3.7
+      },
+      "JWTxt-Board": {
+        "LLM": 0.55
+      },
+      "JWTxt-HW": {
+        "CER": 0.77
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.25
+      },
+      "LLAVA": {
+        "LLM": 3.63
+      },
+      "MECHA": {
+        "Acc": 69.2
+      },
+      "MMMU": {
+        "Acc": 52.11
+      },
+      "MulIm-VQA": {
+        "LLM": 3.11
+      },
+      "OK-VQA": {
+        "Acc": 84.44
+      },
+      "TextVQA": {
+        "Acc": 92.6
+      },
+      "VG-VQA": {
+        "LLM": 3.17
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3.5-2B",
+    "url": "https://huggingface.co/Qwen/Qwen3.5-2B",
+    "scores": {
+      "AI2D": {
+        "Acc": 56.41
+      },
+      "CC-OCR": {
+        "macro_f1": 72.6
+      },
+      "CVQA": {
+        "Acc": 51.72
+      },
+      "ChartQA": {
+        "Acc": 73.2
+      },
+      "ChartQAPro": {
+        "Acc": 22.54
+      },
+      "DocVQA": {
+        "Acc": 88.15
+      },
+      "Heron": {
+        "LLM": 44.5
+      },
+      "InfoVQA": {
+        "Acc": 65.58
+      },
+      "JDocQA": {
+        "LLM": 2.85
+      },
+      "JMMMU": {
+        "Acc": 36.21
+      },
+      "JVB-ItW": {
+        "LLM": 3.3
+      },
+      "JWTxt-Board": {
+        "LLM": 0.3
+      },
+      "JWTxt-HW": {
+        "CER": 0.71
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.25
+      },
+      "LLAVA": {
+        "LLM": 2.82
+      },
+      "MECHA": {
+        "Acc": 45.76
+      },
+      "MMMU": {
+        "Acc": 32.78
+      },
+      "MulIm-VQA": {
+        "LLM": 2.64
+      },
+      "OK-VQA": {
+        "Acc": 81.21
+      },
+      "TextVQA": {
+        "Acc": 91.9
+      },
+      "VG-VQA": {
+        "LLM": 2.72
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3.5-4B",
+    "url": "https://huggingface.co/Qwen/Qwen3.5-4B",
+    "scores": {
+      "AI2D": {
+        "Acc": 68.23
+      },
+      "CC-OCR": {
+        "macro_f1": 65.27
+      },
+      "CVQA": {
+        "Acc": 56.65
+      },
+      "ChartQA": {
+        "Acc": 77.92
+      },
+      "ChartQAPro": {
+        "Acc": 24.95
+      },
+      "DocVQA": {
+        "Acc": 90.04
+      },
+      "Heron": {
+        "LLM": 52.8
+      },
+      "InfoVQA": {
+        "Acc": 72.12
+      },
+      "JDocQA": {
+        "LLM": 3.16
+      },
+      "JMMMU": {
+        "Acc": 40.91
+      },
+      "JVB-ItW": {
+        "LLM": 3.38
+      },
+      "JWTxt-Board": {
+        "LLM": 0.41
+      },
+      "JWTxt-HW": {
+        "CER": 0.11
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.37
+      },
+      "LLAVA": {
+        "LLM": 2.58
+      },
+      "MECHA": {
+        "Acc": 61.77
+      },
+      "MMMU": {
+        "Acc": 21.11
+      },
+      "MulIm-VQA": {
+        "LLM": 2.82
+      },
+      "OK-VQA": {
+        "Acc": 79.21
+      },
+      "TextVQA": {
+        "Acc": 90.54
+      },
+      "VG-VQA": {
+        "LLM": 2.95
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3.5-9B",
+    "url": "https://huggingface.co/Qwen/Qwen3.5-9B",
+    "scores": {
+      "AI2D": {
+        "Acc": 84.1
+      },
+      "CC-OCR": {
+        "macro_f1": 63.72
+      },
+      "CVQA": {
+        "Acc": 63.05
+      },
+      "ChartQA": {
+        "Acc": 79.12
+      },
+      "ChartQAPro": {
+        "Acc": 29.47
+      },
+      "DocVQA": {
+        "Acc": 91.01
+      },
+      "Heron": {
+        "LLM": 53.21
+      },
+      "InfoVQA": {
+        "Acc": 75.9
+      },
+      "JDocQA": {
+        "LLM": 3.24
+      },
+      "JMMMU": {
+        "Acc": 54.7
+      },
+      "JVB-ItW": {
+        "LLM": 3.6
+      },
+      "JWTxt-Board": {
+        "LLM": 0.57
+      },
+      "JWTxt-HW": {
+        "CER": 0.76
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.38
+      },
+      "LLAVA": {
+        "LLM": 2.87
+      },
+      "MECHA": {
+        "Acc": 66.67
+      },
+      "MMMU": {
+        "Acc": 34.0
+      },
+      "MulIm-VQA": {
+        "LLM": 2.96
+      },
+      "OK-VQA": {
+        "Acc": 83.85
+      },
+      "TextVQA": {
+        "Acc": 91.82
+      },
+      "VG-VQA": {
+        "LLM": 3.07
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3.5-27B",
+    "url": "https://huggingface.co/Qwen/Qwen3.5-27B",
+    "scores": {
+      "AI2D": {
+        "Acc": 89.15
+      },
+      "CC-OCR": {
+        "macro_f1": 52.88
+      },
+      "CVQA": {
+        "Acc": 63.05
+      },
+      "ChartQA": {
+        "Acc": 84.24
+      },
+      "ChartQAPro": {
+        "Acc": 35.57
+      },
+      "DocVQA": {
+        "Acc": 92.62
+      },
+      "Heron": {
+        "LLM": 70.69
+      },
+      "InfoVQA": {
+        "Acc": 83.26
+      },
+      "JDocQA": {
+        "LLM": 3.29
+      },
+      "JMMMU": {
+        "Acc": 48.56
+      },
+      "JVB-ItW": {
+        "LLM": 3.82
+      },
+      "JWTxt-Board": {
+        "LLM": 0.57
+      },
+      "JWTxt-HW": {
+        "CER": 0.46
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.4
+      },
+      "LLAVA": {
+        "LLM": 3.28
+      },
+      "MECHA": {
+        "Acc": 62.32
+      },
+      "MMMU": {
+        "Acc": 53.67
+      },
+      "MulIm-VQA": {
+        "LLM": 2.95
+      },
+      "OK-VQA": {
+        "Acc": 84.94
+      },
+      "TextVQA": {
+        "Acc": 92.12
+      },
+      "VG-VQA": {
+        "LLM": 3.01
+      }
+    }
+  },
+  {
+    "model": "Qwen/Qwen3.5-35B-A3B",
+    "url": "https://huggingface.co/Qwen/Qwen3.5-35B-A3B",
+    "scores": {
+      "AI2D": {
+        "Acc": 86.88
+      },
+      "CC-OCR": {
+        "macro_f1": 51.97
+      },
+      "CVQA": {
+        "Acc": 69.95
+      },
+      "ChartQA": {
+        "Acc": 81.88
+      },
+      "ChartQAPro": {
+        "Acc": 35.16
+      },
+      "DocVQA": {
+        "Acc": 92.95
+      },
+      "Heron": {
+        "LLM": 62.13
+      },
+      "InfoVQA": {
+        "Acc": 80.58
+      },
+      "JDocQA": {
+        "LLM": 3.3
+      },
+      "JMMMU": {
+        "Acc": 59.17
+      },
+      "JVB-ItW": {
+        "LLM": 3.72
+      },
+      "JWTxt-Board": {
+        "LLM": 0.64
+      },
+      "JWTxt-HW": {
+        "CER": 0.75
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.41
+      },
+      "LLAVA": {
+        "LLM": 2.85
+      },
+      "MECHA": {
+        "Acc": 75.03
+      },
+      "MMMU": {
+        "Acc": 39.33
+      },
+      "MulIm-VQA": {
+        "LLM": 2.89
+      },
+      "OK-VQA": {
+        "Acc": 86.35
+      },
+      "TextVQA": {
+        "Acc": 93.56
+      },
+      "VG-VQA": {
+        "LLM": 2.95
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL2-8B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL2-8B",
+    "scores": {
+      "AI2D": {
+        "Acc": 81.8
+      },
+      "CC-OCR": {
+        "macro_f1": 37.58
+      },
+      "CVQA": {
+        "Acc": 44.83
+      },
+      "ChartQA": {
+        "Acc": 70.56
+      },
+      "ChartQAPro": {
+        "Acc": 21.77
+      },
+      "DocVQA": {
+        "Acc": 72.22
+      },
+      "Heron": {
+        "LLM": 41.82
+      },
+      "InfoVQA": {
+        "Acc": 61.8
+      },
+      "JDocQA": {
+        "LLM": 2.5
+      },
+      "JMMMU": {
+        "Acc": 38.79
+      },
+      "JVB-ItW": {
+        "LLM": 2.96
+      },
+      "JWTxt-Board": {
+        "LLM": 0.23
+      },
+      "JWTxt-HW": {
+        "CER": 0.15
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.29
+      },
+      "LLAVA": {
+        "LLM": 2.98
+      },
+      "MECHA": {
+        "Acc": 49.23
+      },
+      "MMMU": {
+        "Acc": 48.67
+      },
+      "MulIm-VQA": {
+        "LLM": 2.16
+      },
+      "OK-VQA": {
+        "Acc": 68.87
+      },
+      "TextVQA": {
+        "Acc": 85.38
+      },
+      "VG-VQA": {
+        "LLM": 2.82
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL2-26B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL2-26B",
+    "scores": {
+      "AI2D": {
+        "Acc": 81.61
+      },
+      "CC-OCR": {
+        "macro_f1": 39.21
+      },
+      "CVQA": {
+        "Acc": 45.81
+      },
+      "ChartQA": {
+        "Acc": 69.64
+      },
+      "ChartQAPro": {
+        "Acc": 21.97
+      },
+      "DocVQA": {
+        "Acc": 75.29
+      },
+      "Heron": {
+        "LLM": 40.94
+      },
+      "InfoVQA": {
+        "Acc": 61.91
+      },
+      "JDocQA": {
+        "LLM": 2.46
+      },
+      "JMMMU": {
+        "Acc": 37.05
+      },
+      "JVB-ItW": {
+        "LLM": 3.42
+      },
+      "JWTxt-Board": {
+        "LLM": 0.17
+      },
+      "JWTxt-HW": {
+        "CER": 0.11
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.29
+      },
+      "LLAVA": {
+        "LLM": 3.12
+      },
+      "MECHA": {
+        "Acc": 48.57
+      },
+      "MMMU": {
+        "Acc": 46.33
+      },
+      "MulIm-VQA": {
+        "LLM": 2.67
+      },
+      "OK-VQA": {
+        "Acc": 72.45
+      },
+      "TextVQA": {
+        "Acc": 87.78
+      },
+      "VG-VQA": {
+        "LLM": 2.85
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3_5-2B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3_5-2B",
+    "scores": {
+      "AI2D": {
+        "Acc": 75.49
+      },
+      "CC-OCR": {
+        "macro_f1": 62.56
+      },
+      "CVQA": {
+        "Acc": 35.96
+      },
+      "ChartQA": {
+        "Acc": 75.52
+      },
+      "ChartQAPro": {
+        "Acc": 18.89
+      },
+      "DocVQA": {
+        "Acc": 85.36
+      },
+      "Heron": {
+        "LLM": 41.84
+      },
+      "InfoVQA": {
+        "Acc": 59.62
+      },
+      "JDocQA": {
+        "LLM": 2.79
+      },
+      "JMMMU": {
+        "Acc": 36.44
+      },
+      "JVB-ItW": {
+        "LLM": 2.74
+      },
+      "JWTxt-Board": {
+        "LLM": 0.25
+      },
+      "JWTxt-HW": {
+        "CER": 0.65
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.33
+      },
+      "LLAVA": {
+        "LLM": 2.85
+      },
+      "MECHA": {
+        "Acc": 43.73
+      },
+      "MMMU": {
+        "Acc": 49.0
+      },
+      "MulIm-VQA": {
+        "LLM": 2.29
+      },
+      "OK-VQA": {
+        "Acc": 74.46
+      },
+      "TextVQA": {
+        "Acc": 86.38
+      },
+      "VG-VQA": {
+        "LLM": 2.69
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3_5-4B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3_5-4B",
+    "scores": {
+      "AI2D": {
+        "Acc": 80.63
+      },
+      "CC-OCR": {
+        "macro_f1": 54.61
+      },
+      "CVQA": {
+        "Acc": 46.8
+      },
+      "ChartQA": {
+        "Acc": 79.96
+      },
+      "ChartQAPro": {
+        "Acc": 28.39
+      },
+      "DocVQA": {
+        "Acc": 88.84
+      },
+      "Heron": {
+        "LLM": 43.04
+      },
+      "InfoVQA": {
+        "Acc": 68.69
+      },
+      "JDocQA": {
+        "LLM": 2.93
+      },
+      "JMMMU": {
+        "Acc": 43.03
+      },
+      "JVB-ItW": {
+        "LLM": 3.24
+      },
+      "JWTxt-Board": {
+        "LLM": 0.36
+      },
+      "JWTxt-HW": {
+        "CER": 0.69
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.34
+      },
+      "LLAVA": {
+        "LLM": 2.85
+      },
+      "MECHA": {
+        "Acc": 50.28
+      },
+      "MMMU": {
+        "Acc": 58.22
+      },
+      "MulIm-VQA": {
+        "LLM": 2.91
+      },
+      "OK-VQA": {
+        "Acc": 75.17
+      },
+      "TextVQA": {
+        "Acc": 85.58
+      },
+      "VG-VQA": {
+        "LLM": 2.89
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3_5-8B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3_5-8B",
+    "scores": {
+      "AI2D": {
+        "Acc": 82.22
+      },
+      "CC-OCR": {
+        "macro_f1": 58.17
+      },
+      "CVQA": {
+        "Acc": 50.74
+      },
+      "ChartQA": {
+        "Acc": 80.52
+      },
+      "ChartQAPro": {
+        "Acc": 25.56
+      },
+      "DocVQA": {
+        "Acc": 88.39
+      },
+      "Heron": {
+        "LLM": 52.28
+      },
+      "InfoVQA": {
+        "Acc": 67.4
+      },
+      "JDocQA": {
+        "LLM": 3.01
+      },
+      "JMMMU": {
+        "Acc": 48.71
+      },
+      "JVB-ItW": {
+        "LLM": 3.46
+      },
+      "JWTxt-Board": {
+        "LLM": 0.43
+      },
+      "JWTxt-HW": {
+        "CER": 0.7
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.4
+      },
+      "LLAVA": {
+        "LLM": 2.92
+      },
+      "MECHA": {
+        "Acc": 56.11
+      },
+      "MMMU": {
+        "Acc": 58.44
+      },
+      "MulIm-VQA": {
+        "LLM": 3.13
+      },
+      "OK-VQA": {
+        "Acc": 78.36
+      },
+      "TextVQA": {
+        "Acc": 85.42
+      },
+      "VG-VQA": {
+        "LLM": 2.98
+      }
+    }
+  },
+  {
+    "model": "OpenGVLab/InternVL3_5-38B",
+    "url": "https://huggingface.co/OpenGVLab/InternVL3_5-38B",
+    "scores": {
+      "AI2D": {
+        "Acc": 86.04
+      },
+      "CC-OCR": {
+        "macro_f1": 41.31
+      },
+      "CVQA": {
+        "Acc": 56.65
+      },
+      "ChartQA": {
+        "Acc": 82.32
+      },
+      "ChartQAPro": {
+        "Acc": 28.23
+      },
+      "DocVQA": {
+        "Acc": 90.02
+      },
+      "Heron": {
+        "LLM": 60.83
+      },
+      "InfoVQA": {
+        "Acc": 75.26
+      },
+      "JDocQA": {
+        "LLM": 2.92
+      },
+      "JMMMU": {
+        "Acc": 55.53
+      },
+      "JVB-ItW": {
+        "LLM": 3.7
+      },
+      "JWTxt-Board": {
+        "LLM": 0.48
+      },
+      "JWTxt-HW": {
+        "CER": 0.7
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.39
+      },
+      "LLAVA": {
+        "LLM": 3.37
+      },
+      "MECHA": {
+        "Acc": 65.79
+      },
+      "MMMU": {
+        "Acc": 64.22
+      },
+      "MulIm-VQA": {
+        "LLM": 3.22
+      },
+      "OK-VQA": {
+        "Acc": 78.85
+      },
+      "TextVQA": {
+        "Acc": 87.32
+      },
+      "VG-VQA": {
+        "LLM": 3.13
+      }
+    }
+  },
+  {
+    "model": "AIDC-AI/Ovis2-1B",
+    "url": "https://huggingface.co/AIDC-AI/Ovis2-1B",
+    "scores": {
+      "AI2D": {
+        "Acc": 72.09
+      },
+      "CC-OCR": {
+        "macro_f1": 67.71
+      },
+      "CVQA": {
+        "Acc": 32.51
+      },
+      "ChartQA": {
+        "Acc": 71.24
+      },
+      "ChartQAPro": {
+        "Acc": 18.02
+      },
+      "DocVQA": {
+        "Acc": 85.21
+      },
+      "Heron": {
+        "LLM": 48.65
+      },
+      "InfoVQA": {
+        "Acc": 61.34
+      },
+      "JVB-ItW": {
+        "LLM": 3.02
+      },
+      "JWTxt-Board": {
+        "LLM": 0.17
+      },
+      "JWTxt-HW": {
+        "CER": 0.65
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.17
+      },
+      "LLAVA": {
+        "LLM": 3.13
+      },
+      "MECHA": {
+        "Acc": 37.29
+      },
+      "OK-VQA": {
+        "Acc": 73.46
+      },
+      "TextVQA": {
+        "Acc": 87.92
+      },
+      "VG-VQA": {
+        "LLM": 2.86
+      }
+    }
+  },
+  {
+    "model": "AIDC-AI/Ovis2-2B",
+    "url": "https://huggingface.co/AIDC-AI/Ovis2-2B",
+    "scores": {
+      "AI2D": {
+        "Acc": 81.02
+      },
+      "CC-OCR": {
+        "macro_f1": 66.13
+      },
+      "CVQA": {
+        "Acc": 42.36
+      },
+      "ChartQA": {
+        "Acc": 73.84
+      },
+      "ChartQAPro": {
+        "Acc": 18.63
+      },
+      "DocVQA": {
+        "Acc": 86.93
+      },
+      "Heron": {
+        "LLM": 48.41
+      },
+      "InfoVQA": {
+        "Acc": 65.94
+      },
+      "JVB-ItW": {
+        "LLM": 3.24
+      },
+      "JWTxt-Board": {
+        "LLM": 0.24
+      },
+      "JWTxt-HW": {
+        "CER": 0.63
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.34
+      },
+      "LLAVA": {
+        "LLM": 3.27
+      },
+      "MECHA": {
+        "Acc": 44.99
+      },
+      "OK-VQA": {
+        "Acc": 77.01
+      },
+      "TextVQA": {
+        "Acc": 88.9
+      },
+      "VG-VQA": {
+        "LLM": 3.02
+      }
+    }
+  },
+  {
+    "model": "AIDC-AI/Ovis2-4B",
+    "url": "https://huggingface.co/AIDC-AI/Ovis2-4B",
+    "scores": {
+      "AI2D": {
+        "Acc": 84.16
+      },
+      "CC-OCR": {
+        "macro_f1": 73.16
+      },
+      "CVQA": {
+        "Acc": 49.75
+      },
+      "ChartQA": {
+        "Acc": 77.4
+      },
+      "ChartQAPro": {
+        "Acc": 23.41
+      },
+      "DocVQA": {
+        "Acc": 90.86
+      },
+      "Heron": {
+        "LLM": 54.26
+      },
+      "InfoVQA": {
+        "Acc": 74.33
+      },
+      "JVB-ItW": {
+        "LLM": 3.46
+      },
+      "JWTxt-Board": {
+        "LLM": 0.36
+      },
+      "JWTxt-HW": {
+        "CER": 0.7
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.38
+      },
+      "LLAVA": {
+        "LLM": 3.4
+      },
+      "MECHA": {
+        "Acc": 55.01
+      },
+      "OK-VQA": {
+        "Acc": 78.42
+      },
+      "TextVQA": {
+        "Acc": 91.36
+      },
+      "VG-VQA": {
+        "LLM": 3.17
+      }
+    }
+  },
+  {
+    "model": "AIDC-AI/Ovis2-8B",
+    "url": "https://huggingface.co/AIDC-AI/Ovis2-8B",
+    "scores": {
+      "AI2D": {
+        "Acc": 85.72
+      },
+      "CC-OCR": {
+        "macro_f1": 67.34
+      },
+      "CVQA": {
+        "Acc": 60.59
+      },
+      "ChartQA": {
+        "Acc": 77.16
+      },
+      "ChartQAPro": {
+        "Acc": 24.64
+      },
+      "DocVQA": {
+        "Acc": 90.3
+      },
+      "Heron": {
+        "LLM": 56.74
+      },
+      "InfoVQA": {
+        "Acc": 75.4
+      },
+      "JVB-ItW": {
+        "LLM": 3.68
+      },
+      "JWTxt-Board": {
+        "LLM": 0.39
+      },
+      "JWTxt-HW": {
+        "CER": 0.64
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.38
+      },
+      "LLAVA": {
+        "LLM": 3.55
+      },
+      "MECHA": {
+        "Acc": 60.34
+      },
+      "OK-VQA": {
+        "Acc": 80.88
+      },
+      "TextVQA": {
+        "Acc": 91.62
+      },
+      "VG-VQA": {
+        "LLM": 3.18
+      }
+    }
+  },
+  {
+    "model": "AIDC-AI/Ovis2-16B",
+    "url": "https://huggingface.co/AIDC-AI/Ovis2-16B",
+    "scores": {
+      "AI2D": {
+        "Acc": 84.78
+      },
+      "CC-OCR": {
+        "macro_f1": 65.35
+      },
+      "CVQA": {
+        "Acc": 63.05
+      },
+      "ChartQA": {
+        "Acc": 78.48
+      },
+      "ChartQAPro": {
+        "Acc": 26.39
+      },
+      "DocVQA": {
+        "Acc": 89.27
+      },
+      "Heron": {
+        "LLM": 58.75
+      },
+      "InfoVQA": {
+        "Acc": 76.44
+      },
+      "JVB-ItW": {
+        "LLM": 3.48
+      },
+      "JWTxt-Board": {
+        "LLM": 0.44
+      },
+      "JWTxt-HW": {
+        "CER": 0.59
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.38
+      },
+      "LLAVA": {
+        "LLM": 3.6
+      },
+      "MECHA": {
+        "Acc": 65.51
+      },
+      "OK-VQA": {
+        "Acc": 81.07
+      },
+      "TextVQA": {
+        "Acc": 90.62
+      },
+      "VG-VQA": {
+        "LLM": 3.2
+      }
+    }
+  },
+  {
+    "model": "AIDC-AI/Ovis2-34B",
+    "url": "https://huggingface.co/AIDC-AI/Ovis2-34B",
+    "scores": {
+      "AI2D": {
+        "Acc": 87.79
+      },
+      "CC-OCR": {
+        "macro_f1": 59.29
+      },
+      "CVQA": {
+        "Acc": 65.52
+      },
+      "ChartQA": {
+        "Acc": 80.2
+      },
+      "ChartQAPro": {
+        "Acc": 26.75
+      },
+      "DocVQA": {
+        "Acc": 90.8
+      },
+      "Heron": {
+        "LLM": 63.49
+      },
+      "InfoVQA": {
+        "Acc": 79.22
+      },
+      "JVB-ItW": {
+        "LLM": 3.38
+      },
+      "JWTxt-Board": {
+        "LLM": 0.45
+      },
+      "JWTxt-HW": {
+        "CER": 0.54
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.36
+      },
+      "LLAVA": {
+        "LLM": 3.7
+      },
+      "MECHA": {
+        "Acc": 69.53
+      },
+      "OK-VQA": {
+        "Acc": 80.94
+      },
+      "TextVQA": {
+        "Acc": 91.66
+      },
+      "VG-VQA": {
+        "LLM": 3.26
+      }
+    }
+  },
+  {
+    "model": "AIDC-AI/Ovis2.5-9B",
+    "url": "https://huggingface.co/AIDC-AI/Ovis2.5-9B",
+    "scores": {
+      "AI2D": {
+        "Acc": 79.4
+      },
+      "CC-OCR": {
+        "macro_f1": 53.13
+      },
+      "CVQA": {
+        "Acc": 61.08
+      },
+      "ChartQA": {
+        "Acc": 84.12
+      },
+      "ChartQAPro": {
+        "Acc": 36.81
+      },
+      "DocVQA": {
+        "Acc": 91.34
+      },
+      "Heron": {
+        "LLM": 54.45
+      },
+      "InfoVQA": {
+        "Acc": 83.72
+      },
+      "JMMMU": {
+        "Acc": 42.73
+      },
+      "JVB-ItW": {
+        "LLM": 3.66
+      },
+      "JWTxt-Board": {
+        "LLM": 0.45
+      },
+      "JWTxt-HW": {
+        "CER": 0.36
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.0
+      },
+      "LLAVA": {
+        "LLM": 3.45
+      },
+      "MECHA": {
+        "Acc": 65.57
+      },
+      "MMMU": {
+        "Acc": 43.22
+      },
+      "OK-VQA": {
+        "Acc": 70.31
+      },
+      "TextVQA": {
+        "Acc": 88.82
+      },
+      "VG-VQA": {
+        "LLM": 3.08
+      }
+    }
+  },
+  {
+    "model": "allenai/Molmo2-4B",
+    "url": "https://huggingface.co/allenai/Molmo2-4B",
+    "scores": {
+      "AI2D": {
+        "Acc": 84.2
+      },
+      "CC-OCR": {
+        "macro_f1": 27.57
+      },
+      "CVQA": {
+        "Acc": 46.8
+      },
+      "ChartQA": {
+        "Acc": 65.04
+      },
+      "ChartQAPro": {
+        "Acc": 20.53
+      },
+      "DocVQA": {
+        "Acc": 64.93
+      },
+      "Heron": {
+        "LLM": 40.29
+      },
+      "InfoVQA": {
+        "Acc": 58.19
+      },
+      "JDocQA": {
+        "LLM": 2.26
+      },
+      "JMMMU": {
+        "Acc": 42.73
+      },
+      "JVB-ItW": {
+        "LLM": 2.7
+      },
+      "JWTxt-Board": {
+        "LLM": 0.13
+      },
+      "JWTxt-HW": {
+        "CER": 0.06
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.17
+      },
+      "LLAVA": {
+        "LLM": 3.3
+      },
+      "MECHA": {
+        "Acc": 52.97
+      },
+      "MMMU": {
+        "Acc": 52.56
+      },
+      "MulIm-VQA": {
+        "LLM": 3.07
+      },
+      "OK-VQA": {
+        "Acc": 80.48
+      },
+      "TextVQA": {
+        "Acc": 89.36
+      },
+      "VG-VQA": {
+        "LLM": 2.76
+      }
+    }
+  },
+  {
+    "model": "allenai/Molmo2-8B",
+    "url": "https://huggingface.co/allenai/Molmo2-8B",
+    "scores": {
+      "AI2D": {
+        "Acc": 84.55
+      },
+      "CC-OCR": {
+        "macro_f1": 26.02
+      },
+      "CVQA": {
+        "Acc": 54.19
+      },
+      "ChartQA": {
+        "Acc": 70.92
+      },
+      "ChartQAPro": {
+        "Acc": 21.15
+      },
+      "DocVQA": {
+        "Acc": 58.44
+      },
+      "Heron": {
+        "LLM": 44.0
+      },
+      "InfoVQA": {
+        "Acc": 52.52
+      },
+      "JDocQA": {
+        "LLM": 2.3
+      },
+      "JMMMU": {
+        "Acc": 47.8
+      },
+      "JVB-ItW": {
+        "LLM": 2.62
+      },
+      "JWTxt-Board": {
+        "LLM": 0.16
+      },
+      "JWTxt-HW": {
+        "CER": 0.06
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.21
+      },
+      "LLAVA": {
+        "LLM": 3.5
+      },
+      "MECHA": {
+        "Acc": 59.57
+      },
+      "MMMU": {
+        "Acc": 53.22
+      },
+      "MulIm-VQA": {
+        "LLM": 3.29
+      },
+      "OK-VQA": {
+        "Acc": 81.63
+      },
+      "TextVQA": {
+        "Acc": 89.7
+      },
+      "VG-VQA": {
+        "LLM": 2.93
+      }
+    }
+  },
+  {
+    "model": "moonshotai/Kimi-VL-A3B-Instruct",
+    "url": "https://huggingface.co/moonshotai/Kimi-VL-A3B-Instruct",
+    "scores": {
+      "AI2D": {
+        "Acc": 83.23
+      },
+      "CC-OCR": {
+        "macro_f1": 64.87
+      },
+      "CVQA": {
+        "Acc": 56.65
+      },
+      "ChartQA": {
+        "Acc": 82.76
+      },
+      "ChartQAPro": {
+        "Acc": 26.33
+      },
+      "DocVQA": {
+        "Acc": 97.05
+      },
+      "Heron": {
+        "LLM": 53.47
+      },
+      "InfoVQA": {
+        "Acc": 79.83
+      },
+      "JDocQA": {
+        "LLM": 2.95
+      },
+      "JMMMU": {
+        "Acc": 40.83
+      },
+      "JVB-ItW": {
+        "LLM": 3.32
+      },
+      "JWTxt-Board": {
+        "LLM": 0.29
+      },
+      "JWTxt-HW": {
+        "CER": 0.53
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.4
+      },
+      "LLAVA": {
+        "LLM": 3.5
+      },
+      "MECHA": {
+        "Acc": 53.41
+      },
+      "MMMU": {
+        "Acc": 50.67
+      },
+      "MulIm-VQA": {
+        "LLM": 2.64
+      },
+      "OK-VQA": {
+        "Acc": 84.64
+      },
+      "TextVQA": {
+        "Acc": 96.8
+      },
+      "VG-VQA": {
+        "LLM": 2.96
+      }
+    }
+  },
+  {
+    "model": "openbmb/MiniCPM-o-2_6",
+    "url": "https://huggingface.co/openbmb/MiniCPM-o-2_6",
+    "scores": {
+      "AI2D": {
+        "Acc": 82.35
+      },
+      "CC-OCR": {
+        "macro_f1": 32.75
+      },
+      "CVQA": {
+        "Acc": 58.62
+      },
+      "ChartQA": {
+        "Acc": 75.44
+      },
+      "ChartQAPro": {
+        "Acc": 22.79
+      },
+      "DocVQA": {
+        "Acc": 89.85
+      },
+      "Heron": {
+        "LLM": 43.2
+      },
+      "InfoVQA": {
+        "Acc": 64.98
+      },
+      "JDocQA": {
+        "LLM": 2.85
+      },
+      "JMMMU": {
+        "Acc": 28.86
+      },
+      "JVB-ItW": {
+        "LLM": 3.36
+      },
+      "JWTxt-Board": {
+        "LLM": 0.32
+      },
+      "JWTxt-HW": {
+        "CER": 0.56
+      },
+      "JWTxt-Receipt": {
+        "F1": 0.33
+      },
+      "LLAVA": {
+        "LLM": 3.47
+      },
+      "MECHA": {
+        "Acc": 58.31
+      },
+      "MMMU": {
+        "Acc": 48.0
+      },
+      "MulIm-VQA": {
+        "LLM": 2.65
+      },
+      "OK-VQA": {
+        "Acc": 79.57
+      },
+      "TextVQA": {
+        "Acc": 89.46
+      },
+      "VG-VQA": {
+        "LLM": 2.84
+      }
+    }
+  }
+]

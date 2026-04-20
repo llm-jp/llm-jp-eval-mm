@@ -3,13 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { IS_STATIC_EXPORT } from "@/lib/base-path";
 
-const NAV_ITEMS = [
+const FULL_NAV_ITEMS = [
   { href: "/", label: "Home" },
   { href: "/runner", label: "Runner" },
   { href: "/leaderboard", label: "Leaderboard" },
   { href: "/browser", label: "Browser" },
 ] as const;
+
+const STATIC_NAV_ITEMS = [{ href: "/", label: "Home" }] as const;
+
+const NAV_ITEMS = IS_STATIC_EXPORT ? STATIC_NAV_ITEMS : FULL_NAV_ITEMS;
 
 export function Nav() {
   const pathname = usePathname();

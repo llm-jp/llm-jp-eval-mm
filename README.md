@@ -302,14 +302,22 @@ git push origin --tags
 
 ### Updating the Website
 
-The web dashboard is built with Next.js in the `web/` directory. For development:
+The site (both the dev dashboard and the public GitHub Pages landing) is built
+with Next.js in the `web/` directory. For local dev (Runner/Browser backed by
+the FastAPI backend):
 ```bash
 cd web && pnpm dev
 ```
 
-The legacy GitHub Pages leaderboard is in `github_pages/`. To update its data:
+To produce the static Pages build (landing + leaderboard only):
+```bash
+cd web && STATIC_EXPORT=1 pnpm build  # emits web/out/
+```
+
+To refresh the data JSON consumed by the public leaderboard:
 ```bash
 python scripts/make_leaderboard.py --update_pages
+# writes web/public/{leaderboard,default_metrics,dataset_url}.json
 ```
 
 ## Environment-Specific Configuration (mdx)
