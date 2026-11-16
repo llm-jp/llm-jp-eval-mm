@@ -19,7 +19,7 @@ export HF_HOME="${HF_HOME:-/model/silviase/cache/huggingface}"
 
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 TENSOR_PARALLEL_SIZE=4
-JUDGE_MODEL="gpt-5.1-2025-11-13"
+JUDGE_MODEL="gpt-6-luna"
 RESULT_DIR="result"
 
 # Optional filter: only run models matching this backend ("vllm" or "transformers").

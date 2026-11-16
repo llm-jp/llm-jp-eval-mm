@@ -26,6 +26,10 @@ class MetricMeta:
     display_name: str
 
 
+# Default LLM-as-a-judge model, shared by the CLI, the runner and the scripts.
+DEFAULT_JUDGE_MODEL = "gpt-6-luna"
+
+
 # ── Task metadata ──────────────────────────────────────────────────
 
 TASKS: dict[str, TaskMeta] = {t.task_id: t for t in [

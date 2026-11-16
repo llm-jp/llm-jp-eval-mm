@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import os
 import sys
 from pathlib import Path
 
 import eval_mm
 import eval_mm.metrics
+from eval_mm.metadata import DEFAULT_JUDGE_MODEL
 from eval_mm.models.generation_config import GenerationConfig
 from eval_mm.runner import run_evaluation
 from eval_mm.tasks.task import TaskConfig
@@ -31,8 +33,14 @@ def _add_model_adapter_path(adapter_dir: str | None) -> None:
         sys.path.insert(0, adapter_dir)
 
 
-def _load_model(model_id: str, backend: str, vllm_kwargs: dict):
+def _load_model(
+    model_id: str, backend: str, vllm_kwargs: dict, openai_kwargs: dict | None = None
+):
     """Instantiate a model from the given backend."""
+    if backend == "openai":
+        from eval_mm.models.openai_compat import OpenAICompatVLM
+
+        return OpenAICompatVLM(model_id, **(openai_kwargs or {}))
     if backend == "vllm":
 
         # Import base_vllm from adapter path (examples/)
@@ -72,16 +80,17 @@ def build_parser() -> argparse.ArgumentParser:
         default=["heron-bench"],
         help=f"Available: {eval_mm.ScorerRegistry.get_metric_list()}",
     )
-    run_parser.add_argument("--judge_model", default="gpt-4o-2024-11-20")
+    run_parser.add_argument("--judge_model", default=DEFAULT_JUDGE_MODEL)
     run_parser.add_argument("--batch_size_for_evaluation", type=int, default=10)
     run_parser.add_argument("--result_dir", default="result")
     run_parser.add_argument("--overwrite", action="store_true")
     run_parser.add_argument("--inference_only", action="store_true")
     run_parser.add_argument(
         "--backend",
-        choices=["transformers", "vllm"],
+        choices=["transformers", "vllm", "openai"],
         default="transformers",
-        help="Inference backend",
+        help="Inference backend. 'openai' talks to an OpenAI-compatible server "
+        "(vllm serve, SGLang, or the OpenAI API) and needs no model adapter.",
     )
     run_parser.add_argument("--adapter_dir", default=None, help="Path to model adapter modules")
 
@@ -103,6 +112,40 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--tensor_parallel_size", type=int, default=1)
     run_parser.add_argument("--max_model_len", type=int, default=None)
 
+    # OpenAI-compatible server
+    run_parser.add_argument(
+        "--base_url",
+        default=None,
+        help="Server URL, e.g. http://localhost:8000/v1. Omit to use the OpenAI API.",
+    )
+    run_parser.add_argument(
+        "--api_key_env",
+        default="OPENAI_API_KEY",
+        help="Environment variable holding the API key.",
+    )
+    run_parser.add_argument(
+        "--served_model_name",
+        default=None,
+        help="Model name the server expects, if it differs from --model_id.",
+    )
+    run_parser.add_argument("--concurrency", type=int, default=16)
+    run_parser.add_argument(
+        "--thinking",
+        choices=["on", "off"],
+        default=None,
+        help="Set chat_template_kwargs.enable_thinking. Omit to keep the model default.",
+    )
+    run_parser.add_argument(
+        "--reasoning_effort",
+        default=None,
+        help="reasoning_effort for APIs that take it.",
+    )
+    run_parser.add_argument(
+        "--no_sampling_params",
+        action="store_true",
+        help="Do not send temperature/top_p (for APIs that reject them).",
+    )
+
     # --- evaluate subcommand (prediction already exists) ---
     eval_parser = subparsers.add_parser(
         "evaluate", help="Score existing predictions"
@@ -110,7 +153,7 @@ def build_parser() -> argparse.ArgumentParser:
     eval_parser.add_argument("--model_id", required=True)
     eval_parser.add_argument("--task_id", required=True)
     eval_parser.add_argument("--metrics", type=str, nargs="+", required=True)
-    eval_parser.add_argument("--judge_model", default="gpt-4o-2024-11-20")
+    eval_parser.add_argument("--judge_model", default=DEFAULT_JUDGE_MODEL)
     eval_parser.add_argument("--batch_size_for_evaluation", type=int, default=10)
     eval_parser.add_argument("--result_dir", default="result")
     eval_parser.add_argument("--random_choice", action="store_true")
@@ -146,7 +189,17 @@ def cmd_run(args: argparse.Namespace) -> None:
         "max_model_len": args.max_model_len,
     }
 
-    model = _load_model(args.model_id, args.backend, vllm_kwargs)
+    openai_kwargs = {
+        "base_url": args.base_url,
+        "api_key": os.getenv(args.api_key_env),
+        "served_model_name": args.served_model_name,
+        "concurrency": args.concurrency,
+        "thinking": args.thinking,
+        "reasoning_effort": args.reasoning_effort,
+        "send_sampling_params": not args.no_sampling_params,
+    }
+
+    model = _load_model(args.model_id, args.backend, vllm_kwargs, openai_kwargs)
 
     run_evaluation(
         model=model,
@@ -161,7 +214,8 @@ def cmd_run(args: argparse.Namespace) -> None:
         overwrite=args.overwrite,
         inference_only=args.inference_only,
         random_choice=args.random_choice,
-        batch_mode=(args.backend == "vllm"),
+        batch_mode=(args.backend in ("vllm", "openai")),
+        batch_chunk_size=args.concurrency * 4 if args.backend == "openai" else 0,
     )
 
 

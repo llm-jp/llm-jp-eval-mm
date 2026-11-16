@@ -22,6 +22,11 @@ class Task(abc.ABC):
         # `_prepare_dataset`.
         builder = self._prepare_test_dataset if self.is_test_context() else self._prepare_dataset
         ds = builder()
+        # `max_dataset_len` limits every run, so a few samples are enough to
+        # check that a model works before a full evaluation.
+        n = config.max_dataset_len
+        if n is not None and len(ds) > n:
+            ds = ds.select(range(n))
         self.dataset = ds
 
     def is_test_context(self) -> bool:

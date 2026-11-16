@@ -1,16 +1,42 @@
 import os
 import asyncio
 import logging
-from openai import AsyncAzureOpenAI, AsyncOpenAI, APIError
+from openai import AsyncAzureOpenAI, AsyncOpenAI, APIError, BadRequestError
 from openai.types.chat import ChatCompletion
 import backoff
+
+from ..metadata import DEFAULT_JUDGE_MODEL
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
 
-@backoff.on_exception(backoff.expo, APIError, max_tries=5)
-async def call_openai(
+def adapt_rejected_params(kwargs: dict, error_message: str) -> dict | None:
+    """Rewrite *kwargs* after a 400 that names a parameter the model rejects.
+
+    Newer models take ``max_completion_tokens`` instead of ``max_tokens`` and
+    some accept only the default sampling parameters. Returns ``None`` when
+    the error is about something else.
+    """
+    message = error_message.lower()
+    adapted = dict(kwargs)
+    if "max_tokens" in message and "max_tokens" in adapted:
+        adapted["max_completion_tokens"] = adapted.pop("max_tokens")
+        return adapted
+    for name in ("temperature", "top_p", "seed"):
+        if name in message and name in adapted:
+            del adapted[name]
+            return adapted
+    return None
+
+
+@backoff.on_exception(
+    backoff.expo,
+    APIError,
+    max_tries=5,
+    giveup=lambda e: isinstance(e, BadRequestError),
+)
+async def _create_completion(
     client: AsyncOpenAI,
     model_name: str,
     messages_list: list[dict[str, str]],
@@ -21,6 +47,22 @@ async def call_openai(
         messages=messages_list,
         **kwargs,
     )
+
+
+async def call_openai(
+    client: AsyncOpenAI,
+    model_name: str,
+    messages_list: list[dict[str, str]],
+    **kwargs,
+) -> ChatCompletion:
+    while True:
+        try:
+            return await _create_completion(client, model_name, messages_list, **kwargs)
+        except BadRequestError as e:
+            adapted = adapt_rejected_params(kwargs, str(e))
+            if adapted is None:
+                raise
+            kwargs = adapted
 
 
 class OpenAIChatAPI:
@@ -128,7 +170,7 @@ if __name__ == "__main__":
     ]
 
     responses = client.batch_generate_chat_response(
-        messages_list, model_name="gpt-4o-2024-05-13"
+        messages_list, model_name=DEFAULT_JUDGE_MODEL
     )
     print(responses)
 
@@ -141,7 +183,7 @@ if __name__ == "__main__":
         for i in range(0, len(dataset), batch_size):
             items = dataset[i : i + batch_size]
             responses = client.batch_generate_chat_response(
-                items, model_name="gpt-4o-2024-05-13"
+                items, model_name=DEFAULT_JUDGE_MODEL
             )
             print(responses)
             pbar.update(len(items))

@@ -78,7 +78,7 @@ def test_manifest_round_trip():
         assert loaded.model_id == "test-model"
         assert loaded.task_id == "test-task"
         assert loaded.metrics == ["rougel"]
-        assert loaded.schema_version == "1.0"
+        assert loaded.schema_version == "1.1"
 
 
 def test_manifest_json_serialization():
