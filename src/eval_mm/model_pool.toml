@@ -1,0 +1,364 @@
+# Models evaluated for the leaderboard.
+#
+# Every model here is served through an OpenAI-compatible server and evaluated
+# with `--backend openai`, so adding a model means adding an entry, not code.
+#
+#   id          Hugging Face repo ID, or the API model ID when source = "api"
+#   source      "vllm" (served with `vllm serve`) or "api"
+#   status      "active"  evaluated by `eval-mm run-model --all`
+#               "pending" listed, but serving is not verified yet
+#   gpus        tensor parallel size passed to `vllm serve`
+#   thinking    "on" / "off" for models whose chat template has a thinking
+#               switch; omit to keep the model default
+#   serve_args  extra arguments for `vllm serve`
+#   note        why an entry is pending, or anything a runner must know
+
+# ── Qwen ────────────────────────────────────────────────────────────
+[[models]]
+id = "Qwen/Qwen2.5-VL-3B-Instruct"
+family = "Qwen2.5-VL"
+params_b = 3
+
+[[models]]
+id = "Qwen/Qwen2.5-VL-7B-Instruct"
+family = "Qwen2.5-VL"
+params_b = 7
+
+[[models]]
+id = "Qwen/Qwen2.5-VL-32B-Instruct"
+family = "Qwen2.5-VL"
+params_b = 32
+gpus = 2
+
+[[models]]
+id = "Qwen/Qwen2.5-VL-72B-Instruct"
+family = "Qwen2.5-VL"
+params_b = 72
+gpus = 4
+
+[[models]]
+id = "Qwen/Qwen3-VL-2B-Instruct"
+family = "Qwen3-VL"
+params_b = 2
+
+[[models]]
+id = "Qwen/Qwen3-VL-4B-Instruct"
+family = "Qwen3-VL"
+params_b = 4
+
+[[models]]
+id = "Qwen/Qwen3-VL-8B-Instruct"
+family = "Qwen3-VL"
+params_b = 8
+
+[[models]]
+id = "Qwen/Qwen3-VL-30B-A3B-Instruct"
+family = "Qwen3-VL"
+params_b = 30
+
+[[models]]
+id = "Qwen/Qwen3-VL-32B-Instruct"
+family = "Qwen3-VL"
+params_b = 32
+gpus = 2
+
+[[models]]
+id = "Qwen/Qwen3.5-2B"
+family = "Qwen3.5"
+params_b = 2
+thinking = "off"
+
+[[models]]
+id = "Qwen/Qwen3.5-4B"
+family = "Qwen3.5"
+params_b = 4
+thinking = "off"
+
+[[models]]
+id = "Qwen/Qwen3.5-9B"
+family = "Qwen3.5"
+params_b = 9
+thinking = "off"
+
+[[models]]
+id = "Qwen/Qwen3.5-27B"
+family = "Qwen3.5"
+params_b = 27
+gpus = 2
+thinking = "off"
+
+[[models]]
+id = "Qwen/Qwen3.5-35B-A3B"
+family = "Qwen3.5"
+params_b = 35
+thinking = "off"
+
+[[models]]
+id = "Qwen/Qwen3.6-27B"
+family = "Qwen3.6"
+params_b = 27
+gpus = 2
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "Qwen/Qwen3.6-35B-A3B"
+family = "Qwen3.6"
+params_b = 35
+gpus = 2
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "Qwen/Qwen3.8-27B"
+family = "Qwen3.8"
+params_b = 27
+gpus = 2
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+# ── InternVL ────────────────────────────────────────────────────────
+[[models]]
+id = "OpenGVLab/InternVL3-1B"
+family = "InternVL3"
+params_b = 1
+
+[[models]]
+id = "OpenGVLab/InternVL3-2B"
+family = "InternVL3"
+params_b = 2
+
+[[models]]
+id = "OpenGVLab/InternVL3-8B"
+family = "InternVL3"
+params_b = 8
+
+[[models]]
+id = "OpenGVLab/InternVL3-14B"
+family = "InternVL3"
+params_b = 14
+
+[[models]]
+id = "OpenGVLab/InternVL3-38B"
+family = "InternVL3"
+params_b = 38
+gpus = 4
+
+[[models]]
+id = "OpenGVLab/InternVL3-78B"
+family = "InternVL3"
+params_b = 78
+gpus = 4
+
+[[models]]
+id = "OpenGVLab/InternVL3_5-1B"
+family = "InternVL3.5"
+params_b = 1
+
+[[models]]
+id = "OpenGVLab/InternVL3_5-2B"
+family = "InternVL3.5"
+params_b = 2
+
+[[models]]
+id = "OpenGVLab/InternVL3_5-4B"
+family = "InternVL3.5"
+params_b = 4
+
+[[models]]
+id = "OpenGVLab/InternVL3_5-8B"
+family = "InternVL3.5"
+params_b = 8
+
+[[models]]
+id = "OpenGVLab/InternVL3_5-38B"
+family = "InternVL3.5"
+params_b = 38
+gpus = 4
+
+# ── Ovis ────────────────────────────────────────────────────────────
+[[models]]
+id = "AIDC-AI/Ovis2-1B"
+family = "Ovis2"
+params_b = 1
+
+[[models]]
+id = "AIDC-AI/Ovis2-2B"
+family = "Ovis2"
+params_b = 2
+
+[[models]]
+id = "AIDC-AI/Ovis2-4B"
+family = "Ovis2"
+params_b = 4
+
+[[models]]
+id = "AIDC-AI/Ovis2-8B"
+family = "Ovis2"
+params_b = 8
+
+[[models]]
+id = "AIDC-AI/Ovis2-16B"
+family = "Ovis2"
+params_b = 16
+gpus = 2
+
+[[models]]
+id = "AIDC-AI/Ovis2-34B"
+family = "Ovis2"
+params_b = 34
+gpus = 2
+
+[[models]]
+id = "AIDC-AI/Ovis2.5-2B"
+family = "Ovis2.5"
+params_b = 2
+
+[[models]]
+id = "AIDC-AI/Ovis2.5-9B"
+family = "Ovis2.5"
+params_b = 9
+
+# ── Gemma ───────────────────────────────────────────────────────────
+[[models]]
+id = "google/gemma-4-E2B-it"
+family = "Gemma 4"
+params_b = 2
+status = "pending"
+note = "Evaluated with the transformers backend so far. Not served with vLLM yet."
+
+[[models]]
+id = "google/gemma-4-E4B-it"
+family = "Gemma 4"
+params_b = 4
+status = "pending"
+note = "Evaluated with the transformers backend so far. Not served with vLLM yet."
+
+[[models]]
+id = "google/gemma-4-12B-it"
+family = "Gemma 4"
+params_b = 12
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "google/gemma-4-26B-A4B-it"
+family = "Gemma 4"
+params_b = 26
+gpus = 2
+status = "pending"
+note = "Evaluated with the transformers backend so far. Not served with vLLM yet."
+
+[[models]]
+id = "google/gemma-4-31B-it"
+family = "Gemma 4"
+params_b = 31
+gpus = 2
+status = "pending"
+note = "Evaluated with the transformers backend so far. Not served with vLLM yet."
+
+# ── Other open-weight models ────────────────────────────────────────
+[[models]]
+id = "allenai/Molmo2-4B"
+family = "Molmo2"
+params_b = 4
+
+[[models]]
+id = "allenai/Molmo2-8B"
+family = "Molmo2"
+params_b = 8
+
+[[models]]
+id = "moonshotai/Kimi-VL-A3B-Instruct"
+family = "Kimi-VL"
+
+[[models]]
+id = "openbmb/MiniCPM-V-4.6"
+family = "MiniCPM-V"
+params_b = 1
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "openbmb/MiniCPM-V-4.7-1B"
+family = "MiniCPM-V"
+params_b = 1
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "openbmb/MiniCPM-V-4.7-35B-A3B"
+family = "MiniCPM-V"
+params_b = 35
+gpus = 2
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "meta-models/Muse-Glimmer-30B"
+family = "Muse"
+params_b = 30
+gpus = 2
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "microsoft/Phi-4-reasoning-vision-15B"
+family = "Phi-4"
+params_b = 15
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "LiquidAI/LFM3-VL-2B"
+family = "LFM3-VL"
+params_b = 2
+status = "pending"
+note = "Added 2026-11. Not served yet."
+
+[[models]]
+id = "zai-org/GLM-4.6V-Flash"
+family = "GLM-4.6V"
+params_b = 9
+
+[[models]]
+id = "zai-org/GLM-4.6V"
+family = "GLM-4.6V"
+gpus = 4
+
+# ── Japanese models ─────────────────────────────────────────────────
+[[models]]
+id = "llm-jp/llm-jp-4-vl-9b"
+family = "llm-jp-4-vl"
+params_b = 9
+status = "pending"
+note = "Model card targets transformers 4.57 with trust_remote_code. Serving method not decided."
+
+[[models]]
+id = "pfnet/plamo-2.1-2b-vl"
+family = "PLaMo 2.1 VL"
+params_b = 2
+status = "pending"
+note = "Model card targets transformers 4.57.1 and mamba_ssm. Serving method not decided."
+
+[[models]]
+id = "pfnet/plamo-2.1-8b-vl"
+family = "PLaMo 2.1 VL"
+params_b = 8
+status = "pending"
+note = "Model card targets transformers 4.57.1 and mamba_ssm. Serving method not decided."
+
+[[models]]
+id = "sbintuitions/sarashina2.2-vision-3b"
+family = "Sarashina2.2-Vision"
+params_b = 3
+status = "pending"
+note = "Gated. Model card targets transformers 4.57.1. Serving method not decided."
+
+[[models]]
+id = "stockmark/Stockmark-Nemotron-3-Nano-Omni-JapanDocReader"
+family = "Stockmark DocReader"
+params_b = 33
+gpus = 2
+status = "pending"
+note = "Added 2026-11. Not served yet."

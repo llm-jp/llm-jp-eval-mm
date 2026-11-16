@@ -158,10 +158,58 @@ def build_parser() -> argparse.ArgumentParser:
     eval_parser.add_argument("--result_dir", default="result")
     eval_parser.add_argument("--random_choice", action="store_true")
 
+    # --- run-model subcommand (serve a pool model and run tasks against it) ---
+    pool_parser = subparsers.add_parser(
+        "run-model",
+        help="Serve models from the model pool and evaluate them on several tasks",
+    )
+    target = pool_parser.add_mutually_exclusive_group(required=True)
+    target.add_argument("--model_id", nargs="+", help="Model IDs in the model pool")
+    target.add_argument("--all", action="store_true", help="Every active model in the pool")
+    pool_parser.add_argument(
+        "--tasks",
+        default=None,
+        help="Comma-separated task IDs. Default: every task with a default metric.",
+    )
+    pool_parser.add_argument(
+        "--base_url",
+        default=None,
+        help="Use a server that is already running instead of starting one.",
+    )
+    pool_parser.add_argument(
+        "--vllm_cmd",
+        default=os.getenv("EVAL_MM_VLLM_CMD", "vllm"),
+        help="Command that runs vLLM, e.g. 'uvx --from vllm==0.33.0 vllm'. "
+        "Defaults to $EVAL_MM_VLLM_CMD or 'vllm'.",
+    )
+    pool_parser.add_argument("--port", type=int, default=8000)
+    pool_parser.add_argument("--startup_timeout", type=float, default=3600)
+    pool_parser.add_argument("--api_key_env", default="OPENAI_API_KEY")
+    pool_parser.add_argument("--concurrency", type=int, default=16)
+    pool_parser.add_argument(
+        "--thinking",
+        choices=["on", "off"],
+        default=None,
+        help="Override the pool's thinking setting.",
+    )
+    pool_parser.add_argument("--max_new_tokens", type=int, default=1024)
+    pool_parser.add_argument("--max_dataset_len", type=int)
+    pool_parser.add_argument("--result_dir", default="result")
+    pool_parser.add_argument("--log_dir", default="logs")
+    pool_parser.add_argument("--judge_model", default=DEFAULT_JUDGE_MODEL)
+    pool_parser.add_argument("--overwrite", action="store_true")
+    pool_parser.add_argument(
+        "--inference_only",
+        action="store_true",
+        help="Generate predictions only; score later with `eval-mm evaluate`.",
+    )
+
     # --- list subcommand ---
-    list_parser = subparsers.add_parser("list", help="List available tasks and metrics")
+    list_parser = subparsers.add_parser(
+        "list", help="List available tasks, metrics and pool models"
+    )
     list_parser.add_argument(
-        "what", choices=["tasks", "metrics"], help="What to list"
+        "what", choices=["tasks", "metrics", "models"], help="What to list"
     )
 
     return parser
@@ -235,6 +283,83 @@ def cmd_evaluate(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_run_model(args: argparse.Namespace) -> int:
+    from contextlib import nullcontext
+    from pathlib import Path
+
+    from eval_mm.metadata import TASKS
+    from eval_mm.model_pool import get_spec, load_pool
+    from eval_mm.models.openai_compat import OpenAICompatVLM
+    from eval_mm.serve import serving
+
+    if args.all:
+        specs = [s for s in load_pool() if s.status == "active"]
+    else:
+        specs = [get_spec(model_id) for model_id in args.model_id]
+
+    if args.tasks:
+        task_ids = [t.strip() for t in args.tasks.split(",") if t.strip()]
+    else:
+        task_ids = [t for t, meta in TASKS.items() if meta.default_metrics]
+    registered = set(eval_mm.TaskRegistry.get_task_list())
+    unknown = [t for t in task_ids if t not in registered]
+    if unknown:
+        raise SystemExit(f"Unknown tasks: {unknown}")
+
+    gen_config = GenerationConfig(max_new_tokens=args.max_new_tokens)
+    failures: list[str] = []
+
+    for spec in specs:
+        if spec.source == "api" or args.base_url:
+            server = nullcontext(args.base_url)
+        else:
+            log_path = Path(args.log_dir) / f"serve-{spec.id.replace('/', '__')}.log"
+            server = serving(
+                spec,
+                port=args.port,
+                vllm_cmd=args.vllm_cmd,
+                log_path=log_path,
+                startup_timeout=args.startup_timeout,
+            )
+        try:
+            with server as base_url:
+                model = OpenAICompatVLM(
+                    spec.id,
+                    base_url=base_url,
+                    api_key=os.getenv(args.api_key_env),
+                    concurrency=args.concurrency,
+                    thinking=args.thinking or spec.thinking,
+                )
+                for task_id in task_ids:
+                    metrics = TASKS[task_id].default_metrics if task_id in TASKS else []
+                    try:
+                        run_evaluation(
+                            model=model,
+                            model_id=spec.id,
+                            task_id=task_id,
+                            metrics=metrics,
+                            gen_config=gen_config,
+                            task_config=TaskConfig(max_dataset_len=args.max_dataset_len),
+                            result_dir=args.result_dir,
+                            judge_model=args.judge_model,
+                            overwrite=args.overwrite,
+                            inference_only=args.inference_only or not metrics,
+                            batch_mode=True,
+                            batch_chunk_size=args.concurrency * 4,
+                        )
+                    except Exception as e:  # noqa: BLE001 - keep going with the other tasks
+                        print(f"FAIL {spec.id} {task_id}: {type(e).__name__}: {e}", file=sys.stderr)
+                        failures.append(f"{spec.id}|{task_id}")
+        except Exception as e:  # noqa: BLE001 - keep going with the other models
+            print(f"FAIL {spec.id} (server): {type(e).__name__}: {e}", file=sys.stderr)
+            failures.append(f"{spec.id}|server")
+
+    if failures:
+        print(f"{len(failures)} failed: {failures}", file=sys.stderr)
+        return 1
+    return 0
+
+
 def cmd_list(args: argparse.Namespace) -> None:
     if args.what == "tasks":
         tasks = eval_mm.TaskRegistry.get_task_list()
@@ -246,6 +371,12 @@ def cmd_list(args: argparse.Namespace) -> None:
         print("Available metrics:")
         for m in sorted(metrics):
             print(f"  - {m}")
+    elif args.what == "models":
+        from eval_mm.model_pool import load_pool
+
+        for spec in load_pool():
+            thinking = f" thinking={spec.thinking}" if spec.thinking else ""
+            print(f"{spec.status:8s} {spec.id} (gpus={spec.gpus}{thinking})")
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -256,6 +387,8 @@ def main(argv: list[str] | None = None) -> None:
         cmd_run(args)
     elif args.command == "evaluate":
         cmd_evaluate(args)
+    elif args.command == "run-model":
+        sys.exit(cmd_run_model(args))
     elif args.command == "list":
         cmd_list(args)
     else:
