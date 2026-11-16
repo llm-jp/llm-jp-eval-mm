@@ -8,7 +8,9 @@ from __future__ import annotations
 
 import base64
 import io
+import json
 import os
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass
 from typing import Any, Literal
@@ -104,11 +106,23 @@ class OpenAICompatVLM(BaseVLM):
             )
         self.client = client
 
+    def _server_version(self) -> str | None:
+        """Version reported by the server (vLLM serves it at ``/version``)."""
+        if not self.base_url:
+            return None
+        url = self.base_url.rstrip("/").removesuffix("/v1") + "/version"
+        try:
+            with urllib.request.urlopen(url, timeout=5) as response:
+                return json.load(response).get("version")
+        except (OSError, ValueError, AttributeError):
+            return None
+
     def describe(self) -> dict[str, Any]:
         """Settings that affect outputs, for the run manifest."""
         return {
             "backend": "openai",
             "base_url": self.base_url,
+            "server_version": self._server_version(),
             "served_model_name": self.served_model_name,
             "thinking": self.thinking,
             "reasoning_effort": self.reasoning_effort,
@@ -167,6 +181,10 @@ class OpenAICompatVLM(BaseVLM):
         text_out = message.content or ""
         if reasoning is None:
             text_out, reasoning = split_reasoning(text_out)
+        if reasoning is None and self.thinking == "on" and choice.finish_reason == "length":
+            # The chat template opens the thinking block itself, so output cut
+            # off before the closing tag is unfinished reasoning, not an answer.
+            text_out, reasoning = "", text_out
         usage = getattr(response, "usage", None)
         return Generation(
             text=text_out.strip(),

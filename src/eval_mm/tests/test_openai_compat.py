@@ -110,6 +110,16 @@ def test_truncated_reasoning_gives_empty_answer_with_finish_reason():
     assert generation.finish_reason == "length"
 
 
+def test_thinking_cut_off_before_the_answer_is_not_scored_as_an_answer():
+    client = FakeClient(lambda _: completion("Thinking Process: 1. Analyze", finish_reason="length"))
+    on = OpenAICompatVLM("m", client=client, thinking="on").batch_generate_detailed(None, ["q"])[0]
+    assert (on.text, on.reasoning) == ("", "Thinking Process: 1. Analyze")
+
+    # Without thinking, truncated output is still the model's answer.
+    off = OpenAICompatVLM("m", client=client, thinking="off").batch_generate_detailed(None, ["q"])[0]
+    assert off.text == "Thinking Process: 1. Analyze"
+
+
 def test_failed_request_is_recorded_and_order_is_kept():
     def respond(kwargs):
         text = kwargs["messages"][0]["content"][-1]["text"]
