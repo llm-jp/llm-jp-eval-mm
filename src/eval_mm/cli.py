@@ -52,10 +52,7 @@ def _load_model(
             tensor_parallel_size=vllm_kwargs.get("tensor_parallel_size", 1),
             max_model_len=vllm_kwargs.get("max_model_len"),
         )
-    else:
-        model_table = importlib.import_module("model_table")
-        model_cls = model_table.get_class_from_model_id(model_id)
-        return model_cls(model_id)
+    raise ValueError(f"Unknown backend: {backend}")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -87,10 +84,11 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--inference_only", action="store_true")
     run_parser.add_argument(
         "--backend",
-        choices=["transformers", "vllm", "openai"],
-        default="transformers",
+        choices=["openai", "vllm"],
+        default="openai",
         help="Inference backend. 'openai' talks to an OpenAI-compatible server "
-        "(vllm serve, SGLang, or the OpenAI API) and needs no model adapter.",
+        "(vllm serve, SGLang, or the OpenAI API) and needs no model adapter. "
+        "'vllm' is the legacy in-process path (examples/base_vllm.py).",
     )
     run_parser.add_argument("--adapter_dir", default=None, help="Path to model adapter modules")
 
