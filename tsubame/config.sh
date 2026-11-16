@@ -41,7 +41,7 @@ TSUBAME_H_RT="${TSUBAME_H_RT:-24:00:00}"
 # ============================================================================
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0,1,2,3}"
 TENSOR_PARALLEL_SIZE=4
-JUDGE_MODEL="${JUDGE_MODEL:-gpt-5.1-2025-11-13}"
+JUDGE_MODEL="${JUDGE_MODEL:-gpt-6-luna}"
 
 # ============================================================================
 # Tasks & Metrics (same as eval.sh)

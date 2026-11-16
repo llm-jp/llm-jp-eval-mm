@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Callable
 from loguru import logger
 from tqdm import tqdm
 
+from .metadata import DEFAULT_JUDGE_MODEL
 from .metrics.scorer import ScorerConfig
 from .metrics.scorer_registry import ScorerRegistry
 from .tasks.task import TaskConfig
@@ -20,6 +21,25 @@ from .utils.azure_client import OpenAIChatAPI
 if TYPE_CHECKING:
     from .models.base_vlm import BaseVLM
     from .models.generation_config import GenerationConfig
+
+
+# Per-sample generation details kept in prediction.jsonl next to the answer.
+_GENERATION_FIELDS = ("reasoning", "finish_reason", "completion_tokens", "error")
+
+
+class LazyJudgeClient:
+    """Create the judge client on first use.
+
+    Metrics that do not call a judge then run without an API key.
+    """
+
+    def __init__(self) -> None:
+        self._client: OpenAIChatAPI | None = None
+
+    def batch_generate_chat_response(self, *args, **kwargs) -> list[str]:
+        if self._client is None:
+            self._client = OpenAIChatAPI()
+        return self._client.batch_generate_chat_response(*args, **kwargs)
 
 
 def save_jsonl(path: str, data: list[dict]) -> None:
@@ -88,20 +108,25 @@ def generate_predictions_batch(
 
     total = len(qids)
 
+    def generate(chunk_images, chunk_texts) -> list[dict]:
+        # Models that separate reasoning from the answer return richer records.
+        if hasattr(model, "batch_generate_detailed"):
+            from .models.openai_compat import generation_to_record
+
+            return [
+                generation_to_record(g)
+                for g in model.batch_generate_detailed(chunk_images, chunk_texts, gen_kwargs)
+            ]
+        return [{"text": t} for t in model.batch_generate(chunk_images, chunk_texts, gen_kwargs)]
+
     if chunk_size <= 0 or chunk_size >= total:
-        results = model.batch_generate(images, texts, gen_kwargs)
-        if progress_callback:
-            progress_callback(total, total)
-        return [{"question_id": qid, "text": pred} for qid, pred in zip(qids, results)]
+        chunk_size = max(total, 1)
 
     all_preds: list[dict] = []
     for start in range(0, total, chunk_size):
         end = min(start + chunk_size, total)
-        chunk_results = model.batch_generate(
-            images[start:end], texts[start:end], gen_kwargs
-        )
-        for qid, pred in zip(qids[start:end], chunk_results):
-            all_preds.append({"question_id": qid, "text": pred})
+        for qid, record in zip(qids[start:end], generate(images[start:end], texts[start:end])):
+            all_preds.append({"question_id": qid, **record})
         if progress_callback:
             progress_callback(end, total)
 
@@ -112,7 +137,7 @@ def evaluate_predictions(
     task,
     preds: list[dict],
     metrics: list[str],
-    judge_model: str = "gpt-4o-2024-11-20",
+    judge_model: str = DEFAULT_JUDGE_MODEL,
     batch_size: int = 10,
     random_choice: bool = False,
     client=None,
@@ -129,7 +154,7 @@ def evaluate_predictions(
     aggregated_metrics: dict[str, dict] = {}
 
     if client is None:
-        client = OpenAIChatAPI()
+        client = LazyJudgeClient()
 
     if refs is None:
         refs = [task.doc_to_answer(doc) for doc in task.dataset]
@@ -189,6 +214,7 @@ def save_results(
             "answer": answers[i],
             "input_text": input_texts[i],
         }
+        result.update({k: pred[k] for k in _GENERATION_FIELDS if k in pred})
         for metric in metrics:
             result[metric] = scores_by_metric[metric][i]
         final_results.append(result)
@@ -212,7 +238,7 @@ def run_evaluation(
     gen_config: GenerationConfig | None = None,
     task_config: TaskConfig | None = None,
     result_dir: str = "result",
-    judge_model: str = "gpt-4o-2024-11-20",
+    judge_model: str = DEFAULT_JUDGE_MODEL,
     batch_size_for_evaluation: int = 10,
     overwrite: bool = False,
     inference_only: bool = False,
@@ -222,6 +248,7 @@ def run_evaluation(
     progress_callback: "Callable[[int, int], None] | None" = None,
     client=None,
     task=None,
+    error_threshold: float = 0.1,
 ) -> dict[str, dict] | None:
     """Run the full evaluation pipeline.
 
@@ -288,6 +315,16 @@ def run_evaluation(
                 chunk_size=batch_chunk_size,
                 progress_callback=progress_callback,
             )
+            errors = [
+                {"question_id": p["question_id"], "error": p["error"]}
+                for p in preds
+                if p.get("error")
+            ]
+            if len(errors) > len(preds) * error_threshold:
+                save_jsonl(os.path.join(output_dir, "error_message.jsonl"), errors)
+                raise RuntimeError(
+                    f"Error rate exceeded {error_threshold*100:.0f}%: {len(errors)}/{len(preds)}"
+                )
         else:
             preds, errors = generate_predictions_sequential(
                 model, task, gen_config, output_dir
@@ -296,6 +333,20 @@ def run_evaluation(
         if errors:
             save_jsonl(os.path.join(output_dir, "error_message.jsonl"), errors)
         logger.info(f"Predictions saved to {prediction_path}")
+        write_manifest(
+            output_dir,
+            model_id,
+            task_id,
+            [],
+            generation={
+                "config": asdict(gen_config),
+                "model": model.describe() if hasattr(model, "describe") else {},
+            },
+            dataset={
+                "num_samples": len(task.dataset),
+                "fingerprint": getattr(task.dataset, "_fingerprint", None),
+            },
+        )
     else:
         raise FileNotFoundError(
             f"No predictions found at {prediction_path} and no model provided."
@@ -319,6 +370,6 @@ def run_evaluation(
     save_results(preds, task, metrics, scores_by_metric, aggregated_metrics, output_dir)
 
     # Write manifest for downstream consumers (leaderboard, prediction browser)
-    write_manifest(output_dir, model_id, task_id, metrics)
+    write_manifest(output_dir, model_id, task_id, metrics, judge_model=judge_model)
 
     return aggregated_metrics

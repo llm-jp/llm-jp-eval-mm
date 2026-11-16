@@ -42,7 +42,7 @@ uv run --group normal eval-mm run \
   --task_id japanese-heron-bench  \
   --result_dir result  \
   --metrics heron-bench \
-  --judge_model gpt-4o-2024-11-20 \
+  --judge_model gpt-6-luna \
   --overwrite
 ```
 
@@ -57,6 +57,26 @@ uv run --group vllm_normal eval-mm run \
   --task_id japanese-heron-bench \
   --metrics heron-bench
 ```
+
+To evaluate a model behind an OpenAI-compatible server (`vllm serve`, SGLang, or the OpenAI API), use the `openai` backend. It needs no per-model adapter and no model dependencies in this environment:
+```bash
+# In another shell or job: vllm serve Qwen/Qwen3-VL-8B-Instruct --port 8000
+uv run eval-mm run \
+  --backend openai \
+  --base_url http://localhost:8000/v1 \
+  --model_id Qwen/Qwen3-VL-8B-Instruct \
+  --task_id japanese-heron-bench \
+  --metrics heron-bench \
+  --max_new_tokens 1024
+```
+
+- `--thinking on|off` sets `chat_template_kwargs.enable_thinking` for models whose chat template has a thinking switch. Omit it to keep the model default.
+- Reasoning is stored in the `reasoning` field of `prediction.jsonl` and is not scored. It is taken from the server's reasoning field, or split from `<think>` tags when the server has no reasoning parser.
+- Reasoning counts toward `--max_new_tokens`. A sample whose `finish_reason` is `length` ran out of tokens.
+- Omit `--base_url` to call the OpenAI API. Use `--reasoning_effort` and `--no_sampling_params` for models that need them.
+- `--max_dataset_len N` limits a run to the first N samples, which is enough to check that a model works.
+
+Each run writes `manifest.json` with the generation settings, the judge model, the dataset fingerprint, this repository's commit and package versions.
 
 To score existing predictions without running inference:
 ```bash
