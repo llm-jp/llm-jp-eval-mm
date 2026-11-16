@@ -1,6 +1,8 @@
 from eval_mm.tasks.task import Task
 from eval_mm.tasks.task_registry import register_task
 from datasets import load_dataset, Dataset
+
+from eval_mm.tasks._head import iter_head_rows
 from PIL import Image
 
 
@@ -25,7 +27,7 @@ class TextVQA(Task):
     def _prepare_test_dataset(self) -> Dataset:
         # Stream a tiny subset to avoid heavy downloads/cache writes in CI
         n = getattr(self.config, "max_dataset_len", 10)
-        stream = load_dataset("lmms-lab/textvqa", split="validation", streaming=True)
+        stream = iter_head_rows("lmms-lab/textvqa", split="validation")
         buf = {
             "question_id": [],
             "question": [],

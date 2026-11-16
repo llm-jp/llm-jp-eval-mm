@@ -1,4 +1,6 @@
 from datasets import Dataset, load_dataset
+
+from ._head import iter_head_rows
 from .task import Task
 from .task_registry import register_task
 from PIL import Image
@@ -57,7 +59,7 @@ class CVQA(Task):
     def _prepare_test_dataset(self) -> Dataset:
         # Stream to pick the first N Japanese samples and build a tiny Dataset
         n = getattr(self.config, "max_dataset_len", 10)
-        stream = load_dataset("afaji/cvqa", split="test", streaming=True)
+        stream = iter_head_rows("afaji/cvqa", split="test")
         buf = {
             "index": [],
             "question_id": [],
