@@ -34,35 +34,10 @@ If you are not using LLM-as-a-Judge, you can assign any value in the `.env` file
 
 ## Usage
 
-To evaluate a model on a task, use the `eval-mm` CLI:
-```bash
-uv sync --group normal
-uv run --group normal eval-mm run \
-  --model_id llava-hf/llava-1.5-7b-hf \
-  --task_id japanese-heron-bench  \
-  --result_dir result  \
-  --metrics heron-bench \
-  --judge_model gpt-6-luna \
-  --overwrite
-```
-
-You can also use `python -m eval_mm run ...` or the legacy `python examples/sample.py ...` wrapper.
-
-To evaluate using vLLM for faster batch inference:
-```bash
-uv sync --group vllm_normal
-uv run --group vllm_normal eval-mm run \
-  --backend vllm \
-  --model_id Qwen/Qwen2.5-VL-3B-Instruct \
-  --task_id japanese-heron-bench \
-  --metrics heron-bench
-```
-
-To evaluate a model behind an OpenAI-compatible server (`vllm serve`, SGLang, or the OpenAI API), use the `openai` backend. It needs no per-model adapter and no model dependencies in this environment:
+Models are evaluated through an OpenAI-compatible server (`vllm serve`, SGLang, or the OpenAI API). No per-model adapter is needed, and the model's dependencies stay out of this environment:
 ```bash
 # In another shell or job: vllm serve Qwen/Qwen3-VL-8B-Instruct --port 8000
 uv run eval-mm run \
-  --backend openai \
   --base_url http://localhost:8000/v1 \
   --model_id Qwen/Qwen3-VL-8B-Instruct \
   --task_id japanese-heron-bench \
@@ -99,7 +74,14 @@ result
 │   │   │   └── prediction.jsonl
 ```
 
-To evaluate multiple models on multiple tasks, please check `eval_all.sh`.
+To serve a model from the model pool, run several tasks against it and stop the server in one command:
+```bash
+export EVAL_MM_VLLM_CMD="uvx --from vllm==0.33.0 vllm"   # vLLM runs from its own environment
+uv run eval-mm run-model --model_id Qwen/Qwen3.5-2B --tasks jmmmu,ja-vg-vqa-500 --inference_only
+uv run eval-mm run-model --all --inference_only            # every active model, every task
+```
+
+The model pool is defined in `src/eval_mm/model_pool.toml`; `eval-mm list models` prints it.
 
 ## Hello World Example
 
@@ -233,20 +215,6 @@ English Tasks:
 - [DocVQA](https://huggingface.co/datasets/lmms-lab/DocVQA)
 - [InfoVQA (infographicvqa)](https://huggingface.co/datasets/lmms-lab/infographicvqa)
 
-## Managing Dependencies
-
-We use uv’s dependency groups to manage each model’s dependencies.
-
-For example, to use llm-jp/llm-jp-3-vila-14b, run:
-```bash
-uv sync --group vilaja
-uv run --group vilaja python examples/VILA_ja.py
-```
-
-See `eval_all.sh` for the complete list of model dependencies.
-
-When adding a new group, remember to configure [conflict](https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies).
-
 ## Browse Predictions
 
 ### Web UI (Recommended)
@@ -272,13 +240,11 @@ To add a new metric, implement the Scorer class in `src/eval_mm/metrics/scorer.p
 
 ### Adding a new model
 
-To add a new model, create a VLM adapter class that inherits from `eval_mm.BaseVLM` and place it in `examples/`.
-Register it in `examples/model_table.py` so the CLI can discover it.
-
-> **Note**: `examples/` contains *model adapter implementations* and *usage examples*.
-> The evaluation engine, CLI, base classes, and scoring live in `src/eval_mm/` (the published package).
-> Model adapters in `examples/` are not part of the PyPI distribution — they are reference implementations
-> for users to copy, adapt, or extend
+Add an entry to `src/eval_mm/model_pool.toml`. Set `status = "pending"` until the model has been served and evaluated on a few samples:
+```bash
+uv run eval-mm run-model --model_id <model_id> --tasks jmmmu --max_dataset_len 10 --inference_only
+```
+Set `thinking` for models whose chat template has a thinking switch, and put extra `vllm serve` arguments in `serve_args`.
 
 ### Adding a new dependency
 
@@ -296,12 +262,6 @@ Portable offline tests (no GPU, no network):
 bash test.sh
 ```
 
-Model smoke tests (requires GPU + model weights):
-```bash
-bash test_model.sh                  # all models
-bash test_model.sh "Qwen"          # filter by name
-CUDA_VISIBLE_DEVICES=0,1 bash test_model.sh  # custom GPU selection
-```
 
 ### Formatting and Linting
 

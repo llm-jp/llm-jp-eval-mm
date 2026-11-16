@@ -8,18 +8,17 @@ This is a concise, coding‑agent–friendly guide for contributing and extendin
   - `tasks/`: Task loaders/adapters; register in `task_registry.py`
   - `metrics/`: Scorers and aggregation utilities; register in `scorer_registry.py`
   - `utils/`: Helpers (e.g., Azure/OpenAI client)
-- `examples/`: Reference VLM wrappers and runnable samples
-  - `vila/`: llm-jp VILA wrapper (submodule)
-  - `llava/`: official LLaVA (optional submodule)
+- `examples/`: Legacy in-process vLLM backend (`base_vllm.py`, `vllm_registry.py`), kept until the server-based path has been run on the clusters
 - `scripts/`: Leaderboard, Streamlit browser, dataset prep
 - `assets/`, `data/`, `dataset/`: Static assets and datasets (not committed)
 - `result/`, `outputs/`: Evaluation artifacts written by runs
 
 ## Key Commands
 
-- Setup: `uv sync` (model deps via groups, e.g., `uv sync --group normal`)
-- Run sample eval: `uv run --group normal python examples/sample.py ...`
-- Tests: `bash test.sh` (tasks/metrics), `bash test_model.sh` (model smoke)
+- Setup: `uv sync --group dev`
+- Run sample eval: `uv run eval-mm run --base_url http://localhost:8000/v1 --model_id <id> --task_id <task> --metrics <metric> --max_dataset_len 10` against a running `vllm serve`
+- Serve and evaluate a pool model: `uv run eval-mm run-model --model_id <id> --tasks <task> --max_dataset_len 10 --inference_only`
+- Tests: `bash test.sh` (tasks/metrics)
 - Lint/format: `uv run ruff format src && uv run ruff check --fix src`
 - Type check: `uv run mypy src`
 - Browse predictions: `uv run streamlit run scripts/browse_prediction.py -- --task_id <id> --result_dir result --model_list <model>`
@@ -29,9 +28,9 @@ This is a concise, coding‑agent–friendly guide for contributing and extendin
 
 - Add a task: implement `Task` in `src/eval_mm/tasks/<name>.py`; import it in `src/eval_mm/tasks/__init__.py`; register with `@register_task` in `task_registry.py`.
 - Add a scorer: implement in `src/eval_mm/metrics/<name>_scorer.py`; import in `metrics/__init__.py`; register in `scorer_registry.py`.
-- Add a model: wrap in `examples/` (see existing VLM wrappers) and map via `examples/model_table.py`.
+- Add a model: add an entry to `src/eval_mm/model_pool.toml` (`status = "pending"` until it has been served and checked on a few samples). Models are evaluated through an OpenAI-compatible server; do not add per-model wrappers.
 - Import pattern: `from eval_mm import TaskRegistry, ScorerRegistry` (avoid `src.` prefixes).
-- Tests: include `def test_*` near tasks/metrics; prefer `bash test.sh` (tasks/metrics) and `bash test_model.sh` (model smoke). For a single file, you may optionally run `uv run --group dev pytest <path> -v`, but CI expects the scripts.
+- Tests: include `def test_*` near tasks/metrics; prefer `bash test.sh` (tasks/metrics). For a single file, you may optionally run `uv run --group dev pytest <path> -v`, but CI expects the scripts.
 
 ## Plan-First Workflow
 
