@@ -13,26 +13,41 @@ _REPO_ID = "llm-jp/jawildtext"
 _CONFIG = "handwriting_ocr"
 
 
-def _build_reference_from_polygons(polygons: list[dict]) -> str:
-    """Build reference text from polygon annotations.
+def _centroid(ann: dict) -> tuple[float, float]:
+    coords = ann["polygon"]
+    return (
+        sum(pt[0] for pt in coords) / len(coords),
+        sum(pt[1] for pt in coords) / len(coords),
+    )
 
-    Sorts annotations top-to-bottom, left-to-right by centroid,
-    then joins text with newlines.
+
+def _is_tall(ann: dict) -> bool:
+    xs = [pt[0] for pt in ann["polygon"]]
+    ys = [pt[1] for pt in ann["polygon"]]
+    return max(ys) - min(ys) > max(xs) - min(xs)
+
+
+def _build_reference_from_polygons(polygons: list[dict]) -> str:
+    """Build reference text from polygon annotations in reading order.
+
+    The page direction is taken from the line geometry (vertical when most
+    line polygons are taller than wide), not from the per-polygon
+    `direction` label, which disagrees with the image on a few pages.
+    Horizontal pages: lines top to bottom, then left to right.
+    Vertical pages: columns right to left, then top to bottom.
+    Lines are joined with newlines.
     """
-    if not polygons:
+    anns = [ann for ann in polygons or [] if ann.get("text") and ann.get("polygon")]
+    if not anns:
         return ""
 
-    def centroid_sort_key(ann: dict) -> tuple[float, float]:
-        coords = ann.get("polygon", [])
-        if not coords:
-            return (0.0, 0.0)
-        ys = [pt[1] for pt in coords]
-        xs = [pt[0] for pt in coords]
-        return (sum(ys) / len(ys), sum(xs) / len(xs))
+    vertical = sum(_is_tall(ann) for ann in anns) > len(anns) / 2
 
-    sorted_anns = sorted(polygons, key=centroid_sort_key)
-    texts = [ann["text"] for ann in sorted_anns if ann.get("text")]
-    return "\n".join(texts)
+    def reading_order_key(ann: dict) -> tuple[float, float]:
+        x, y = _centroid(ann)
+        return (-x, y) if vertical else (y, x)
+
+    return "\n".join(ann["text"] for ann in sorted(anns, key=reading_order_key))
 
 
 def _build_dataset(ds: Dataset) -> Dataset:

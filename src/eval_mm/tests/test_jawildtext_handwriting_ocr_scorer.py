@@ -36,6 +36,25 @@ class TestNormalizeOcrText:
     def test_crlf_to_lf(self):
         assert _normalize_ocr_text("a\r\nb") == "a\nb"
 
+    def test_escaped_newline_before_japanese(self):
+        assert _normalize_ocr_text("です\\nまた") == "です\nまた"
+
+    def test_escaped_newline_before_word_starting_with_command(self):
+        # "\\nu" is a LaTeX command, "\\nunit" is a line break before "unit"
+        assert _normalize_ocr_text("a\\nunit") == "a\nunit"
+        assert _normalize_ocr_text("a\\neko") == "a\neko"
+
+    @pytest.mark.parametrize(
+        "latex",
+        [r"\nabla p", r"a \neq b", r"\nu", r"\not\in", r"a \ne b", r"\nabla^2 v"],
+    )
+    def test_latex_commands_kept(self, latex):
+        assert "\n" not in _normalize_ocr_text(latex)
+
+    def test_latex_and_line_break_mixed(self):
+        text = r"-\nabla p + \nu\nabla^2 v\n次の行"
+        assert _normalize_ocr_text(text) == "-\\nabla p + \\nu\\nabla^2 v\n次の行"
+
 
 class TestLevenshtein:
     def test_identical(self):
