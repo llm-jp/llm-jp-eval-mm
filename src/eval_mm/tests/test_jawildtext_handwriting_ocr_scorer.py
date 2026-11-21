@@ -18,14 +18,20 @@ class TestNormalizeOcrText:
         # Full-width digits → half-width
         assert _normalize_ocr_text("１２３") == "123"
 
-    def test_lowercase(self):
-        assert _normalize_ocr_text("ABC") == "abc"
+    def test_case_preserved(self):
+        assert _normalize_ocr_text("ABC") == "ABC"
 
     def test_escaped_newline_to_real(self):
         assert _normalize_ocr_text("hello\\nworld") == "hello\nworld"
 
-    def test_collapse_spaces(self):
-        assert _normalize_ocr_text("a   b") == "a b"
+    def test_remove_spaces(self):
+        assert _normalize_ocr_text("a   b") == "ab"
+
+    def test_remove_tabs_and_full_width_spaces(self):
+        assert _normalize_ocr_text("電荷\tq\u3000=\u00a01.6") == "電荷q=1.6"
+
+    def test_line_breaks_kept_spaces_around_removed(self):
+        assert _normalize_ocr_text("  一行目 \n 二行目  ") == "一行目\n二行目"
 
     def test_empty_string(self):
         assert _normalize_ocr_text("") == ""
@@ -35,6 +41,25 @@ class TestNormalizeOcrText:
 
     def test_crlf_to_lf(self):
         assert _normalize_ocr_text("a\r\nb") == "a\nb"
+
+    def test_escaped_newline_before_japanese(self):
+        assert _normalize_ocr_text("です\\nまた") == "です\nまた"
+
+    def test_escaped_newline_before_word_starting_with_command(self):
+        # "\\nu" is a LaTeX command, "\\nunit" is a line break before "unit"
+        assert _normalize_ocr_text("a\\nunit") == "a\nunit"
+        assert _normalize_ocr_text("a\\neko") == "a\neko"
+
+    @pytest.mark.parametrize(
+        "latex",
+        [r"\nabla p", r"a \neq b", r"\nu", r"\not\in", r"a \ne b", r"\nabla^2 v"],
+    )
+    def test_latex_commands_kept(self, latex):
+        assert "\n" not in _normalize_ocr_text(latex)
+
+    def test_latex_and_line_break_mixed(self):
+        text = r"-\nabla p + \nu\nabla^2 v\n次の行"
+        assert _normalize_ocr_text(text) == "-\\nablap+\\nu\\nabla^2v\n次の行"
 
 
 class TestLevenshtein:
@@ -92,9 +117,18 @@ class TestScore:
         scores = scorer.score(["some text"], [""])
         assert scores == [0.0]
 
-    def test_case_insensitive(self, scorer):
+    def test_case_sensitive(self, scorer):
         scores = scorer.score(["Hello World"], ["hello world"])
-        assert scores == [1.0]
+        assert scores[0] == pytest.approx(1 - 2 / len("HelloWorld"))
+
+    def test_spaces_ignored(self, scorer):
+        ref = "電荷q=1.6×10⁻¹⁹の電子が\n磁場0.025Tを垂直に横切る"
+        pred = "電荷 q = 1.6×10⁻¹⁹ の電子が\n磁場 0.025 T を垂直に横切る"
+        assert scorer.score([ref], [pred]) == [1.0]
+
+    def test_line_breaks_count(self, scorer):
+        scores = scorer.score(["一行目\n二行目"], ["一行目二行目"])
+        assert scores[0] == pytest.approx(1 - 1 / len("一行目\n二行目"))
 
     def test_multiple_samples(self, scorer):
         refs = ["abc", "xyz"]

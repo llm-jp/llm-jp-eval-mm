@@ -4,18 +4,27 @@ import unicodedata
 from .scorer import AggregateOutput, Scorer
 from .scorer_registry import register_scorer
 
+# A literal backslash-n written by the model means a line break, except where it
+# starts a LaTeX command such as \nabla, \neq or \nu.
+_LATEX_N_COMMANDS = (
+    "nabla|natural|nearrow|neg|neq|newline|ne|ngeq|ngtr|ni|nleq|nless|nmid|"
+    "not|notin|nparallel|nsubseteq|nsupseteq|nu|nwarrow"
+)
+_LITERAL_NEWLINE = re.compile(rf"\\(?!(?:{_LATEX_N_COMMANDS})(?![a-zA-Z]))n")
+_NON_NEWLINE_WHITESPACE = re.compile(r"[^\S\n]+")
+
 
 def _normalize_ocr_text(text: str) -> str:
-    """Normalize text for CER comparison.
+    """Normalize text for CER comparison (JaWildText protocol).
 
-    NFKC normalization, lowercase, newline/spacing handling.
+    NFKC normalization, literal "\\n" and CRLF converted to line breaks, all
+    other whitespace (spaces, tabs, full-width spaces) removed. Line breaks are
+    kept and case is preserved.
     """
     text = unicodedata.normalize("NFKC", text or "")
-    text = text.replace("\\n", "\n")
+    text = _LITERAL_NEWLINE.sub("\n", text)
     text = text.replace("\r\n", "\n")
-    lines = text.split("\n")
-    cleaned_lines = [re.sub(r"[ \t]+", " ", line.strip()) for line in lines]
-    return "\n".join(cleaned_lines).lower()
+    return _NON_NEWLINE_WHITESPACE.sub("", text)
 
 
 def _levenshtein(s1: str, s2: str) -> int:
