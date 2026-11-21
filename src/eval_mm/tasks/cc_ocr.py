@@ -4,7 +4,6 @@ from .task_registry import register_task
 from PIL import Image
 from io import BytesIO
 import base64
-import os
 
 
 def base64_to_pil_image(base64_string: str) -> Image.Image:

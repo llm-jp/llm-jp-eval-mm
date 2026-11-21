@@ -1,6 +1,7 @@
 # mecha-ja-scorer.py
 from .scorer import Scorer, AggregateOutput
 from .scorer_registry import register_scorer
+from ._text_utils import strip_reasoning
 import re
 from collections import defaultdict
 
@@ -33,6 +34,7 @@ class MECHAJaScorer(Scorer):
         """
         scores = []
         for ref, pred in zip(refs, preds):
+            pred = strip_reasoning(pred)
             score = 1 if ref in pred else 0
             scores.append(score)
         return scores

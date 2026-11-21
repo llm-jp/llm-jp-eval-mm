@@ -3,6 +3,7 @@ import unicodedata
 
 from .scorer import AggregateOutput, Scorer
 from .scorer_registry import register_scorer
+from ._text_utils import strip_reasoning
 
 # A literal backslash-n written by the model means a line break, except where it
 # starts a LaTeX command such as \nabla, \neq or \nu.
@@ -51,7 +52,7 @@ class JaWildTextHandwritingOCRScorer(Scorer):
         scores = []
         for ref, pred in zip(refs, preds):
             ref_norm = _normalize_ocr_text(ref)
-            pred_norm = _normalize_ocr_text(pred)
+            pred_norm = _normalize_ocr_text(strip_reasoning(pred))
             if not ref_norm and not pred_norm:
                 scores.append(1.0)
                 continue

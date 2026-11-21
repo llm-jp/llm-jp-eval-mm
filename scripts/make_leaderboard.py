@@ -85,18 +85,28 @@ def process_results(
 ) -> pd.DataFrame:
     """Process all evaluation results into a structured DataFrame."""
     if not task_id_list:
-        task_id_list = [d for d in os.listdir(result_dir) if not d.startswith(".")]
+        task_id_list = [
+            d for d in os.listdir(result_dir)
+            if not d.startswith(".")
+            and not d.startswith("eval_failures_")
+            and not d.startswith("judge_failures")
+            and os.path.isdir(os.path.join(result_dir, d))
+        ]
 
-    df = pd.DataFrame()
-
+    rows: list[dict] = []
     for model in model_list:
         logger.info(f"Processing results for {model}")
         model_results = load_evaluation_data(result_dir, model, task_id_list)
         if len(model_results) == 1:
             continue
-        df = df._append(model_results, ignore_index=True)
+        rows.append(model_results)
+
+    df = pd.DataFrame(rows) if rows else pd.DataFrame()
 
     df = df.set_index("Model").round(2)
+    # Keep "Task/Metric" with a "/" separator so downstream consumers
+    # (JSON export, LaTeX export) can still split on "/". The markdown
+    # renderer swaps "/" for "<br>" at the last moment for two-line headers.
     df = df.rename(
         columns={
             k: f"{TASK_ALIAS[k.split('/')[0]]}/{METRIC_ALIAS[k.split('/')[1]]}"
@@ -431,12 +441,20 @@ def compute_cluster_scores(df: pd.DataFrame) -> pd.DataFrame:
 def format_output(df: pd.DataFrame, output_format: str) -> str:
     """Format the DataFrame output for markdown or LaTeX."""
 
+    # Cast numeric columns to object so we can write formatted markdown strings
+    # (pandas >=2.2 refuses implicit str→float coercion on typed columns).
+    df = df.astype(object)
+
     # textbf top1 score and underline top2 score for each task
     for col in df.columns:
-        top1_model = df[col].astype(float).idxmax()
-        top2_model = df[col].astype(float).nlargest(2).index[-1]
-        top1_score = f"{float(df.loc[top1_model, col]):.1f}"
-        top2_score = f"{float(df.loc[top2_model, col]):.1f}"
+        numeric = pd.to_numeric(df[col], errors="coerce")
+        if numeric.dropna().empty:
+            continue
+        top1_model = numeric.idxmax()
+        top2_candidates = numeric.nlargest(2).dropna()
+        top2_model = top2_candidates.index[-1] if len(top2_candidates) > 1 else top1_model
+        top1_score = f"{float(numeric.loc[top1_model]):.1f}"
+        top2_score = f"{float(numeric.loc[top2_model]):.1f}"
         # apply formatting
         if output_format == "latex":
             df.loc[top1_model, col] = f"\\textbf{{{top1_score}}}"
@@ -447,10 +465,28 @@ def format_output(df: pd.DataFrame, output_format: str) -> str:
             df.loc[top2_model, col] = f"*{top2_score}*"
             df.loc[top2_model, col] = f"<u>{top2_score}</u>"
 
-    df = df.fillna("")
+    # Use "--" for missing cells so blanks render distinctly (structural
+    # inference gaps for single-image models on multi-image tasks).
+    df = df.fillna("--")
 
     if output_format == "markdown":
-        return df.to_markdown(mode="github", floatfmt=".1f")
+        judge_note = (
+            f"> **Judge model:** `{format_output.judge_model}`  \n"
+            if getattr(format_output, "judge_model", None) else ""
+        )
+        note = (
+            "> [!NOTE]\n"
+            f"{judge_note}"
+            "> Multi-image tasks (JDocQA, MulIm-VQA, JMMMU, MMMU) render as "
+            "`--` for models that only accept a single image per prompt — "
+            "those cells are inference-time structural gaps, not scoring "
+            "failures.\n\n"
+        )
+        # Swap "Task/Metric" → "Task<br>Metric" for two-line GFM headers.
+        df_md = df.rename(
+            columns={c: c.replace("/", "<br>", 1) for c in df.columns}
+        )
+        return note + df_md.to_markdown(mode="github", floatfmt=".1f")
     elif output_format == "latex":
         return df.to_latex(
             float_format="%.1f", column_format="l" + "c" * len(df.columns)
@@ -686,9 +722,9 @@ def main(
     if update_pages:
         # sort by task
         df = df.sort_index(axis=1)
-        generate_json_path(df.copy(), "github_pages/public/leaderboard.json")
+        generate_json_path(df.copy(), "web/public/leaderboard.json")
         # Regenerate metadata JSON from single source (eval_mm.metadata)
-        write_github_pages_json("github_pages/public")
+        write_github_pages_json("web/public")
     
     tex_columns = None
     if export_tex:
@@ -758,11 +794,22 @@ def parse_args():
         action="store_true",
         help="Export leaderboard results to artifact/result_*.tex files",
     )
+    parser.add_argument(
+        "--judge_model",
+        type=str,
+        default=None,
+        help="Judge model id to print in the output header "
+             "(e.g. 'openai/gpt-oss-20b'). Optional; omit to skip the note.",
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
+
+    # Stash judge model on format_output so the markdown header can
+    # include it without threading another kwarg through main().
+    format_output.judge_model = args.judge_model
 
     print(args.task_id_list)
     main(

@@ -4,6 +4,7 @@ from typing import List, Dict, Any, cast  # Added cast for type hinting clarity
 
 from .scorer import Scorer, AggregateOutput, ScorerConfig
 from .scorer_registry import register_scorer
+from ._text_utils import strip_reasoning
 
 
 def token_normalize(
@@ -188,7 +189,7 @@ class CCOCRScorer(Scorer):
                 is_alphanum_only=self.is_alphanum_only,
             )
             pred_tokens = text_normalize_and_tokenize(
-                pred_text,
+                strip_reasoning(pred_text),
                 is_keep_blank=self.is_word_level,  # False for char level
                 is_lower=self.is_lower,
                 is_alphanum_only=self.is_alphanum_only,

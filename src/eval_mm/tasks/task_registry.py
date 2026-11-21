@@ -2,7 +2,7 @@
 Task registry with decorator-based registration to avoid duplication.
 """
 
-from typing import Type, Callable
+from typing import Type
 from .task import Task, TaskConfig
 
 # Global registry dictionary

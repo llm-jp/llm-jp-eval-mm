@@ -5,6 +5,7 @@ from collections import Counter
 
 from .scorer import AggregateOutput, Scorer
 from .scorer_registry import register_scorer
+from ._text_utils import strip_reasoning
 
 _SCALAR_FIELDS = [
     "store_name",
@@ -112,7 +113,7 @@ class JaWildTextReceiptKIEScorer(Scorer):
         zero_field_acc = {f"field_{f}": 0.0 for f in _SCALAR_FIELDS}
         for ref_json, pred_text in zip(refs, preds):
             gold = json.loads(ref_json)
-            pred = _extract_json_from_response(pred_text)
+            pred = _extract_json_from_response(strip_reasoning(pred_text))
             if pred is None:
                 scores.append({
                     "f1": 0.0,

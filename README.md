@@ -182,23 +182,36 @@ This will create a `leaderboard.md` file with your model performance:
 
 The official leaderboard is available [here](https://llm-jp.github.io/llm-jp-eval-mm/)
 
+> [!NOTE]
+> Multi-image tasks — **JDocQA**, **JA-Multi-Image-VQA**, **JMMMU**, and
+> **MMMU** — may appear blank for models that only accept a single image
+> per prompt (e.g. LLaVA-1.6, Pangea, Aya-Vision, older Ovis2). Those
+> cells are structural gaps from inference, not scoring failures.
+
 ## Supported Tasks
 
 Japanese Tasks:
 - [Japanese Heron Bench](https://huggingface.co/datasets/turing-motors/Japanese-Heron-Bench)
-- [JA-VG-VQA500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500)
+- [JA-VG-VQA-500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500)
 - [JA-VLM-Bench-In-the-Wild](https://huggingface.co/datasets/SakanaAI/JA-VLM-Bench-In-the-Wild)
 - [JA-Multi-Image-VQA](https://huggingface.co/datasets/SakanaAI/JA-Multi-Image-VQA)
 - [JDocQA](https://github.com/mizuumi/JDocQA)
 - [JMMMU](https://huggingface.co/datasets/JMMMU/JMMMU)
-- [JIC-VQA](https://huggingface.co/datasets/line-corporation/JIC-VQA)
 - [MECHA-ja](https://huggingface.co/datasets/llm-jp/MECHA-ja)
 - [CC-OCR](https://huggingface.co/datasets/wulipc/CC-OCR) (multi_lan_ocr split, ja subset)
+- [jawildtext-board-vqa / handwriting-ocr / receipt-kie](https://huggingface.co/datasets/llm-jp/jawildtext)
 - [CVQA](https://huggingface.co/datasets/afaji/cvqa) (ja subset)
 
 English Tasks:
 - [MMMU](https://huggingface.co/datasets/MMMU/MMMU)
 - [LlaVA-Bench-In-the-Wild](https://huggingface.co/datasets/lmms-lab/llava-bench-in-the-wild)
+- [OK-VQA](https://okvqa.allenai.org/)
+- [TextVQA](https://huggingface.co/datasets/lmms-lab/textvqa)
+- [AI2D](https://huggingface.co/datasets/lmms-lab/ai2d)
+- [ChartQA](https://huggingface.co/datasets/lmms-lab/ChartQA)
+- [ChartQAPro](https://huggingface.co/datasets/ahmed-masry/ChartQAPro)
+- [DocVQA](https://huggingface.co/datasets/lmms-lab/DocVQA)
+- [InfoVQA (infographicvqa)](https://huggingface.co/datasets/lmms-lab/infographicvqa)
 
 ## Managing Dependencies
 
@@ -289,14 +302,22 @@ git push origin --tags
 
 ### Updating the Website
 
-The web dashboard is built with Next.js in the `web/` directory. For development:
+The site (both the dev dashboard and the public GitHub Pages landing) is built
+with Next.js in the `web/` directory. For local dev (Runner/Browser backed by
+the FastAPI backend):
 ```bash
 cd web && pnpm dev
 ```
 
-The legacy GitHub Pages leaderboard is in `github_pages/`. To update its data:
+To produce the static Pages build (landing + leaderboard only):
+```bash
+cd web && STATIC_EXPORT=1 pnpm build  # emits web/out/
+```
+
+To refresh the data JSON consumed by the public leaderboard:
 ```bash
 python scripts/make_leaderboard.py --update_pages
+# writes web/public/{leaderboard,default_metrics,dataset_url}.json
 ```
 
 ## Environment-Specific Configuration (mdx)
@@ -354,6 +375,22 @@ We also thank the developers of the evaluation datasets for their hard work.
   pages={TBD},
   year={2026},
   note = {local.ja},
+  month = {January}
+}
+
+@article{maeda-etal-2026-evalmm-en,
+  title = {Cross-Task Evaluation and Empirical Analysis of Japanese Visual Language Models},
+  author = {Koki Maeda and
+    Issa Sugiura and
+    Yusuke Oda and
+    Shuhei Kurita and
+    Naoaki Okazaki},
+  journal = {自然言語処理},
+  volume = {33},
+  number = {2},
+  pages = {TBD},
+  year = {2026},
+  note = {local.en},
   month = {January}
 }
 ```
